@@ -11,6 +11,9 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230b1120'/%3E%3Ctext x='90' y='122' font-size='90' text-anchor='middle'%3E%F0%9F%8F%A2%3C/text%3E%3C/svg%3E">
 <title>بوابة الشركات — المحاسبة</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   :root{
     --bg:#0b1120; --panel:#111c30; --panel2:#0f172a; --line:#1e3252;
@@ -106,9 +109,29 @@
 </head>
 <body>
 
+<div id="auth-overlay" style="position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px">
+  <div style="width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px">
+    <div style="text-align:center;font-size:36px">🏢</div>
+    <h2 style="text-align:center;margin:6px 0 4px;font-size:20px">بوابة الشركات</h2>
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px">سجّل دخول لمزامنة بياناتك على كل أجهزتك</p>
+    <label class="fld">الإيميل</label>
+    <input id="auth-email" type="email" placeholder="you@example.com" style="margin-bottom:10px">
+    <label class="fld">كلمة السر</label>
+    <input id="auth-pass" type="password" placeholder="6 أحرف على الأقل" style="margin-bottom:14px">
+    <div id="auth-error" style="color:var(--red);font-size:13px;margin-bottom:10px;display:none"></div>
+    <button class="btn btn-green" style="width:100%;margin-bottom:8px" onclick="authSignIn()">تسجيل الدخول</button>
+    <button class="btn btn-ghost" style="width:100%" onclick="authSignUp()">إنشاء حساب جديد</button>
+    <p style="text-align:center;color:var(--dim);font-size:11px;margin-top:14px">🔒 بياناتك محفوظة بأمان في حسابك فقط</p>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="topbar-row">
     <div class="brand">🏢 بوابة الشركات<small id="subBrand">المحاسبة ومتابعة المصاريف</small></div>
+    <div style="display:flex;align-items:center;gap:8px;order:3">
+      <span id="sync-status" class="badge" style="font-size:11px">⏳</span>
+      <button id="logout-btn" class="btn btn-ghost btn-sm" style="display:none" onclick="authSignOut()">خروج</button>
+    </div>
     <div class="company-switch">
       <button id="btn-expo" class="active" onclick="showCompany('expo')">Ramallah Expo</button>
       <button id="btn-themob" onclick="showCompany('themob')">TheMob</button>
@@ -982,6 +1005,85 @@ document.getElementById('ex-date').value=today();
 ['mr-date','mi-date','mf-date','mc-date','mp-date'].forEach(id=>{const e=document.getElementById(id); if(e)e.value=today();});
 mobPayToggle();
 renderDash();
+
+/* ============================================================
+   CLOUD SYNC — Firebase (تزامن + نسخ احتياطي سحابي)
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAUwWF7Aj_s6yNi5tO5i8XH5LYTqq45guw",
+  authDomain: "ramallah--mob.firebaseapp.com",
+  projectId: "ramallah--mob",
+  storageBucket: "ramallah--mob.firebasestorage.app",
+  messagingSenderId: "374909398111",
+  appId: "1:374909398111:web:eda6ba3ce9a41d2eb1bfea"
+};
+let fbReady=false, fbAuth=null, fbDb=null, userDocRef=null, pushTimer=null, applyingRemote=false;
+function setSync(txt,color){ const e=document.getElementById('sync-status'); if(e){ e.textContent=txt; if(color){e.style.color=color; e.style.borderColor=color;} } }
+function renderCurrent(){ if(currentCompany==='expo') renderActive(); else renderActiveMob(); }
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  fbAuth = firebase.auth();
+  fbDb = firebase.firestore();
+  fbDb.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+  fbReady = true;
+  fbAuth.onAuthStateChanged(handleAuth);
+} catch(e){
+  document.getElementById('auth-overlay').style.display='none';
+  setSync('💾 محلي فقط','#f59e0b');
+}
+
+function handleAuth(user){
+  const overlay=document.getElementById('auth-overlay');
+  const logout=document.getElementById('logout-btn');
+  if(user){
+    overlay.style.display='none';
+    if(logout) logout.style.display='inline-block';
+    setSync('☁️ متصل','#22c55e');
+    userDocRef = fbDb.collection('users').doc(user.uid);
+    userDocRef.onSnapshot(snap=>{
+      if(snap.metadata.hasPendingWrites) return;        // تجاهل صدى كتابتنا
+      if(snap.exists){
+        const d=snap.data();
+        if(d && d.data){ applyingRemote=true; db=ensureMob(d.data); localStorage.setItem(DB_KEY,JSON.stringify(db)); renderCurrent(); applyingRemote=false; setSync('☁️ متزامن','#22c55e'); }
+      } else {
+        pushCloud(true);   // أول مرة: ارفع البيانات المحلية للسحابة
+      }
+    }, ()=> setSync('⚠️ خطأ','#ef4444'));
+  } else {
+    overlay.style.display='flex';
+    if(logout) logout.style.display='none';
+    userDocRef=null;
+    setSync('⏳','#8aa0c4');
+  }
+}
+
+function pushCloud(immediate){
+  if(!userDocRef) return;
+  clearTimeout(pushTimer);
+  const doIt=()=>{ setSync('⏳ يحفظ…','#f59e0b'); userDocRef.set({data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>setSync('☁️ متزامن','#22c55e')).catch(()=>setSync('⚠️ غير متصل','#ef4444')); };
+  if(immediate) doIt(); else pushTimer=setTimeout(doIt,800);
+}
+
+/* اربط الحفظ المحلي بالرفع السحابي */
+const _origCommit = commit;
+commit = function(){ _origCommit(); if(fbReady && userDocRef && !applyingRemote) pushCloud(false); };
+
+function mapAuthErr(code){
+  if(code==='auth/invalid-email') return 'إيميل غير صحيح';
+  if(code==='auth/missing-password'||code==='auth/weak-password') return 'كلمة السر لازم 6 أحرف على الأقل';
+  if(code==='auth/email-already-in-use') return 'هذا الإيميل مسجّل — اضغط تسجيل الدخول';
+  if(code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found') return 'الإيميل أو كلمة السر غلط';
+  if(code==='auth/network-request-failed') return 'لا يوجد اتصال إنترنت';
+  if(code==='auth/operation-not-allowed') return 'تسجيل الدخول بالإيميل غير مفعّل بعد في Firebase';
+  return 'صار خطأ: '+code;
+}
+function authShowErr(msg){ const e=document.getElementById('auth-error'); e.textContent=msg; e.style.display='block'; }
+function authSignIn(){ document.getElementById('auth-error').style.display='none';
+  fbAuth.signInWithEmailAndPassword(val('auth-email').trim(), val('auth-pass')).catch(err=>authShowErr(mapAuthErr(err.code))); }
+function authSignUp(){ document.getElementById('auth-error').style.display='none';
+  fbAuth.createUserWithEmailAndPassword(val('auth-email').trim(), val('auth-pass')).catch(err=>authShowErr(mapAuthErr(err.code))); }
+function authSignOut(){ if(fbAuth) fbAuth.signOut(); }
 </script>
 </body>
 </html>
