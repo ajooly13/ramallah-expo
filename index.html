@@ -1020,6 +1020,16 @@ const firebaseConfig = {
 let fbReady=false, fbAuth=null, fbDb=null, userDocRef=null, pushTimer=null, applyingRemote=false;
 function setSync(txt,color){ const e=document.getElementById('sync-status'); if(e){ e.textContent=txt; if(color){e.style.color=color; e.style.borderColor=color;} } }
 function renderCurrent(){ if(currentCompany==='expo') renderActive(); else renderActiveMob(); }
+function dbIsEmpty(d){
+  try{
+    const E=d.expo||{}, M=d.themob||{};
+    const kioskData=Object.values(E.kiosks||{}).some(k=> (k.owner&&(''+k.owner).trim()) || num(k.rent)>0 || (k.others&&k.others.length));
+    const sponsorData=(E.sponsors||[]).some(s=> (s.sponsor&&(''+s.sponsor).trim()) || num(s.amount)>0);
+    const expoData=kioskData||sponsorData||((E.dome||[]).length)||((E.expenses||[]).length);
+    const mobData=((M.rentals||[]).length)||((M.install||[]).length)||((M.fixed||[]).length)||((M.expenses||[]).length)||((M.pocket||[]).length);
+    return !(expoData||mobData);
+  }catch(e){ return false; }
+}
 
 try {
   firebase.initializeApp(firebaseConfig);
@@ -1043,11 +1053,15 @@ function handleAuth(user){
     userDocRef = fbDb.collection('users').doc(user.uid);
     userDocRef.onSnapshot(snap=>{
       if(snap.metadata.hasPendingWrites) return;        // تجاهل صدى كتابتنا
-      if(snap.exists){
-        const d=snap.data();
-        if(d && d.data){ applyingRemote=true; db=ensureMob(d.data); localStorage.setItem(DB_KEY,JSON.stringify(db)); renderCurrent(); applyingRemote=false; setSync('☁️ متزامن','#22c55e'); }
+      const cloudData = snap.exists ? ((snap.data()||{}).data) : null;
+      if(cloudData && !dbIsEmpty(cloudData)){
+        // السحابة فيها بيانات حقيقية → استخدمها
+        if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak', JSON.stringify(db)); // نسخة أمان قبل الاستبدال
+        applyingRemote=true; db=ensureMob(cloudData); localStorage.setItem(DB_KEY,JSON.stringify(db)); renderCurrent(); applyingRemote=false;
+        setSync('☁️ متزامن','#22c55e');
       } else {
-        pushCloud(true);   // أول مرة: ارفع البيانات المحلية للسحابة
+        // السحابة فاضية أو غير موجودة → لا تمسح المحلي أبداً؛ لو عندنا بيانات ارفعها
+        if(!dbIsEmpty(db)){ pushCloud(true); } else { setSync('☁️ متزامن','#22c55e'); }
       }
     }, ()=> setSync('⚠️ خطأ','#ef4444'));
   } else {
