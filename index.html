@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1120">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Business Portal">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230b1120'/%3E%3Ctext x='90' y='122' font-size='90' text-anchor='middle'%3E%F0%9F%8F%A2%3C/text%3E%3C/svg%3E">
+<title>بوابة الشركات — المحاسبة</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0b1120; --panel:#111c30; --panel2:#0f172a; --line:#1e3252;
+    --text:#e7eefb; --muted:#8aa0c4; --dim:#5a6f93;
+    --blue:#3b82f6; --green:#22c55e; --red:#ef4444; --amber:#f59e0b;
+    --purple:#a855f7; --cyan:#06b6d4; --teal:#14b8a6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  .hidden{display:none!important}
+
+  /* Portal / company switch */
+  .topbar{background:linear-gradient(135deg,#111c30,#0b1120);padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  .topbar-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .brand{font-size:18px;font-weight:800;letter-spacing:.3px}
+  .brand small{display:block;font-size:11px;color:var(--dim);font-weight:400;margin-top:2px}
+  .company-switch{display:flex;gap:8px}
+  .company-switch button{background:var(--panel2);border:1px solid var(--line);color:var(--muted);padding:8px 16px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;transition:.15s}
+  .company-switch button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+
+  /* Tabs */
+  .tabs{display:flex;gap:4px;background:var(--panel2);border-bottom:1px solid var(--line);overflow-x:auto;padding:0 8px}
+  .tabs::-webkit-scrollbar{height:0}
+  .tab{padding:13px 16px;cursor:pointer;color:var(--muted);font-size:13.5px;white-space:nowrap;border-bottom:2px solid transparent;font-weight:600}
+  .tab.active{color:#fff;border-bottom-color:var(--blue)}
+
+  .wrap{max-width:780px;margin:0 auto;padding:16px}
+  .page{display:none}.page.active{display:block}
+
+  .section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+  .section h3{font-size:14px;color:var(--muted);margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .section h3 .hint{font-size:11px;color:var(--dim);font-weight:400}
+
+  /* Cards grid */
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:14px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .stat .l{font-size:12px;color:var(--dim);margin-bottom:7px}
+  .stat .v{font-size:17px;font-weight:800;line-height:1.5}
+  .stat .v .ils{color:var(--cyan)} .stat .v .usd{color:var(--green)}
+  .stat.full{grid-column:span 2}
+
+  /* Forms */
+  .row{display:flex;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+  input,select{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:10px;font-size:14px;font-family:inherit;width:100%}
+  input:focus,select:focus{outline:none;border-color:var(--blue)}
+  .row>*{flex:1;min-width:90px}
+  .cur-sel{max-width:80px;flex:0 0 72px}
+  label.fld{display:block;font-size:11px;color:var(--dim);margin:0 2px 4px}
+  .btn{padding:10px 16px;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;transition:.15s;color:#fff}
+  .btn:active{transform:scale(.98)}
+  .btn-blue{background:var(--blue)} .btn-green{background:var(--green)} .btn-amber{background:var(--amber);color:#241a00}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+  .btn-x{background:var(--red);padding:6px 9px;font-size:12px;border-radius:8px;flex:0 0 auto}
+  .btn-sm{padding:7px 12px;font-size:12.5px}
+
+  /* List items */
+  .item{display:flex;align-items:center;gap:9px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:7px}
+  .item .info{flex:1;min-width:0}
+  .item .info .t{font-size:14px;font-weight:600}
+  .item .info .s{font-size:11.5px;color:var(--dim);margin-top:2px}
+  .item .amt{font-weight:800;font-size:14px;white-space:nowrap}
+  .pos{color:var(--green)} .neg{color:var(--red)} .cyan{color:var(--cyan)}
+  .empty{text-align:center;color:var(--dim);padding:22px 0;font-size:13px}
+
+  /* Kiosk accordion */
+  .kiosk{background:var(--panel2);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden}
+  .kiosk-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+  .kiosk-head .tag{background:var(--blue);color:#fff;font-weight:800;font-size:12px;padding:4px 9px;border-radius:7px;letter-spacing:.5px}
+  .kiosk-head .who{flex:1;min-width:0}
+  .kiosk-head .who .nm{font-size:14px;font-weight:600}
+  .kiosk-head .who .sub{font-size:11px;color:var(--dim);margin-top:2px}
+  .kiosk-head .tot{font-weight:800;font-size:13px;color:var(--cyan);text-align:left}
+  .kiosk-head .chev{color:var(--dim);transition:.2s}
+  .kiosk.open .chev{transform:rotate(180deg)}
+  .kiosk-body{display:none;padding:0 14px 14px;border-top:1px solid var(--line)}
+  .kiosk.open .kiosk-body{display:block}
+  .mini{font-size:12px;color:var(--muted);margin:12px 0 6px}
+
+  /* Waterfall */
+  .wf{display:flex;justify-content:space-between;align-items:center;padding:9px 2px;border-bottom:1px dashed var(--line);font-size:14px}
+  .wf:last-child{border-bottom:none}
+  .wf .lbl{color:var(--muted)}
+  .wf .val{font-weight:800}
+  .wf.total{border-top:2px solid var(--line);margin-top:6px;padding-top:12px;font-size:16px}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:center;font-size:12px;color:var(--dim);margin-bottom:4px}
+  .twocol b{display:block;font-size:11px}
+
+  .note{background:#0c2a3a;border:1px solid #0e7490;color:#a5f3fc;font-size:12.5px;padding:11px 13px;border-radius:10px;line-height:1.7;margin-bottom:12px}
+  .warn{background:#3a2a0c;border:1px solid #a16207;color:#fde68a}
+  canvas{max-width:100%}
+  .badge{display:inline-block;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-size:11px;padding:3px 8px;border-radius:7px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row">
+    <div class="brand">🏢 بوابة الشركات<small id="subBrand">المحاسبة ومتابعة المصاريف</small></div>
+    <div class="company-switch">
+      <button id="btn-expo" class="active" onclick="showCompany('expo')">Ramallah Expo</button>
+      <button id="btn-themob" onclick="showCompany('themob')">TheMob</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RAMALLAH EXPO ============ -->
+<div id="co-expo">
+  <div class="tabs">
+    <div class="tab active" data-tab="dash" onclick="showTab('dash')">📊 لوحة التحكم</div>
+    <div class="tab" data-tab="kiosks" onclick="showTab('kiosks')">🏪 الأكشاك</div>
+    <div class="tab" data-tab="sponsors" onclick="showTab('sponsors')">🤝 الرعاية</div>
+    <div class="tab" data-tab="dome" onclick="showTab('dome')">🎪 القبة</div>
+    <div class="tab" data-tab="expenses" onclick="showTab('expenses')">💸 المصاريف</div>
+    <div class="tab" data-tab="profit" onclick="showTab('profit')">👥 الأرباح</div>
+    <div class="tab" data-tab="backup" onclick="showTab('backup')">💾 النسخ</div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- DASHBOARD -->
+    <div id="tab-dash" class="page active">
+      <div class="cards">
+        <div class="stat"><div class="l">📥 إجمالي الدخل</div><div class="v" id="d-income">—</div></div>
+        <div class="stat"><div class="l">📤 إجمالي المصاريف</div><div class="v" id="d-expenses">—</div></div>
+        <div class="stat"><div class="l">🤝 شريك 10% (من الدخل)</div><div class="v" id="d-silent">—</div></div>
+        <div class="stat"><div class="l">💰 صافي الربح</div><div class="v" id="d-net">—</div></div>
+      </div>
+
+      <div class="section">
+        <h3>🔻 من الدخل إلى صافي الربح <span class="hint">₪ و $ منفصلين</span></h3>
+        <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
+        <div id="waterfall"></div>
+      </div>
+
+      <div class="section">
+        <h3>📊 مصادر الدخل</h3>
+        <div style="position:relative;max-width:240px;margin:0 auto"><canvas id="incomeChart" height="240"></canvas></div>
+        <div id="incomeLegend" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px"></div>
+      </div>
+
+      <div class="section">
+        <h3>👥 حصص الشركاء من صافي الربح</h3>
+        <div id="dash-partners"></div>
+      </div>
+    </div>
+
+    <!-- KIOSKS -->
+    <div id="tab-kiosks" class="page">
+      <div class="note">🏪 الأكشاك من <b>RA1</b> إلى <b>RA11</b>. اضغط على أي كشك لتعبئة اسم صاحبه، الإيجار الشهري، وأي دفعات أخرى. الإجمالي يدخل تلقائياً على دخل الشركة.</div>
+      <div class="cards">
+        <div class="stat"><div class="l">عدد الأكشاك المؤجّرة</div><div class="v cyan" id="k-rented">0 / 11</div></div>
+        <div class="stat"><div class="l">إجمالي دخل الأكشاك</div><div class="v" id="k-total">—</div></div>
+      </div>
+      <div id="kiosks-list"></div>
+    </div>
+
+    <!-- SPONSORS -->
+    <div id="tab-sponsors" class="page">
+      <div class="note">🤝 أجنحة الرعاية والإعلان (10 أجنحة + إمكانية إضافة غيرهم). عبّي اسم الراعي وكم دفع — بيتحسب ضمن دخل الشركة.</div>
+      <div class="cards">
+        <div class="stat"><div class="l">عدد الرعاة</div><div class="v cyan" id="sp-count">0</div></div>
+        <div class="stat"><div class="l">إجمالي دخل الرعاية</div><div class="v" id="sp-total">—</div></div>
+      </div>
+      <div class="section">
+        <h3>🤝 الأجنحة</h3>
+        <div id="sponsors-list"></div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addSponsor()">＋ إضافة راعٍ (أخرى)</button>
+      </div>
+    </div>
+
+    <!-- DOME -->
+    <div id="tab-dome" class="page">
+      <div class="note">🎪 معرض القبة — تأجير القبة للإيفنتات. سجّل الجهة المستأجرة، مدة الإيجار، الإيجار اليومي، والإجمالي يتحسب تلقائياً.</div>
+      <div class="cards">
+        <div class="stat"><div class="l">عدد الإيفنتات</div><div class="v cyan" id="dm-count">0</div></div>
+        <div class="stat"><div class="l">إجمالي دخل القبة</div><div class="v" id="dm-total">—</div></div>
+      </div>
+      <div class="section">
+        <h3>➕ تسجيل إيجار قبة</h3>
+        <div class="row"><div><label class="fld">الجهة المستأجرة</label><input id="dm-renter" placeholder="اسم الجهة"></div></div>
+        <div class="row">
+          <div><label class="fld">المدة (أيام)</label><input id="dm-days" type="number" inputmode="decimal" placeholder="مثلاً 3" oninput="domePreview()"></div>
+          <div><label class="fld">الإيجار اليومي</label><input id="dm-daily" type="number" inputmode="decimal" placeholder="لليوم" oninput="domePreview()"></div>
+          <div class="cur-sel"><label class="fld">عملة</label><select id="dm-cur"><option>₪</option><option>$</option></select></div>
+        </div>
+        <div class="row"><div><label class="fld">التاريخ</label><input id="dm-date" type="date"></div></div>
+        <div class="badge" id="dm-preview" style="margin-bottom:10px">الإجمالي: 0</div><br>
+        <button class="btn btn-green" onclick="addDome()">إضافة الإيفنت</button>
+      </div>
+      <div class="section"><h3>📋 سجل الإيفنتات</h3><div id="dome-list"></div></div>
+    </div>
+
+    <!-- EXPENSES -->
+    <div id="tab-expenses" class="page">
+      <div class="cards">
+        <div class="stat full"><div class="l">📤 إجمالي المصاريف</div><div class="v" id="ex-total">—</div></div>
+      </div>
+      <div class="section">
+        <h3>➕ إضافة مصروف</h3>
+        <div class="row">
+          <div><label class="fld">البند</label>
+            <select id="ex-cat">
+              <option>حراسة وأمن</option><option>خدمات تنظيف</option><option>المحاسب</option>
+              <option>ماء وكهرباء</option><option>إنترنت</option><option>صيانة</option>
+              <option>ضريبة بلدية</option><option>ضريبة دخل</option><option>ضريبة المعارف</option>
+              <option>ضريبة القيمة المضافة</option><option>أخرى</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div><label class="fld">المبلغ</label><input id="ex-amount" type="number" inputmode="decimal" placeholder="المبلغ"></div>
+          <div class="cur-sel"><label class="fld">عملة</label><select id="ex-cur"><option>₪</option><option>$</option></select></div>
+          <div><label class="fld">التاريخ</label><input id="ex-date" type="date"></div>
+        </div>
+        <div class="row"><div><label class="fld">ملاحظة (اختياري)</label><input id="ex-note" placeholder="تفاصيل"></div></div>
+        <button class="btn btn-amber" onclick="addExpense()">إضافة مصروف</button>
+      </div>
+      <div class="section"><h3>🗂️ حسب البند</h3><div id="ex-bycat"></div></div>
+      <div class="section"><h3>📋 كل المصاريف</h3><div id="ex-list"></div></div>
+    </div>
+
+    <!-- PROFIT -->
+    <div id="tab-profit" class="page">
+      <div class="note">👥 توزيع صافي الربح = الدخل − شريك 10% − المصاريف، ثم يتوزع: محمود 5% • جواد 62% • عقبة 33%. كل عملة تتوزع لحالها.</div>
+      <div class="section">
+        <h3>🤝 الشريك الصامت (10% من الدخل)</h3>
+        <div id="profit-silent"></div>
+      </div>
+      <div class="section">
+        <h3>👥 الشركاء الثلاثة</h3>
+        <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
+        <div id="profit-partners"></div>
+      </div>
+      <div class="section">
+        <h3>⚙️ تعديل النسب <span class="hint">المجموع لازم 100%</span></h3>
+        <div id="partners-edit"></div>
+        <div class="row" style="margin-top:8px">
+          <div><label class="fld">نسبة الشريك الصامت %</label><input id="silent-pct" type="number" inputmode="decimal" onchange="setSilent(this.value)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BACKUP -->
+    <div id="tab-backup" class="page">
+      <div class="note warn">⚠️ الداتا محفوظة على هذا الجهاز فقط. <b>اعمل نسخة احتياطية بشكل دوري</b> وارفعها على Google Drive أو واتساب — لو خرب الجهاز ترجّعها بضغطة.</div>
+      <div class="section">
+        <h3>💾 نسخة احتياطية</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:6px">آخر نسخة: <span id="last-backup" class="badge">لا يوجد</span></p>
+        <button class="btn btn-blue" onclick="exportBackup()">⬇️ تنزيل نسخة احتياطية (ملف)</button>
+      </div>
+      <div class="section">
+        <h3>♻️ استرجاع نسخة</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">اختر ملف النسخة الاحتياطية لإرجاع كل البيانات.</p>
+        <input type="file" id="import-file" accept="application/json" onchange="importBackup(event)">
+      </div>
+      <div class="section">
+        <h3>💱 سعر الصرف</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">يُستخدم فقط لعرض مجموع تقريبي موحّد بالشيكل في لوحة التحكم.</p>
+        <div class="row">
+          <div><label class="fld">1 دولار = كم شيكل؟</label><input id="rate" type="number" inputmode="decimal" onchange="setRate(this.value)"></div>
+        </div>
+      </div>
+      <div class="section">
+        <h3>🗑️ تصفير</h3>
+        <button class="btn btn-ghost btn-sm" onclick="wipeAll()">حذف كل بيانات Ramallah Expo</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ THEMOB (placeholder) ============ -->
+<div id="co-themob" class="hidden">
+  <div class="wrap" style="text-align:center;padding-top:70px">
+    <div style="font-size:64px">🚧</div>
+    <h2 style="margin:14px 0 8px">TheMob</h2>
+    <p style="color:var(--muted)">هاي الشركة لسا فاضية — بنجهّزها لاحقاً.<br>قوللي شو أقسامها لما تكون جاهز.</p>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA LAYER — كل الداتا بمفتاح واحد (سهل للنسخ الاحتياطي والسحابة لاحقاً)
+   ============================================================ */
+const DB_KEY = 'rexpo_db_v1';
+const CURS = ['₪','$'];
+
+function defaultDB(){
+  const kiosks = {};
+  for(let i=1;i<=11;i++){ kiosks['ra'+i] = { owner:'', rent:'', rentCur:'₪', others:[] }; }
+  const sponsors = [];
+  for(let i=1;i<=10;i++){ sponsors.push({ id:'b'+i, label:'جناح '+i, sponsor:'', amount:'', cur:'₪', fixed:true }); }
+  return {
+    meta:{ version:1, usdToIls:3.6, lastBackup:null },
+    expo:{
+      kiosks,
+      sponsors,
+      dome:[],
+      expenses:[],
+      partners:[ {name:'محمود',pct:5}, {name:'جواد',pct:62}, {name:'عقبة',pct:33} ],
+      silentPct:10
+    },
+    themob:{}
+  };
+}
+function loadDB(){
+  try{ const d = JSON.parse(localStorage.getItem(DB_KEY)); return d && d.expo ? d : defaultDB(); }
+  catch(e){ return defaultDB(); }
+}
+let db = loadDB();
+function commit(){ localStorage.setItem(DB_KEY, JSON.stringify(db)); renderActive(); }
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function num(v){ const n = parseFloat(v); return isNaN(n)?0:n; }
+function money(n,cur){ return Math.round(n).toLocaleString('en-US') + ' ' + cur; }
+function dual(o){ // {ils,usd} -> "X ₪ • Y $"
+  return `<span class="ils" style="color:var(--cyan)">${money(o.ils,'₪')}</span> &nbsp;•&nbsp; <span class="usd" style="color:var(--green)">${money(o.usd,'$')}</span>`;
+}
+function today(){ return new Date().toISOString().split('T')[0]; }
+function uid(){ return Date.now()+''+Math.floor(Math.random()*1000); }
+function curBucket(){ return {ils:0,usd:0}; }
+function addCur(bucket, amount, cur){ if(cur==='$') bucket.usd+=amount; else bucket.ils+=amount; }
+
+/* ============================================================
+   COMPUTE — كل الحسابات بمكان واحد
+   ============================================================ */
+function compute(){
+  const E = db.expo;
+  const inc = { kiosks:curBucket(), sponsors:curBucket(), dome:curBucket() };
+
+  // kiosks
+  Object.values(E.kiosks).forEach(k=>{
+    addCur(inc.kiosks, num(k.rent), k.rentCur);
+    (k.others||[]).forEach(o=> addCur(inc.kiosks, num(o.amount), o.cur));
+  });
+  // sponsors
+  E.sponsors.forEach(s=> addCur(inc.sponsors, num(s.amount), s.cur));
+  // dome
+  E.dome.forEach(d=> addCur(inc.dome, num(d.total), d.cur));
+
+  const gross = { ils:inc.kiosks.ils+inc.sponsors.ils+inc.dome.ils,
+                  usd:inc.kiosks.usd+inc.sponsors.usd+inc.dome.usd };
+
+  const silent = { ils:gross.ils*(E.silentPct/100), usd:gross.usd*(E.silentPct/100) };
+
+  const exp = curBucket();
+  E.expenses.forEach(x=> addCur(exp, num(x.amount), x.cur));
+
+  const net = { ils:gross.ils - silent.ils - exp.ils, usd:gross.usd - silent.usd - exp.usd };
+
+  const partners = E.partners.map(p=>({ name:p.name, pct:p.pct,
+    ils:net.ils*(p.pct/100), usd:net.usd*(p.pct/100) }));
+
+  return { inc, gross, silent, exp, net, partners };
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+let incomeChart=null;
+function renderDash(){
+  const c = compute();
+  document.getElementById('d-income').innerHTML   = dual(c.gross);
+  document.getElementById('d-expenses').innerHTML = dual(c.exp);
+  document.getElementById('d-silent').innerHTML   = dual(c.silent);
+  document.getElementById('d-net').innerHTML      = dual(c.net);
+
+  // waterfall
+  const wf = [
+    ['📥 إجمالي الدخل', c.gross, 'var(--cyan)'],
+    ['🤝 − شريك 10%', neg(c.silent), 'var(--red)'],
+    ['💸 − المصاريف', neg(c.exp), 'var(--red)'],
+  ];
+  let html = wf.map(([l,o,col])=>`<div class="wf"><span class="lbl">${l}</span><span class="val">${dual(o)}</span></div>`).join('');
+  html += `<div class="wf total"><span class="lbl">💰 صافي الربح</span><span class="val">${dual(c.net)}</span></div>`;
+  // combined approx
+  const rate = num(db.meta.usdToIls)||0;
+  const approx = c.net.ils + c.net.usd*rate;
+  html += `<div class="wf" style="border:none;color:var(--dim);font-size:12px"><span>≈ موحّد بالشيكل (1$=${rate}₪)</span><span style="color:var(--amber);font-weight:800">${money(approx,'₪')}</span></div>`;
+  document.getElementById('waterfall').innerHTML = html;
+
+  // partners summary
+  document.getElementById('dash-partners').innerHTML = c.partners.map(p=>`
+    <div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}% من الصافي</div></div>
+    <div class="amt">${dual(p)}</div></div>`).join('');
+
+  // chart (income sources, ils-equivalent for shape)
+  const labels=['الأكشاك','الرعاية','القبة'];
+  const colors=['#3b82f6','#a855f7','#14b8a6'];
+  const vals=[c.inc.kiosks, c.inc.sponsors, c.inc.dome].map(o=>o.ils + o.usd*rate);
+  document.getElementById('incomeLegend').innerHTML = labels.map((l,i)=>
+    `<span style="font-size:12px;display:flex;align-items:center;gap:5px"><i style="width:10px;height:10px;border-radius:50%;background:${colors[i]};display:inline-block"></i>${l}</span>`).join('');
+  if(window.Chart){
+    const ctx=document.getElementById('incomeChart');
+    if(incomeChart) incomeChart.destroy();
+    if(vals.some(v=>v>0)){
+      incomeChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderColor:'#0b1120',borderWidth:3}]},
+        options:{cutout:'66%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.label}: ${money(c.parsed,'₪')} (تقريبي)`}}}}});
+    } else if(incomeChart){ incomeChart.destroy(); incomeChart=null; }
+  }
+}
+function neg(o){ return {ils:-o.ils, usd:-o.usd}; }
+
+/* ============================================================
+   KIOSKS
+   ============================================================ */
+function renderKiosks(){
+  const E=db.expo; const wrap=document.getElementById('kiosks-list');
+  let rented=0; const tot=curBucket();
+  let html='';
+  for(let i=1;i<=11;i++){
+    const id='ra'+i; const k=E.kiosks[id];
+    const kt=curBucket();
+    addCur(kt, num(k.rent), k.rentCur);
+    (k.others||[]).forEach(o=>addCur(kt,num(o.amount),o.cur));
+    tot.ils+=kt.ils; tot.usd+=kt.usd;
+    if(k.owner || num(k.rent)>0) rented++;
+    const othersHtml = (k.others||[]).length ? k.others.map(o=>`
+      <div class="item"><div class="info"><div class="t">${o.label||'دفعة'}</div><div class="s">${o.date||''}</div></div>
+      <div class="amt cyan">${money(num(o.amount),o.cur)}</div>
+      <button class="btn-x btn" onclick="delKioskOther('${id}','${o.id}')">✕</button></div>`).join('') :
+      '<div class="empty">لا يوجد دفعات أخرى</div>';
+    html+=`
+    <div class="kiosk" id="kiosk-${id}">
+      <div class="kiosk-head" onclick="toggleKiosk('${id}')">
+        <span class="tag">${id.toUpperCase()}</span>
+        <div class="who"><div class="nm">${k.owner||'<span style="color:var(--dim)">— بدون صاحب —</span>'}</div>
+          <div class="sub">إيجار: ${money(num(k.rent),k.rentCur)}</div></div>
+        <div class="tot">${money(kt.ils,'₪')}<br>${money(kt.usd,'$')}</div>
+        <span class="chev">▾</span>
+      </div>
+      <div class="kiosk-body">
+        <div class="mini">بيانات الكشك</div>
+        <div class="row"><div><label class="fld">اسم صاحب الكشك</label>
+          <input value="${esc(k.owner)}" placeholder="الاسم" onchange="setKiosk('${id}','owner',this.value)"></div></div>
+        <div class="row">
+          <div><label class="fld">الإيجار الشهري</label>
+            <input type="number" inputmode="decimal" value="${esc(k.rent)}" placeholder="0" onchange="setKiosk('${id}','rent',this.value)"></div>
+          <div class="cur-sel"><label class="fld">عملة</label>
+            <select onchange="setKiosk('${id}','rentCur',this.value)">${curOpts(k.rentCur)}</select></div>
+        </div>
+        <div class="mini">دفعات أخرى من صاحب الكشك</div>
+        ${othersHtml}
+        <div class="row" style="margin-top:8px">
+          <div><input id="ko-l-${id}" placeholder="وصف الدفعة"></div>
+          <div><input id="ko-a-${id}" type="number" inputmode="decimal" placeholder="مبلغ"></div>
+          <div class="cur-sel"><select id="ko-c-${id}">${curOpts('₪')}</select></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="addKioskOther('${id}')">＋ إضافة دفعة</button>
+      </div>
+    </div>`;
+  }
+  wrap.innerHTML=html;
+  document.getElementById('k-rented').textContent = rented+' / 11';
+  document.getElementById('k-total').innerHTML = dual(tot);
+}
+function toggleKiosk(id){ document.getElementById('kiosk-'+id).classList.toggle('open'); }
+function setKiosk(id,field,val){ db.expo.kiosks[id][field]=val; localStorage.setItem(DB_KEY,JSON.stringify(db));
+  // keep open state, re-render
+  const open=document.getElementById('kiosk-'+id).classList.contains('open');
+  renderKiosks(); renderDash(); if(open) document.getElementById('kiosk-'+id).classList.add('open'); }
+function addKioskOther(id){
+  const l=document.getElementById('ko-l-'+id).value||'دفعة';
+  const a=document.getElementById('ko-a-'+id).value; const c=document.getElementById('ko-c-'+id).value;
+  if(!num(a)) return;
+  db.expo.kiosks[id].others.push({id:uid(),label:l,amount:a,cur:c,date:today()});
+  localStorage.setItem(DB_KEY,JSON.stringify(db));
+  renderKiosks(); renderDash(); document.getElementById('kiosk-'+id).classList.add('open');
+}
+function delKioskOther(id,oid){
+  db.expo.kiosks[id].others = db.expo.kiosks[id].others.filter(o=>o.id!==oid);
+  localStorage.setItem(DB_KEY,JSON.stringify(db));
+  renderKiosks(); renderDash(); document.getElementById('kiosk-'+id).classList.add('open');
+}
+
+/* ============================================================
+   SPONSORS
+   ============================================================ */
+function renderSponsors(){
+  const E=db.expo; const tot=curBucket(); let count=0;
+  const html=E.sponsors.map(s=>{
+    if(num(s.amount)>0 || s.sponsor) count++;
+    addCur(tot,num(s.amount),s.cur);
+    return `<div class="item" style="flex-wrap:wrap">
+      <div class="info" style="flex:1 1 100%;margin-bottom:6px">
+        <div class="t">🤝 ${s.label} ${s.fixed?'':'<span class="badge">أخرى</span>'}</div></div>
+      <div style="flex:2"><input value="${esc(s.sponsor)}" placeholder="اسم الراعي" onchange="setSponsor('${s.id}','sponsor',this.value)"></div>
+      <div style="flex:1"><input type="number" inputmode="decimal" value="${esc(s.amount)}" placeholder="المبلغ" onchange="setSponsor('${s.id}','amount',this.value)"></div>
+      <div class="cur-sel"><select onchange="setSponsor('${s.id}','cur',this.value)">${curOpts(s.cur)}</select></div>
+      ${s.fixed?'':`<button class="btn-x btn" onclick="delSponsor('${s.id}')">✕</button>`}
+    </div>`;
+  }).join('');
+  document.getElementById('sponsors-list').innerHTML=html;
+  document.getElementById('sp-count').textContent=count;
+  document.getElementById('sp-total').innerHTML=dual(tot);
+}
+function setSponsor(id,field,val){ const s=db.expo.sponsors.find(x=>x.id===id); if(s){s[field]=val; commit();} }
+function addSponsor(){ db.expo.sponsors.push({id:uid(),label:'راعٍ إضافي',sponsor:'',amount:'',cur:'₪',fixed:false}); commit(); }
+function delSponsor(id){ db.expo.sponsors=db.expo.sponsors.filter(x=>x.id!==id); commit(); }
+
+/* ============================================================
+   DOME
+   ============================================================ */
+function domePreview(){
+  const t=num(document.getElementById('dm-days').value)*num(document.getElementById('dm-daily').value);
+  document.getElementById('dm-preview').textContent='الإجمالي: '+money(t,document.getElementById('dm-cur').value);
+}
+function addDome(){
+  const renter=document.getElementById('dm-renter').value||'جهة';
+  const days=document.getElementById('dm-days').value; const daily=document.getElementById('dm-daily').value;
+  const cur=document.getElementById('dm-cur').value; const date=document.getElementById('dm-date').value||today();
+  if(!num(days)||!num(daily)) return;
+  db.expo.dome.push({id:uid(),renter,days,daily,total:num(days)*num(daily),cur,date});
+  document.getElementById('dm-renter').value='';document.getElementById('dm-days').value='';document.getElementById('dm-daily').value='';
+  document.getElementById('dm-preview').textContent='الإجمالي: 0';
+  commit();
+}
+function delDome(id){ db.expo.dome=db.expo.dome.filter(x=>x.id!==id); commit(); }
+function renderDome(){
+  const E=db.expo; const tot=curBucket();
+  E.dome.forEach(d=>addCur(tot,num(d.total),d.cur));
+  document.getElementById('dm-count').textContent=E.dome.length;
+  document.getElementById('dm-total').innerHTML=dual(tot);
+  const el=document.getElementById('dome-list');
+  el.innerHTML = E.dome.length ? E.dome.slice().reverse().map(d=>`
+    <div class="item"><div class="info"><div class="t">🎪 ${d.renter}</div>
+      <div class="s">${d.days} يوم × ${money(num(d.daily),d.cur)} • ${d.date}</div></div>
+    <div class="amt cyan">${money(num(d.total),d.cur)}</div>
+    <button class="btn-x btn" onclick="delDome('${d.id}')">✕</button></div>`).join('')
+    : '<div class="empty">لا يوجد إيفنتات بعد</div>';
+}
+
+/* ============================================================
+   EXPENSES
+   ============================================================ */
+function addExpense(){
+  const cat=document.getElementById('ex-cat').value;
+  const amount=document.getElementById('ex-amount').value;
+  const cur=document.getElementById('ex-cur').value;
+  const date=document.getElementById('ex-date').value||today();
+  const note=document.getElementById('ex-note').value;
+  if(!num(amount)) return;
+  db.expo.expenses.push({id:uid(),cat,amount,cur,date,note});
+  document.getElementById('ex-amount').value='';document.getElementById('ex-note').value='';
+  commit();
+}
+function delExpense(id){ db.expo.expenses=db.expo.expenses.filter(x=>x.id!==id); commit(); }
+function renderExpenses(){
+  const E=db.expo; const tot=curBucket(); const byCat={};
+  E.expenses.forEach(x=>{ addCur(tot,num(x.amount),x.cur);
+    if(!byCat[x.cat]) byCat[x.cat]=curBucket(); addCur(byCat[x.cat],num(x.amount),x.cur); });
+  document.getElementById('ex-total').innerHTML=dual(tot);
+  const bc=document.getElementById('ex-bycat');
+  const cats=Object.keys(byCat);
+  bc.innerHTML = cats.length ? cats.map(c=>`
+    <div class="item"><div class="info"><div class="t">${c}</div></div><div class="amt neg">${dual(byCat[c])}</div></div>`).join('')
+    : '<div class="empty">لا يوجد مصاريف</div>';
+  const el=document.getElementById('ex-list');
+  el.innerHTML = E.expenses.length ? E.expenses.slice().reverse().map(x=>`
+    <div class="item"><div class="info"><div class="t">${x.cat}${x.note?' — '+x.note:''}</div>
+      <div class="s">${x.date}</div></div>
+    <div class="amt neg">${money(num(x.amount),x.cur)}</div>
+    <button class="btn-x btn" onclick="delExpense('${x.id}')">✕</button></div>`).join('')
+    : '<div class="empty">لا يوجد مصاريف بعد</div>';
+}
+
+/* ============================================================
+   PROFIT
+   ============================================================ */
+function renderProfit(){
+  const c=compute(); const E=db.expo;
+  document.getElementById('profit-silent').innerHTML=`
+    <div class="item"><div class="info"><div class="t">🤝 الشريك الصامت</div>
+      <div class="s">${E.silentPct}% من إجمالي الدخل (قبل المصاريف)</div></div>
+    <div class="amt">${dual(c.silent)}</div></div>`;
+  document.getElementById('profit-partners').innerHTML=c.partners.map(p=>`
+    <div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}% من الصافي</div></div>
+    <div class="amt">${dual(p)}</div></div>`).join('');
+  // edit
+  const totalPct=E.partners.reduce((s,p)=>s+num(p.pct),0);
+  document.getElementById('partners-edit').innerHTML=E.partners.map((p,i)=>`
+    <div class="row">
+      <div><label class="fld">اسم الشريك</label><input value="${esc(p.name)}" onchange="setPartner(${i},'name',this.value)"></div>
+      <div class="cur-sel" style="flex:0 0 90px"><label class="fld">النسبة %</label><input type="number" inputmode="decimal" value="${esc(p.pct)}" onchange="setPartner(${i},'pct',this.value)"></div>
+    </div>`).join('') + `<div class="badge ${totalPct==100?'':'warn'}" style="${totalPct==100?'':'background:#3a2a0c;border-color:#a16207;color:#fde68a'}">مجموع النسب: ${totalPct}%</div>`;
+  document.getElementById('silent-pct').value=E.silentPct;
+}
+function setPartner(i,field,val){ db.expo.partners[i][field]= field==='pct'?num(val):val; commit(); }
+function setSilent(v){ db.expo.silentPct=num(v); commit(); }
+
+/* ============================================================
+   BACKUP / SETTINGS
+   ============================================================ */
+function exportBackup(){
+  db.meta.lastBackup=new Date().toLocaleString('en-GB');
+  localStorage.setItem(DB_KEY,JSON.stringify(db));
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='ramallah-expo-backup-'+today()+'.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  renderBackup();
+}
+function importBackup(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=e=>{ try{ const d=JSON.parse(e.target.result);
+    if(!d.expo) throw new Error('ملف غير صالح');
+    if(!confirm('سيتم استبدال كل البيانات الحالية بالنسخة الاحتياطية. متأكد؟')) return;
+    db=d; localStorage.setItem(DB_KEY,JSON.stringify(db)); renderActive();
+    alert('✅ تم استرجاع النسخة بنجاح');
+  }catch(err){ alert('❌ الملف غير صالح: '+err.message); } };
+  r.readAsText(f); ev.target.value='';
+}
+function setRate(v){ db.meta.usdToIls=num(v); commit(); }
+function wipeAll(){
+  if(!confirm('سيتم حذف كل بيانات Ramallah Expo نهائياً. متأكد؟')) return;
+  if(!confirm('تأكيد أخير — ما في رجعة بدون نسخة احتياطية!')) return;
+  db=defaultDB(); localStorage.setItem(DB_KEY,JSON.stringify(db)); renderActive();
+}
+function renderBackup(){
+  document.getElementById('last-backup').textContent=db.meta.lastBackup||'لا يوجد';
+  document.getElementById('rate').value=db.meta.usdToIls;
+}
+
+/* ============================================================
+   UI PLUMBING
+   ============================================================ */
+function esc(s){ return String(s==null?'':s).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function curOpts(sel){ return CURS.map(c=>`<option ${c===sel?'selected':''}>${c}</option>`).join(''); }
+
+let activeTab='dash';
+function showTab(name){
+  activeTab=name;
+  document.querySelectorAll('#co-expo .tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('#co-expo .page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  renderActive();
+}
+function showCompany(co){
+  document.getElementById('btn-expo').classList.toggle('active',co==='expo');
+  document.getElementById('btn-themob').classList.toggle('active',co==='themob');
+  document.getElementById('co-expo').classList.toggle('hidden',co!=='expo');
+  document.getElementById('co-themob').classList.toggle('hidden',co!=='themob');
+  document.getElementById('subBrand').textContent = co==='expo'?'Ramallah Expo — المحاسبة':'TheMob';
+}
+function renderActive(){
+  switch(activeTab){
+    case 'dash': renderDash(); break;
+    case 'kiosks': renderKiosks(); break;
+    case 'sponsors': renderSponsors(); break;
+    case 'dome': renderDome(); break;
+    case 'expenses': renderExpenses(); break;
+    case 'profit': renderProfit(); break;
+    case 'backup': renderBackup(); break;
+  }
+}
+
+/* init */
+document.getElementById('dm-date').value=today();
+document.getElementById('ex-date').value=today();
+renderDash();
+</script>
+</body>
+</html>
