@@ -282,12 +282,156 @@
   </div>
 </div>
 
-<!-- ============ THEMOB (placeholder) ============ -->
+<!-- ============ THEMOB ============ -->
 <div id="co-themob" class="hidden">
-  <div class="wrap" style="text-align:center;padding-top:70px">
-    <div style="font-size:64px">🚧</div>
-    <h2 style="margin:14px 0 8px">TheMob</h2>
-    <p style="color:var(--muted)">هاي الشركة لسا فاضية — بنجهّزها لاحقاً.<br>قوللي شو أقسامها لما تكون جاهز.</p>
+  <div class="tabs">
+    <div class="tab active" data-mtab="dash" onclick="showTabMob('dash')">📊 لوحة التحكم</div>
+    <div class="tab" data-mtab="rentals" onclick="showTabMob('rentals')">🏠 العائد</div>
+    <div class="tab" data-mtab="checks" onclick="showTabMob('checks')">🧾 الشيكات</div>
+    <div class="tab" data-mtab="install" onclick="showTabMob('install')">🔧 التركيب</div>
+    <div class="tab" data-mtab="fixed" onclick="showTabMob('fixed')">💡 ثابتة</div>
+    <div class="tab" data-mtab="costs" onclick="showTabMob('costs')">💸 مصاريف</div>
+    <div class="tab" data-mtab="pocket" onclick="showTabMob('pocket')">👛 بوكيت موني</div>
+    <div class="tab" data-mtab="profit" onclick="showTabMob('profit')">👥 الأرباح</div>
+  </div>
+  <div class="wrap">
+
+    <!-- DASH -->
+    <div id="mtab-dash" class="page active">
+      <div class="cards">
+        <div class="stat"><div class="l">🏠 إجمالي العائد</div><div class="v" id="m-income">—</div></div>
+        <div class="stat"><div class="l">💸 إجمالي التكاليف</div><div class="v" id="m-costs">—</div></div>
+        <div class="stat"><div class="l">💰 صافي الربح</div><div class="v" id="m-net">—</div></div>
+        <div class="stat"><div class="l">🧾 شيكات معلّقة</div><div class="v" id="m-checks">—</div></div>
+      </div>
+      <div class="section">
+        <h3>🔻 من العائد إلى صافي الربح</h3>
+        <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
+        <div id="m-waterfall"></div>
+      </div>
+      <div class="section"><h3>👥 حصص الشركاء</h3><div id="m-partners-dash"></div></div>
+      <div class="section"><h3>🧾 شيكات قادمة الاستحقاق</h3><div id="m-checks-soon"></div></div>
+      <div class="section"><h3>👛 بوكيت موني (مسحوب)</h3><div class="stat" style="border:none;padding:0"><div class="v" id="m-pocket-dash">—</div></div></div>
+    </div>
+
+    <!-- RENTALS -->
+    <div id="mtab-rentals" class="page">
+      <div class="note">🏠 العائد من تأجير المعدات. سجّل كل تأجير: العميل، المبلغ، وطريقة الاستلام (كاش أو شيك). لو شيك بتعبّي رقمه وموعد استحقاقه.</div>
+      <div class="cards">
+        <div class="stat"><div class="l">عدد التأجيرات</div><div class="v cyan" id="r-count">0</div></div>
+        <div class="stat"><div class="l">إجمالي العائد</div><div class="v" id="r-total">—</div></div>
+      </div>
+      <div class="section">
+        <h3>➕ تسجيل تأجير</h3>
+        <div class="row"><div><label class="fld">العميل / الجهة</label><input id="mr-client" placeholder="الاسم"></div>
+          <div><label class="fld">الإيفنت / الوصف</label><input id="mr-event" placeholder="اختياري"></div></div>
+        <div class="row">
+          <div><label class="fld">مبلغ الإيجار</label><input id="mr-amount" type="number" inputmode="decimal" placeholder="0"></div>
+          <div class="cur-sel"><label class="fld">عملة</label><select id="mr-cur"><option>₪</option><option>$</option></select></div>
+          <div><label class="fld">طريقة الاستلام</label><select id="mr-pay" onchange="mobPayToggle()"><option value="cash">💵 كاش</option><option value="check">🧾 شيك</option></select></div>
+        </div>
+        <div id="mr-check-fields" style="display:none">
+          <div class="row">
+            <div><label class="fld">رقم الشيك</label><input id="mr-checkno" placeholder="#"></div>
+            <div><label class="fld">موعد الاستحقاق</label><input id="mr-checkdue" type="date"></div>
+          </div>
+          <div class="row"><div><label class="fld">تفاصيل الشيك (البنك / ملاحظات)</label><input id="mr-checkdetails" placeholder="تفاصيل"></div></div>
+        </div>
+        <div class="row"><div><label class="fld">التاريخ</label><input id="mr-date" type="date"></div></div>
+        <button class="btn btn-green" onclick="addRental()">إضافة التأجير</button>
+      </div>
+      <div class="section"><h3>📋 سجل التأجيرات</h3><div id="rentals-list"></div></div>
+    </div>
+
+    <!-- CHECKS -->
+    <div id="mtab-checks" class="page">
+      <div class="note">🧾 متابعة الشيكات حسب موعد الاستحقاق. 🔴 متأخر • 🟡 معلّق • 🟢 تم صرفه. اضغط "سجّل صرفه" لما تقبض الشيك.</div>
+      <div class="cards"><div class="stat full"><div class="l">إجمالي الشيكات المعلّقة</div><div class="v" id="checks-pending-total">—</div></div></div>
+      <div class="section"><h3>📋 كل الشيكات (الأقرب استحقاقاً أولاً)</h3><div id="checks-list"></div></div>
+    </div>
+
+    <!-- INSTALL -->
+    <div id="mtab-install" class="page">
+      <div class="note">🔧 تكاليف التركيب لكل إيفنت: أجور العمال، بنزين، لاصق ومرابط، عشاء العمال.</div>
+      <div class="cards"><div class="stat full"><div class="l">إجمالي تكاليف التركيب</div><div class="v" id="install-total">—</div></div></div>
+      <div class="section">
+        <h3>➕ إضافة تكلفة تركيب</h3>
+        <div class="row"><div><label class="fld">النوع</label><select id="mi-cat"><option>أجور عمال</option><option>بنزين</option><option>لاصق ومرابط</option><option>عشاء عمال</option><option>أخرى</option></select></div></div>
+        <div class="row">
+          <div><label class="fld">المبلغ</label><input id="mi-amount" type="number" inputmode="decimal" placeholder="0"></div>
+          <div class="cur-sel"><label class="fld">عملة</label><select id="mi-cur"><option>₪</option><option>$</option></select></div>
+          <div><label class="fld">التاريخ</label><input id="mi-date" type="date"></div>
+        </div>
+        <div class="row"><div><label class="fld">ملاحظة</label><input id="mi-note" placeholder="اختياري"></div></div>
+        <button class="btn btn-amber" onclick="addMobCost('install')">إضافة</button>
+      </div>
+      <div class="section"><h3>📋 السجل</h3><div id="install-list"></div></div>
+    </div>
+
+    <!-- FIXED -->
+    <div id="mtab-fixed" class="page">
+      <div class="note">💡 التكاليف الثابتة للمعدات: الإضاءة، الصوت، الشاشة.</div>
+      <div class="cards"><div class="stat full"><div class="l">إجمالي التكاليف الثابتة</div><div class="v" id="fixed-total">—</div></div></div>
+      <div class="section">
+        <h3>➕ إضافة تكلفة ثابتة</h3>
+        <div class="row"><div><label class="fld">النوع</label><select id="mf-cat"><option>إضاءة</option><option>صوت</option><option>شاشة</option><option>أخرى</option></select></div></div>
+        <div class="row">
+          <div><label class="fld">المبلغ</label><input id="mf-amount" type="number" inputmode="decimal" placeholder="0"></div>
+          <div class="cur-sel"><label class="fld">عملة</label><select id="mf-cur"><option>₪</option><option>$</option></select></div>
+          <div><label class="fld">التاريخ</label><input id="mf-date" type="date"></div>
+        </div>
+        <div class="row"><div><label class="fld">ملاحظة</label><input id="mf-note" placeholder="اختياري"></div></div>
+        <button class="btn btn-amber" onclick="addMobCost('fixed')">إضافة</button>
+      </div>
+      <div class="section"><h3>📋 السجل</h3><div id="fixed-list"></div></div>
+    </div>
+
+    <!-- COSTS -->
+    <div id="mtab-costs" class="page">
+      <div class="note">💸 الدعاية والإعلان، الصيانة، والمصاريف الأخرى.</div>
+      <div class="cards"><div class="stat full"><div class="l">إجمالي المصاريف</div><div class="v" id="mcosts-total">—</div></div></div>
+      <div class="section">
+        <h3>➕ إضافة مصروف</h3>
+        <div class="row"><div><label class="fld">البند</label><select id="mc-cat"><option>دعاية وإعلان</option><option>صيانة</option><option>مصاريف أخرى</option></select></div></div>
+        <div class="row">
+          <div><label class="fld">المبلغ</label><input id="mc-amount" type="number" inputmode="decimal" placeholder="0"></div>
+          <div class="cur-sel"><label class="fld">عملة</label><select id="mc-cur"><option>₪</option><option>$</option></select></div>
+          <div><label class="fld">التاريخ</label><input id="mc-date" type="date"></div>
+        </div>
+        <div class="row"><div><label class="fld">ملاحظة</label><input id="mc-note" placeholder="اختياري"></div></div>
+        <button class="btn btn-amber" onclick="addMobCost('expenses')">إضافة</button>
+      </div>
+      <div class="section"><h3>📋 السجل</h3><div id="mcosts-list"></div></div>
+    </div>
+
+    <!-- POCKET -->
+    <div id="mtab-pocket" class="page">
+      <div class="note">👛 بوكيت موني — المبالغ المسحوبة للمصروف اليومي. تظهر منفصلة عن توزيع الأرباح.</div>
+      <div class="cards"><div class="stat full"><div class="l">إجمالي البوكيت موني</div><div class="v" id="pocket-total">—</div></div></div>
+      <div class="section">
+        <h3>➕ إضافة سحب</h3>
+        <div class="row"><div><label class="fld">الوصف</label><input id="mp-desc" placeholder="مثلاً: مصروف يومي"></div></div>
+        <div class="row">
+          <div><label class="fld">المبلغ</label><input id="mp-amount" type="number" inputmode="decimal" placeholder="0"></div>
+          <div class="cur-sel"><label class="fld">عملة</label><select id="mp-cur"><option>₪</option><option>$</option></select></div>
+          <div><label class="fld">التاريخ</label><input id="mp-date" type="date"></div>
+        </div>
+        <button class="btn btn-blue" onclick="addPocket()">إضافة</button>
+      </div>
+      <div class="section"><h3>📋 السجل</h3><div id="pocket-list"></div></div>
+    </div>
+
+    <!-- PROFIT -->
+    <div id="mtab-profit" class="page">
+      <div class="note">👥 توزيع صافي الربح: جواد 45% • عقبة 45% • TheMob 10%. كل عملة تتوزع لحالها.</div>
+      <div class="section">
+        <h3>👥 حصص الشركاء</h3>
+        <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
+        <div id="mprofit-partners"></div>
+      </div>
+      <div class="section"><h3>⚙️ تعديل النسب <span class="hint">المجموع لازم 100%</span></h3><div id="mpartners-edit"></div></div>
+    </div>
+
   </div>
 </div>
 
@@ -313,15 +457,26 @@ function defaultDB(){
       partners:[ {name:'محمود',pct:5}, {name:'جواد',pct:62}, {name:'عقبة',pct:33} ],
       silentPct:10
     },
-    themob:{}
+    themob:{
+      rentals:[], install:[], fixed:[], expenses:[], pocket:[],
+      partners:[ {name:'جواد',pct:45}, {name:'عقبة',pct:45}, {name:'TheMob',pct:10} ]
+    }
   };
 }
+function ensureMob(d){
+  const def = { rentals:[], install:[], fixed:[], expenses:[], pocket:[],
+    partners:[ {name:'جواد',pct:45}, {name:'عقبة',pct:45}, {name:'TheMob',pct:10} ] };
+  d.themob = d.themob || {};
+  for(const k in def){ if(d.themob[k]==null) d.themob[k]=def[k]; }
+  return d;
+}
 function loadDB(){
-  try{ const d = JSON.parse(localStorage.getItem(DB_KEY)); return d && d.expo ? d : defaultDB(); }
+  try{ const d = JSON.parse(localStorage.getItem(DB_KEY)); return ensureMob(d && d.expo ? d : defaultDB()); }
   catch(e){ return defaultDB(); }
 }
 let db = loadDB();
-function commit(){ localStorage.setItem(DB_KEY, JSON.stringify(db)); renderActive(); }
+let currentCompany='expo';
+function commit(){ localStorage.setItem(DB_KEY, JSON.stringify(db)); if(currentCompany==='expo'){ renderActive(); } else { renderActiveMob(); } }
 
 /* ============================================================
    HELPERS
@@ -653,11 +808,13 @@ function showTab(name){
   renderActive();
 }
 function showCompany(co){
+  currentCompany=co;
   document.getElementById('btn-expo').classList.toggle('active',co==='expo');
   document.getElementById('btn-themob').classList.toggle('active',co==='themob');
   document.getElementById('co-expo').classList.toggle('hidden',co!=='expo');
   document.getElementById('co-themob').classList.toggle('hidden',co!=='themob');
-  document.getElementById('subBrand').textContent = co==='expo'?'Ramallah Expo — المحاسبة':'TheMob';
+  document.getElementById('subBrand').textContent = co==='expo'?'Ramallah Expo — المحاسبة':'TheMob — تأجير معدات الإيفنتات';
+  if(co==='themob'){ renderActiveMob(); } else { renderActive(); }
 }
 function renderActive(){
   switch(activeTab){
@@ -671,9 +828,159 @@ function renderActive(){
   }
 }
 
+/* ============================================================
+   THEMOB — تأجير معدات الإيفنتات
+   ============================================================ */
+function val(id){ const e=document.getElementById(id); return e?e.value:''; }
+
+function computeMob(){
+  const M=db.themob;
+  const income=curBucket(); M.rentals.forEach(r=>addCur(income,num(r.amount),r.cur));
+  const install=curBucket(); M.install.forEach(x=>addCur(install,num(x.amount),x.cur));
+  const fixed=curBucket(); M.fixed.forEach(x=>addCur(fixed,num(x.amount),x.cur));
+  const exp=curBucket(); M.expenses.forEach(x=>addCur(exp,num(x.amount),x.cur));
+  const pocket=curBucket(); M.pocket.forEach(x=>addCur(pocket,num(x.amount),x.cur));
+  const costs={ ils:install.ils+fixed.ils+exp.ils, usd:install.usd+fixed.usd+exp.usd };
+  const net={ ils:income.ils-costs.ils, usd:income.usd-costs.usd };
+  const partners=M.partners.map(p=>({ name:p.name, pct:p.pct, ils:net.ils*(p.pct/100), usd:net.usd*(p.pct/100) }));
+  const pendingChecks=M.rentals.filter(r=>r.pay==='check' && !r.cashed);
+  const checksPending=curBucket(); pendingChecks.forEach(r=>addCur(checksPending,num(r.amount),r.cur));
+  return { income, install, fixed, exp, pocket, costs, net, partners, pendingChecks, checksPending };
+}
+
+function renderMobDash(){
+  const c=computeMob();
+  document.getElementById('m-income').innerHTML=dual(c.income);
+  document.getElementById('m-costs').innerHTML=dual(c.costs);
+  document.getElementById('m-net').innerHTML=dual(c.net);
+  document.getElementById('m-checks').innerHTML=dual(c.checksPending);
+  const wf=[['🏠 العائد',c.income],['🔧 − التركيب',neg(c.install)],['💡 − الثابتة',neg(c.fixed)],['💸 − مصاريف',neg(c.exp)]];
+  let html=wf.map(([l,o])=>`<div class="wf"><span class="lbl">${l}</span><span class="val">${dual(o)}</span></div>`).join('');
+  html+=`<div class="wf total"><span class="lbl">💰 صافي الربح</span><span class="val">${dual(c.net)}</span></div>`;
+  document.getElementById('m-waterfall').innerHTML=html;
+  document.getElementById('m-partners-dash').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}%</div></div><div class="amt">${dual(p)}</div></div>`).join('');
+  document.getElementById('m-pocket-dash').innerHTML=dual(c.pocket);
+  const t=today(); const soon=c.pendingChecks.slice().sort((a,b)=>(a.checkdue||'').localeCompare(b.checkdue||''));
+  document.getElementById('m-checks-soon').innerHTML = soon.length ? soon.map(c2=>{
+    const overdue=c2.checkdue && c2.checkdue<t;
+    return `<div class="item"><div class="info"><div class="t">🧾 ${esc(c2.client)}</div><div class="s" style="color:${overdue?'var(--red)':'var(--amber)'}">استحقاق ${c2.checkdue||'—'} ${overdue?'(متأخر)':''}</div></div><div class="amt cyan">${money(num(c2.amount),c2.cur)}</div></div>`;
+  }).join('') : '<div class="empty">لا يوجد شيكات معلّقة</div>';
+}
+
+function mobPayToggle(){ const f=document.getElementById('mr-check-fields'); if(f) f.style.display = val('mr-pay')==='check'?'block':'none'; }
+function addRental(){
+  const amount=val('mr-amount'); if(!num(amount)) return;
+  const pay=val('mr-pay');
+  const r={ id:uid(), client:val('mr-client')||'عميل', event:val('mr-event'), amount, cur:val('mr-cur'), pay, date:val('mr-date')||today(), cashed: pay==='cash' };
+  if(pay==='check'){ r.checkno=val('mr-checkno'); r.checkdue=val('mr-checkdue'); r.checkdetails=val('mr-checkdetails'); r.cashed=false; }
+  db.themob.rentals.push(r);
+  ['mr-client','mr-event','mr-amount','mr-checkno','mr-checkdue','mr-checkdetails'].forEach(id=>{const e=document.getElementById(id); if(e)e.value='';});
+  commit();
+}
+function delRental(id){ db.themob.rentals=db.themob.rentals.filter(x=>x.id!==id); commit(); }
+function renderRentals(){
+  const M=db.themob; const tot=curBucket(); M.rentals.forEach(r=>addCur(tot,num(r.amount),r.cur));
+  document.getElementById('r-count').textContent=M.rentals.length;
+  document.getElementById('r-total').innerHTML=dual(tot);
+  document.getElementById('rentals-list').innerHTML = M.rentals.length ? M.rentals.slice().reverse().map(r=>{
+    const payBadge = r.pay==='check'
+      ? `<span class="badge" style="color:var(--amber);border-color:var(--amber)">🧾 شيك ${r.cashed?'(مصروف)':'• '+(r.checkdue||'')}</span>`
+      : `<span class="badge" style="color:var(--green);border-color:var(--green)">💵 كاش</span>`;
+    return `<div class="item" style="flex-wrap:wrap">
+      <div class="info" style="flex:1 1 100%"><div class="t">🏠 ${esc(r.client)}${r.event?' — '+esc(r.event):''}</div><div class="s">${r.date} ${payBadge}</div></div>
+      <div class="amt pos" style="flex:1">+${money(num(r.amount),r.cur)}</div>
+      <button class="btn btn-x" onclick="delRental('${r.id}')">✕</button></div>`;
+  }).join('') : '<div class="empty">لا يوجد عائد مسجّل</div>';
+}
+
+function toggleCheck(id){ const r=db.themob.rentals.find(x=>x.id===id); if(r){ r.cashed=!r.cashed; commit(); } }
+function renderChecks(){
+  const checks=db.themob.rentals.filter(r=>r.pay==='check');
+  checks.sort((a,b)=>(a.checkdue||'').localeCompare(b.checkdue||''));
+  const pending=curBucket(); checks.filter(c=>!c.cashed).forEach(c=>addCur(pending,num(c.amount),c.cur));
+  document.getElementById('checks-pending-total').innerHTML=dual(pending);
+  const t=today();
+  document.getElementById('checks-list').innerHTML = checks.length ? checks.map(c=>{
+    let status,col;
+    if(c.cashed){ status='✅ تم الصرف'; col='var(--green)'; }
+    else if(c.checkdue && c.checkdue<t){ status='⚠️ متأخر'; col='var(--red)'; }
+    else { status='⏳ معلّق'; col='var(--amber)'; }
+    return `<div class="item" style="flex-wrap:wrap">
+      <div class="info" style="flex:1 1 100%"><div class="t">🧾 ${esc(c.client)} ${c.checkno?'<span class="badge">#'+esc(c.checkno)+'</span>':''}</div>
+        <div class="s">استحقاق: ${c.checkdue||'—'}${c.checkdetails?' • '+esc(c.checkdetails):''}</div></div>
+      <div class="amt cyan" style="flex:1">${money(num(c.amount),c.cur)}</div>
+      <span class="badge" style="color:${col};border-color:${col}">${status}</span>
+      <button class="btn btn-sm ${c.cashed?'btn-ghost':'btn-green'}" onclick="toggleCheck('${c.id}')">${c.cashed?'تراجع':'سجّل صرفه'}</button></div>`;
+  }).join('') : '<div class="empty">لا يوجد شيكات</div>';
+}
+
+function addMobCost(kind){
+  const map={ install:['mi-cat','mi-amount','mi-cur','mi-date','mi-note'], fixed:['mf-cat','mf-amount','mf-cur','mf-date','mf-note'], expenses:['mc-cat','mc-amount','mc-cur','mc-date','mc-note'] };
+  const f=map[kind]; const amount=val(f[1]); if(!num(amount)) return;
+  db.themob[kind].push({ id:uid(), cat:val(f[0]), amount, cur:val(f[2]), date:val(f[3])||today(), note:val(f[4]) });
+  document.getElementById(f[1]).value=''; const ne=document.getElementById(f[4]); if(ne)ne.value='';
+  commit();
+}
+function delMobCost(kind,id){ db.themob[kind]=db.themob[kind].filter(x=>x.id!==id); commit(); }
+function renderCostTab(kind,listId,totalId){
+  const arr=db.themob[kind]; const tot=curBucket(); arr.forEach(x=>addCur(tot,num(x.amount),x.cur));
+  if(totalId) document.getElementById(totalId).innerHTML=dual(tot);
+  document.getElementById(listId).innerHTML = arr.length ? arr.slice().reverse().map(x=>`
+    <div class="item"><div class="info"><div class="t">${x.cat||x.desc||''}${x.note?' — '+esc(x.note):''}</div><div class="s">${x.date}</div></div>
+    <div class="amt neg">-${money(num(x.amount),x.cur)}</div>
+    <button class="btn btn-x" onclick="delMobCost('${kind}','${x.id}')">✕</button></div>`).join('') : '<div class="empty">لا يوجد</div>';
+}
+
+function addPocket(){ const amount=val('mp-amount'); if(!num(amount)) return;
+  db.themob.pocket.push({ id:uid(), desc:val('mp-desc')||'سحب', amount, cur:val('mp-cur'), date:val('mp-date')||today() });
+  document.getElementById('mp-amount').value=''; document.getElementById('mp-desc').value=''; commit(); }
+function delPocket(id){ db.themob.pocket=db.themob.pocket.filter(x=>x.id!==id); commit(); }
+function renderPocket(){
+  const arr=db.themob.pocket; const tot=curBucket(); arr.forEach(x=>addCur(tot,num(x.amount),x.cur));
+  document.getElementById('pocket-total').innerHTML=dual(tot);
+  document.getElementById('pocket-list').innerHTML = arr.length ? arr.slice().reverse().map(x=>`
+    <div class="item"><div class="info"><div class="t">👛 ${esc(x.desc)}</div><div class="s">${x.date}</div></div>
+    <div class="amt neg">-${money(num(x.amount),x.cur)}</div>
+    <button class="btn btn-x" onclick="delPocket('${x.id}')">✕</button></div>`).join('') : '<div class="empty">لا يوجد</div>';
+}
+
+function renderMobProfit(){
+  const c=computeMob(); const M=db.themob;
+  document.getElementById('mprofit-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}% من الصافي</div></div><div class="amt">${dual(p)}</div></div>`).join('');
+  const totalPct=M.partners.reduce((s,p)=>s+num(p.pct),0);
+  document.getElementById('mpartners-edit').innerHTML=M.partners.map((p,i)=>`
+    <div class="row"><div><label class="fld">الشريك</label><input value="${esc(p.name)}" onchange="setMobPartner(${i},'name',this.value)"></div>
+    <div class="cur-sel" style="flex:0 0 90px"><label class="fld">النسبة %</label><input type="number" inputmode="decimal" value="${esc(p.pct)}" onchange="setMobPartner(${i},'pct',this.value)"></div></div>`).join('')
+    + `<div class="badge" style="${totalPct==100?'':'background:#3a2a0c;border-color:#a16207;color:#fde68a'}">مجموع النسب: ${totalPct}%</div>`;
+}
+function setMobPartner(i,f,v){ db.themob.partners[i][f]= f==='pct'?num(v):v; commit(); }
+
+let activeMobTab='dash';
+function showTabMob(name){
+  activeMobTab=name;
+  document.querySelectorAll('#co-themob .tab').forEach(t=>t.classList.toggle('active',t.dataset.mtab===name));
+  document.querySelectorAll('#co-themob .page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('mtab-'+name).classList.add('active');
+  renderActiveMob();
+}
+function renderActiveMob(){
+  switch(activeMobTab){
+    case 'dash': renderMobDash(); break;
+    case 'rentals': renderRentals(); break;
+    case 'checks': renderChecks(); break;
+    case 'install': renderCostTab('install','install-list','install-total'); break;
+    case 'fixed': renderCostTab('fixed','fixed-list','fixed-total'); break;
+    case 'costs': renderCostTab('expenses','mcosts-list','mcosts-total'); break;
+    case 'pocket': renderPocket(); break;
+    case 'profit': renderMobProfit(); break;
+  }
+}
+
 /* init */
 document.getElementById('dm-date').value=today();
 document.getElementById('ex-date').value=today();
+['mr-date','mi-date','mf-date','mc-date','mp-date'].forEach(id=>{const e=document.getElementById(id); if(e)e.value=today();});
+mobPayToggle();
 renderDash();
 </script>
 </body>
