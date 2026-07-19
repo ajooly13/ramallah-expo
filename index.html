@@ -105,6 +105,16 @@
   .warn{background:#3a2a0c;border:1px solid #a16207;color:#fde68a}
   canvas{max-width:100%}
   .badge{display:inline-block;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-size:11px;padding:3px 8px;border-radius:7px}
+
+  @media print {
+    .topbar, .tabs, #auth-overlay, .company-switch, .note, .stmt-actions, .btn { display:none !important; }
+    body { background:#fff !important; color:#000 !important; }
+    .page:not(.active){ display:none !important; }
+    .wrap{ max-width:100% !important; padding:0 !important; }
+    .section, .stat, .item, .kiosk { background:#fff !important; border:1px solid #bbb !important; color:#000 !important; box-shadow:none !important; }
+    .v, .amt, .t, .l, .lbl, h3, .s, span, div { color:#000 !important; }
+    .pos{ color:#0a0 !important; } .neg{ color:#c00 !important; } .cyan,.ils{ color:#036 !important; } .usd{ color:#060 !important; }
+  }
 </style>
 </head>
 <body>
@@ -290,6 +300,10 @@
           <span id="stmt-label" style="font-size:16px;font-weight:800;min-width:130px">—</span>
           <button class="btn btn-ghost" onclick="changeStmt(1)">›</button>
         </div>
+      </div>
+      <div class="stmt-actions" style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">
+        <button class="btn btn-green btn-sm" onclick="stmtToExcel('expo')">⬇️ تصدير Excel</button>
+        <button class="btn btn-ghost btn-sm" onclick="stmtPrint()">🖨️ طباعة</button>
       </div>
       <div class="cards">
         <div class="stat"><div class="l">📥 الدخل</div><div class="v" id="stmt-income">—</div></div>
@@ -494,6 +508,10 @@
           <span id="mstmt-label" style="font-size:16px;font-weight:800;min-width:130px">—</span>
           <button class="btn btn-ghost" onclick="changeStmt(1)">›</button>
         </div>
+      </div>
+      <div class="stmt-actions" style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">
+        <button class="btn btn-green btn-sm" onclick="stmtToExcel('themob')">⬇️ تصدير Excel</button>
+        <button class="btn btn-ghost btn-sm" onclick="stmtPrint()">🖨️ طباعة</button>
       </div>
       <div class="cards">
         <div class="stat"><div class="l">📥 الدخل</div><div class="v" id="mstmt-income">—</div></div>
@@ -1078,6 +1096,56 @@ function stmtRowHtml(r){
     <div class="amt ${r.kind==='in'?'pos':'neg'}">${r.kind==='in'?'+':'-'}${money(num(r.amount),r.cur)}</div></div>`;
 }
 
+function dualPlain(o){ const a=[]; if(Math.round(o.ils)!==0) a.push(money(o.ils,'₪')); if(Math.round(o.usd)!==0) a.push(money(o.usd,'$')); return a.join(' / ')||'0'; }
+function rowGrp(t){
+  if(t.indexOf('🏪')===0) return 'الأكشاك';
+  if(t.indexOf('🤝')===0) return 'الرعاية والإعلان';
+  if(t.indexOf('🎪')===0) return 'القبة';
+  if(t.indexOf('🏠')===0) return 'التأجير';
+  if(t.indexOf('🔧')===0) return 'التركيب';
+  if(t.indexOf('💡')===0) return 'التكاليف الثابتة';
+  if(t.indexOf('👛')===0) return 'بوكيت موني';
+  if(t.indexOf('💸')===0) return 'المصاريف';
+  return 'أخرى';
+}
+function stmtDetailHtml(c){
+  const groups={};
+  c.rows.forEach(r=>{ const g=rowGrp(r.t); const key=r.kind+'|'+g; if(!groups[key]) groups[key]={kind:r.kind,grp:g,items:[],sub:curBucket()}; groups[key].items.push(r); addCur(groups[key].sub,num(r.amount),r.cur); });
+  const list=Object.values(groups); const inG=list.filter(g=>g.kind==='in'), outG=list.filter(g=>g.kind==='out');
+  const grpHtml=g=>`<div style="margin:12px 0 4px;padding:6px 10px;background:var(--panel2);border-radius:8px;display:flex;justify-content:space-between;font-weight:700;font-size:13px"><span>${g.grp}</span><span style="color:${g.kind==='in'?'var(--green)':'var(--red)'}">${g.kind==='in'?'+':'-'}${dualPlain(g.sub)}</span></div>`
+    + g.items.map(r=>`<div class="item" style="padding:7px 12px"><div class="info"><div class="t" style="font-size:13px">${r.t}</div>${r.date?`<div class="s">${r.date}</div>`:''}</div><div class="amt ${r.kind==='in'?'pos':'neg'}" style="font-size:13px">${r.kind==='in'?'+':'-'}${money(num(r.amount),r.cur)}</div></div>`).join('');
+  let h='';
+  if(inG.length){ h+='<div style="color:var(--green);font-weight:800">▲ الدخل</div>'; inG.forEach(g=>h+=grpHtml(g)); }
+  if(outG.length){ h+='<div style="color:var(--red);font-weight:800;margin-top:10px">▼ المصاريف</div>'; outG.forEach(g=>h+=grpHtml(g)); }
+  return h;
+}
+function stmtToExcel(company){
+  const c = company==='expo' ? expoStmt(stmtScope()) : mobStmt(stmtScope());
+  const title=(company==='expo'?'Ramallah Expo':'TheMob')+' — '+stmtLabelText();
+  const exp = c.expense || c.costs;
+  let body='';
+  c.rows.forEach(r=>{ body+=`<tr><td>${rowGrp(r.t)}</td><td>${(r.t||'').replace(/<[^>]*>/g,'')}</td><td>${r.date||''}</td><td>${r.kind==='in'?Math.round(num(r.amount)):''}</td><td>${r.kind==='out'?Math.round(num(r.amount)):''}</td><td>${r.cur}</td></tr>`; });
+  if(c.silent && (c.silent.ils||c.silent.usd)){ if(c.silent.ils) body+=`<tr><td>اقتطاعات</td><td>شريك صامت 10%</td><td></td><td></td><td>${Math.round(c.silent.ils)}</td><td>₪</td></tr>`; if(c.silent.usd) body+=`<tr><td>اقتطاعات</td><td>شريك صامت 10%</td><td></td><td></td><td>${Math.round(c.silent.usd)}</td><td>$</td></tr>`; }
+  let ptr='';
+  c.partners.forEach(p=>{ ptr+=`<tr><td>حصص الشركاء</td><td>${p.name} (${p.pct}%)</td><td></td><td colspan="3">${Math.round(p.ils)} ₪ / ${Math.round(p.usd)} $</td></tr>`; });
+  const table=`<table border="1" cellspacing="0" cellpadding="4">
+    <tr><th colspan="6" style="font-size:16px">${title}</th></tr>
+    <tr><th>القسم</th><th>البند</th><th>التاريخ</th><th>دخل</th><th>مصروف</th><th>العملة</th></tr>
+    ${body}
+    <tr><td colspan="6"></td></tr>
+    <tr><td colspan="3"><b>إجمالي الدخل</b></td><td colspan="3"><b>${Math.round(c.income.ils)} ₪ / ${Math.round(c.income.usd)} $</b></td></tr>
+    <tr><td colspan="3"><b>إجمالي المصاريف</b></td><td colspan="3"><b>${Math.round(exp.ils)} ₪ / ${Math.round(exp.usd)} $</b></td></tr>
+    <tr><td colspan="3"><b>صافي الربح</b></td><td colspan="3"><b>${Math.round(c.net.ils)} ₪ / ${Math.round(c.net.usd)} $</b></td></tr>
+    ${ptr}
+  </table>`;
+  const html=`<html dir="rtl"><head><meta charset="UTF-8"></head><body>${table}</body></html>`;
+  const blob=new Blob(['﻿'+html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=(company==='expo'?'ramallah-expo':'themob')+'-statement-'+stmtScope()+'.xls';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+}
+function stmtPrint(){ window.print(); }
+
 function expoStmt(scope){
   const E=db.expo; const isYear=scope.length===4; const mult=isYear?12:1;
   const inS=d=>ymOf(d).startsWith(scope);
@@ -1110,8 +1178,8 @@ function renderStmt(){
     for(let mo=1;mo<=12;mo++){ const mc=expoStmt(y+'-'+String(mo).padStart(2,'0')); if(mc.income.ils||mc.income.usd||mc.expense.ils||mc.expense.usd) bd+=`<div class="item"><div class="info"><div class="t">${MONTHS_AR[mo-1]}</div></div><div class="amt">${dual(mc.net)}</div></div>`; }
     document.getElementById('stmt-breakdown').innerHTML=bd||'<div class="empty">لا يوجد حركات في هذه السنة</div>';
   } else sec.style.display='none';
-  let html=c.rows.map(stmtRowHtml).join('');
-  if(c.silent.ils||c.silent.usd) html+=`<div class="item"><div class="info"><div class="t">🤝 شريك صامت 10% (من الدخل)</div></div><div class="amt neg">−${money(c.silent.ils,'₪')} / ${money(c.silent.usd,'$')}</div></div>`;
+  let html=stmtDetailHtml(c);
+  if(c.silent.ils||c.silent.usd) html+=`<div style="color:var(--red);font-weight:800;margin-top:10px">▼ اقتطاعات</div><div class="item" style="padding:7px 12px"><div class="info"><div class="t" style="font-size:13px">🤝 شريك صامت 10% (من الدخل)</div></div><div class="amt neg" style="font-size:13px">−${dualPlain(c.silent)}</div></div>`;
   document.getElementById('stmt-rows').innerHTML = html || '<div class="empty">لا يوجد حركات</div>';
 }
 
@@ -1141,7 +1209,7 @@ function renderMobStmt(){
     for(let mo=1;mo<=12;mo++){ const mc=mobStmt(y+'-'+String(mo).padStart(2,'0')); if(mc.income.ils||mc.income.usd||mc.costs.ils||mc.costs.usd) bd+=`<div class="item"><div class="info"><div class="t">${MONTHS_AR[mo-1]}</div></div><div class="amt">${dual(mc.net)}</div></div>`; }
     document.getElementById('mstmt-breakdown').innerHTML=bd||'<div class="empty">لا يوجد حركات في هذه السنة</div>';
   } else sec.style.display='none';
-  document.getElementById('mstmt-rows').innerHTML = c.rows.length ? c.rows.map(stmtRowHtml).join('') : '<div class="empty">لا يوجد حركات</div>';
+  document.getElementById('mstmt-rows').innerHTML = c.rows.length ? stmtDetailHtml(c) : '<div class="empty">لا يوجد حركات</div>';
 }
 
 /* init */
