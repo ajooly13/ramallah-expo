@@ -148,6 +148,7 @@
     <div class="tab" data-tab="dome" onclick="showTab('dome')">🎪 القبة</div>
     <div class="tab" data-tab="expenses" onclick="showTab('expenses')">💸 المصاريف</div>
     <div class="tab" data-tab="profit" onclick="showTab('profit')">👥 الأرباح</div>
+    <div class="tab" data-tab="stmt" onclick="showTab('stmt')">📅 كشف شهري</div>
     <div class="tab" data-tab="backup" onclick="showTab('backup')">💾 النسخ</div>
   </div>
 
@@ -276,6 +277,30 @@
       </div>
     </div>
 
+    <!-- MONTHLY STATEMENT -->
+    <div id="tab-stmt" class="page">
+      <div class="note">📅 كشف شهري وسنوي — بدّل بين "شهري" و"سنوي"، وتنقّل بالأسهم. بيعرض الدخل والمصاريف والصافي وحصص الشركاء حسب التاريخ.</div>
+      <div class="section" style="text-align:center;padding:12px">
+        <div style="display:flex;justify-content:center;gap:8px;margin-bottom:10px">
+          <button id="stmt-mode-month" class="btn btn-sm btn-blue" onclick="setStmtMode('month')">📅 شهري</button>
+          <button id="stmt-mode-year" class="btn btn-sm btn-ghost" onclick="setStmtMode('year')">📆 سنوي</button>
+        </div>
+        <div style="display:flex;justify-content:center;align-items:center;gap:14px">
+          <button class="btn btn-ghost" onclick="changeStmt(-1)">‹</button>
+          <span id="stmt-label" style="font-size:16px;font-weight:800;min-width:130px">—</span>
+          <button class="btn btn-ghost" onclick="changeStmt(1)">›</button>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="stat"><div class="l">📥 الدخل</div><div class="v" id="stmt-income">—</div></div>
+        <div class="stat"><div class="l">📤 المصاريف</div><div class="v" id="stmt-expense">—</div></div>
+        <div class="stat full"><div class="l">💰 صافي الربح</div><div class="v" id="stmt-net">—</div></div>
+      </div>
+      <div class="section" id="stmt-breakdown-sec" style="display:none"><h3>📊 تفصيل شهور السنة (صافي كل شهر)</h3><div id="stmt-breakdown"></div></div>
+      <div class="section"><h3>👥 حصص الشركاء</h3><div id="stmt-partners"></div></div>
+      <div class="section"><h3>📋 حركات الشهر</h3><div id="stmt-rows"></div></div>
+    </div>
+
     <!-- BACKUP -->
     <div id="tab-backup" class="page">
       <div class="note warn">⚠️ الداتا محفوظة على هذا الجهاز فقط. <b>اعمل نسخة احتياطية بشكل دوري</b> وارفعها على Google Drive أو واتساب — لو خرب الجهاز ترجّعها بضغطة.</div>
@@ -316,6 +341,7 @@
     <div class="tab" data-mtab="costs" onclick="showTabMob('costs')">💸 مصاريف</div>
     <div class="tab" data-mtab="pocket" onclick="showTabMob('pocket')">👛 بوكيت موني</div>
     <div class="tab" data-mtab="profit" onclick="showTabMob('profit')">👥 الأرباح</div>
+    <div class="tab" data-mtab="stmt" onclick="showTabMob('stmt')">📅 كشف شهري</div>
   </div>
   <div class="wrap">
 
@@ -453,6 +479,30 @@
         <div id="mprofit-partners"></div>
       </div>
       <div class="section"><h3>⚙️ تعديل النسب <span class="hint">المجموع لازم 100%</span></h3><div id="mpartners-edit"></div></div>
+    </div>
+
+    <!-- MONTHLY STATEMENT -->
+    <div id="mtab-stmt" class="page">
+      <div class="note">📅 كشف شهري وسنوي — بدّل بين "شهري" و"سنوي"، وتنقّل بالأسهم (تأجير، تكاليف، بوكيت موني).</div>
+      <div class="section" style="text-align:center;padding:12px">
+        <div style="display:flex;justify-content:center;gap:8px;margin-bottom:10px">
+          <button id="mstmt-mode-month" class="btn btn-sm btn-blue" onclick="setStmtMode('month')">📅 شهري</button>
+          <button id="mstmt-mode-year" class="btn btn-sm btn-ghost" onclick="setStmtMode('year')">📆 سنوي</button>
+        </div>
+        <div style="display:flex;justify-content:center;align-items:center;gap:14px">
+          <button class="btn btn-ghost" onclick="changeStmt(-1)">‹</button>
+          <span id="mstmt-label" style="font-size:16px;font-weight:800;min-width:130px">—</span>
+          <button class="btn btn-ghost" onclick="changeStmt(1)">›</button>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="stat"><div class="l">📥 الدخل</div><div class="v" id="mstmt-income">—</div></div>
+        <div class="stat"><div class="l">📤 المصاريف</div><div class="v" id="mstmt-expense">—</div></div>
+        <div class="stat full"><div class="l">💰 صافي الربح</div><div class="v" id="mstmt-net">—</div></div>
+      </div>
+      <div class="section" id="mstmt-breakdown-sec" style="display:none"><h3>📊 تفصيل شهور السنة (صافي كل شهر)</h3><div id="mstmt-breakdown"></div></div>
+      <div class="section"><h3>👥 حصص الشركاء</h3><div id="mstmt-partners"></div></div>
+      <div class="section"><h3>📋 حركات الشهر</h3><div id="mstmt-rows"></div></div>
     </div>
 
   </div>
@@ -687,7 +737,7 @@ function renderSponsors(){
   document.getElementById('sp-count').textContent=count;
   document.getElementById('sp-total').innerHTML=dual(tot);
 }
-function setSponsor(id,field,val){ const s=db.expo.sponsors.find(x=>x.id===id); if(s){s[field]=val; commit();} }
+function setSponsor(id,field,val){ const s=db.expo.sponsors.find(x=>x.id===id); if(s){ s[field]=val; if(field==='amount' && num(val)>0 && !s.date) s.date=today(); commit(); } }
 function addSponsor(){ db.expo.sponsors.push({id:uid(),label:'راعٍ إضافي',sponsor:'',amount:'',cur:'₪',fixed:false}); commit(); }
 function delSponsor(id){ db.expo.sponsors=db.expo.sponsors.filter(x=>x.id!==id); commit(); }
 
@@ -847,6 +897,7 @@ function renderActive(){
     case 'dome': renderDome(); break;
     case 'expenses': renderExpenses(); break;
     case 'profit': renderProfit(); break;
+    case 'stmt': renderStmt(); break;
     case 'backup': renderBackup(); break;
   }
 }
@@ -996,7 +1047,101 @@ function renderActiveMob(){
     case 'costs': renderCostTab('expenses','mcosts-list','mcosts-total'); break;
     case 'pocket': renderPocket(); break;
     case 'profit': renderMobProfit(); break;
+    case 'stmt': renderMobStmt(); break;
   }
+}
+
+/* ============================================================
+   MONTHLY STATEMENT — كشف شهري (للشركتين)
+   ============================================================ */
+const MONTHS_AR=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+let stmtMonth=(new Date()).toISOString().slice(0,7);   // YYYY-MM
+let stmtMode='month';                                   // 'month' | 'year'
+function ymOf(d){ return (d||'').slice(0,7); }
+function stmtScope(){ return stmtMode==='year' ? stmtMonth.slice(0,4) : stmtMonth; }
+function stmtLabelText(){ const [y,m]=stmtMonth.split('-'); return stmtMode==='year' ? ('سنة '+y) : (MONTHS_AR[(+m)-1]+' '+y); }
+function setStmtMode(mode){ stmtMode=mode; if(currentCompany==='expo') renderStmt(); else renderMobStmt(); }
+function changeStmt(delta){
+  let [y,m]=stmtMonth.split('-').map(Number);
+  if(stmtMode==='year'){ y+=delta; }
+  else { const d=new Date(y,(m-1)+delta,1); y=d.getFullYear(); m=d.getMonth()+1; }
+  stmtMonth=y+'-'+String(m).padStart(2,'0');
+  if(currentCompany==='expo') renderStmt(); else renderMobStmt();
+}
+function modeBtns(prefix){
+  const mb=document.getElementById(prefix+'-mode-month'), yb=document.getElementById(prefix+'-mode-year');
+  if(mb) mb.className='btn btn-sm '+(stmtMode==='month'?'btn-blue':'btn-ghost');
+  if(yb) yb.className='btn btn-sm '+(stmtMode==='year'?'btn-blue':'btn-ghost');
+}
+function stmtRowHtml(r){
+  return `<div class="item"><div class="info"><div class="t">${r.t}</div>${r.date?`<div class="s">${r.date}</div>`:''}</div>
+    <div class="amt ${r.kind==='in'?'pos':'neg'}">${r.kind==='in'?'+':'-'}${money(num(r.amount),r.cur)}</div></div>`;
+}
+
+function expoStmt(scope){
+  const E=db.expo; const isYear=scope.length===4; const mult=isYear?12:1;
+  const inS=d=>ymOf(d).startsWith(scope);
+  const income=curBucket(), expense=curBucket(); const rows=[];
+  const rent=curBucket();
+  Object.values(E.kiosks).forEach(k=>{ if(num(k.rent)>0) addCur(rent,num(k.rent),k.rentCur); });
+  const rentLbl='🏪 إيجارات الأكشاك ('+(isYear?'سنوي ×12':'متكرر')+')';
+  if(rent.ils>0){ income.ils+=rent.ils*mult; rows.push({t:rentLbl,amount:rent.ils*mult,cur:'₪',kind:'in'}); }
+  if(rent.usd>0){ income.usd+=rent.usd*mult; rows.push({t:rentLbl,amount:rent.usd*mult,cur:'$',kind:'in'}); }
+  Object.entries(E.kiosks).forEach(([id,k])=>(k.others||[]).forEach(o=>{ if(inS(o.date)){ addCur(income,num(o.amount),o.cur); rows.push({t:'🏪 '+id.toUpperCase()+' — '+(o.label||'دفعة'),amount:o.amount,cur:o.cur,kind:'in',date:o.date}); } }));
+  E.sponsors.forEach(s=>{ if(num(s.amount)>0 && inS(s.date)){ addCur(income,num(s.amount),s.cur); rows.push({t:'🤝 '+(s.sponsor||s.label),amount:s.amount,cur:s.cur,kind:'in',date:s.date}); } });
+  E.dome.forEach(d=>{ if(inS(d.date)){ addCur(income,num(d.total),d.cur); rows.push({t:'🎪 '+d.renter,amount:d.total,cur:d.cur,kind:'in',date:d.date}); } });
+  E.expenses.forEach(x=>{ if(inS(x.date)){ addCur(expense,num(x.amount),x.cur); rows.push({t:'💸 '+x.cat+(x.note?' — '+x.note:''),amount:x.amount,cur:x.cur,kind:'out',date:x.date}); } });
+  const silent={ils:income.ils*(E.silentPct/100), usd:income.usd*(E.silentPct/100)};
+  const net={ils:income.ils-silent.ils-expense.ils, usd:income.usd-silent.usd-expense.usd};
+  const partners=E.partners.map(p=>({name:p.name,pct:p.pct,ils:net.ils*p.pct/100,usd:net.usd*p.pct/100}));
+  return {income,expense,silent,net,partners,rows};
+}
+function renderStmt(){
+  modeBtns('stmt');
+  const c=expoStmt(stmtScope());
+  document.getElementById('stmt-label').textContent=stmtLabelText();
+  document.getElementById('stmt-income').innerHTML=dual(c.income);
+  document.getElementById('stmt-expense').innerHTML=dual(c.expense);
+  document.getElementById('stmt-net').innerHTML=dual(c.net);
+  document.getElementById('stmt-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}%</div></div><div class="amt">${dual(p)}</div></div>`).join('');
+  const sec=document.getElementById('stmt-breakdown-sec');
+  if(stmtMode==='year'){
+    sec.style.display=''; const y=stmtMonth.slice(0,4); let bd='';
+    for(let mo=1;mo<=12;mo++){ const mc=expoStmt(y+'-'+String(mo).padStart(2,'0')); if(mc.income.ils||mc.income.usd||mc.expense.ils||mc.expense.usd) bd+=`<div class="item"><div class="info"><div class="t">${MONTHS_AR[mo-1]}</div></div><div class="amt">${dual(mc.net)}</div></div>`; }
+    document.getElementById('stmt-breakdown').innerHTML=bd||'<div class="empty">لا يوجد حركات في هذه السنة</div>';
+  } else sec.style.display='none';
+  let html=c.rows.map(stmtRowHtml).join('');
+  if(c.silent.ils||c.silent.usd) html+=`<div class="item"><div class="info"><div class="t">🤝 شريك صامت 10% (من الدخل)</div></div><div class="amt neg">−${money(c.silent.ils,'₪')} / ${money(c.silent.usd,'$')}</div></div>`;
+  document.getElementById('stmt-rows').innerHTML = html || '<div class="empty">لا يوجد حركات</div>';
+}
+
+function mobStmt(scope){
+  const M=db.themob; const inS=d=>ymOf(d).startsWith(scope);
+  const income=curBucket(), costs=curBucket(), pocket=curBucket(); const rows=[];
+  M.rentals.forEach(r=>{ if(inS(r.date)){ addCur(income,num(r.amount),r.cur); rows.push({t:'🏠 '+r.client+(r.pay==='check'?' (شيك)':' (كاش)'),amount:r.amount,cur:r.cur,kind:'in',date:r.date}); } });
+  M.install.forEach(x=>{ if(inS(x.date)){ addCur(costs,num(x.amount),x.cur); rows.push({t:'🔧 '+x.cat,amount:x.amount,cur:x.cur,kind:'out',date:x.date}); } });
+  M.fixed.forEach(x=>{ if(inS(x.date)){ addCur(costs,num(x.amount),x.cur); rows.push({t:'💡 '+x.cat,amount:x.amount,cur:x.cur,kind:'out',date:x.date}); } });
+  M.expenses.forEach(x=>{ if(inS(x.date)){ addCur(costs,num(x.amount),x.cur); rows.push({t:'💸 '+x.cat,amount:x.amount,cur:x.cur,kind:'out',date:x.date}); } });
+  M.pocket.forEach(x=>{ if(inS(x.date)){ addCur(pocket,num(x.amount),x.cur); rows.push({t:'👛 '+x.desc,amount:x.amount,cur:x.cur,kind:'out',date:x.date}); } });
+  const net={ils:income.ils-costs.ils, usd:income.usd-costs.usd};
+  const partners=M.partners.map(p=>({name:p.name,pct:p.pct,ils:net.ils*p.pct/100,usd:net.usd*p.pct/100}));
+  return {income,costs,pocket,net,partners,rows};
+}
+function renderMobStmt(){
+  modeBtns('mstmt');
+  const c=mobStmt(stmtScope());
+  document.getElementById('mstmt-label').textContent=stmtLabelText();
+  document.getElementById('mstmt-income').innerHTML=dual(c.income);
+  document.getElementById('mstmt-expense').innerHTML=dual(c.costs);
+  document.getElementById('mstmt-net').innerHTML=dual(c.net);
+  document.getElementById('mstmt-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}%</div></div><div class="amt">${dual(p)}</div></div>`).join('');
+  const sec=document.getElementById('mstmt-breakdown-sec');
+  if(stmtMode==='year'){
+    sec.style.display=''; const y=stmtMonth.slice(0,4); let bd='';
+    for(let mo=1;mo<=12;mo++){ const mc=mobStmt(y+'-'+String(mo).padStart(2,'0')); if(mc.income.ils||mc.income.usd||mc.costs.ils||mc.costs.usd) bd+=`<div class="item"><div class="info"><div class="t">${MONTHS_AR[mo-1]}</div></div><div class="amt">${dual(mc.net)}</div></div>`; }
+    document.getElementById('mstmt-breakdown').innerHTML=bd||'<div class="empty">لا يوجد حركات في هذه السنة</div>';
+  } else sec.style.display='none';
+  document.getElementById('mstmt-rows').innerHTML = c.rows.length ? c.rows.map(stmtRowHtml).join('') : '<div class="empty">لا يوجد حركات</div>';
 }
 
 /* init */
