@@ -232,7 +232,10 @@
         </div>
         <div class="row">
           <div><label class="fld">🔧 فك وتركيب (مبلغ إضافي)</label><input id="dm-setup" type="number" inputmode="decimal" placeholder="اختياري" oninput="domePreview()"></div>
-          <div><label class="fld">التاريخ</label><input id="dm-date" type="date"></div>
+        </div>
+        <div class="row">
+          <div><label class="fld">من تاريخ</label><input id="dm-from" type="date" onchange="domeDays()"></div>
+          <div><label class="fld">إلى تاريخ</label><input id="dm-to" type="date" onchange="domeDays()"></div>
         </div>
         <div class="badge" id="dm-preview" style="margin-bottom:10px">الإجمالي: 0</div><br>
         <button class="btn btn-green" onclick="addDome()">إضافة الإيفنت</button>
@@ -772,6 +775,11 @@ function delSponsor(id){ db.expo.sponsors=db.expo.sponsors.filter(x=>x.id!==id);
 /* ============================================================
    DOME
    ============================================================ */
+function domeDays(){
+  const f=document.getElementById('dm-from').value, t=document.getElementById('dm-to').value;
+  if(f&&t){ const d=Math.floor((new Date(t)-new Date(f))/86400000)+1; if(d>0) document.getElementById('dm-days').value=d; }
+  domePreview();
+}
 function domePreview(){
   const t=num(document.getElementById('dm-days').value)*num(document.getElementById('dm-daily').value)+num(document.getElementById('dm-setup').value);
   document.getElementById('dm-preview').textContent='الإجمالي: '+money(t,document.getElementById('dm-cur').value);
@@ -780,11 +788,13 @@ function addDome(){
   const renter=document.getElementById('dm-renter').value||'جهة';
   const days=document.getElementById('dm-days').value; const daily=document.getElementById('dm-daily').value;
   const setup=document.getElementById('dm-setup').value;
-  const cur=document.getElementById('dm-cur').value; const date=document.getElementById('dm-date').value||today();
+  const cur=document.getElementById('dm-cur').value;
+  const from=document.getElementById('dm-from').value; const to=document.getElementById('dm-to').value;
+  const date=from||today();
   const total=num(days)*num(daily)+num(setup);
   if(!total) return;
-  db.expo.dome.push({id:uid(),renter,days,daily,setup,total,cur,date});
-  document.getElementById('dm-renter').value='';document.getElementById('dm-days').value='';document.getElementById('dm-daily').value='';document.getElementById('dm-setup').value='';
+  db.expo.dome.push({id:uid(),renter,days,daily,setup,total,cur,dateFrom:from,dateTo:to,date});
+  document.getElementById('dm-renter').value='';document.getElementById('dm-days').value='';document.getElementById('dm-daily').value='';document.getElementById('dm-setup').value='';document.getElementById('dm-from').value='';document.getElementById('dm-to').value='';
   document.getElementById('dm-preview').textContent='الإجمالي: 0';
   commit();
 }
@@ -797,7 +807,7 @@ function renderDome(){
   const el=document.getElementById('dome-list');
   el.innerHTML = E.dome.length ? E.dome.slice().reverse().map(d=>`
     <div class="item"><div class="info"><div class="t">🎪 ${d.renter}</div>
-      <div class="s">${num(d.days)} يوم × ${money(num(d.daily),d.cur)}${num(d.setup)>0?' + فك وتركيب '+money(num(d.setup),d.cur):''} • ${d.date}</div></div>
+      <div class="s">${num(d.days)} يوم × ${money(num(d.daily),d.cur)}${num(d.setup)>0?' + فك وتركيب '+money(num(d.setup),d.cur):''}<br>📅 ${d.dateFrom?('من '+d.dateFrom+' إلى '+(d.dateTo||'—')):(d.date||'')}</div></div>
     <div class="amt cyan">${money(num(d.total),d.cur)}</div>
     <button class="btn-x btn" onclick="delDome('${d.id}')">✕</button></div>`).join('')
     : '<div class="empty">لا يوجد إيفنتات بعد</div>';
@@ -1230,7 +1240,7 @@ function renderMobStmt(){
 }
 
 /* init */
-document.getElementById('dm-date').value=today();
+document.getElementById('dm-from').value=today();
 document.getElementById('ex-date').value=today();
 ['mr-date','mi-date','mf-date','mc-date','mp-date'].forEach(id=>{const e=document.getElementById(id); if(e)e.value=today();});
 mobPayToggle();
