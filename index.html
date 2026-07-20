@@ -169,7 +169,7 @@
       <div class="cards">
         <div class="stat"><div class="l">📥 إجمالي الدخل</div><div class="v" id="d-income">—</div></div>
         <div class="stat"><div class="l">📤 إجمالي المصاريف</div><div class="v" id="d-expenses">—</div></div>
-        <div class="stat"><div class="l">🤝 شريك 10% (من الدخل)</div><div class="v" id="d-silent">—</div></div>
+        <div class="stat"><div class="l">🏛️ بلدية رام الله (10%)</div><div class="v" id="d-silent">—</div></div>
         <div class="stat"><div class="l">💰 صافي الربح</div><div class="v" id="d-net">—</div></div>
       </div>
 
@@ -230,7 +230,10 @@
           <div><label class="fld">الإيجار اليومي</label><input id="dm-daily" type="number" inputmode="decimal" placeholder="لليوم" oninput="domePreview()"></div>
           <div class="cur-sel"><label class="fld">عملة</label><select id="dm-cur"><option>₪</option><option>$</option></select></div>
         </div>
-        <div class="row"><div><label class="fld">التاريخ</label><input id="dm-date" type="date"></div></div>
+        <div class="row">
+          <div><label class="fld">🔧 فك وتركيب (مبلغ إضافي)</label><input id="dm-setup" type="number" inputmode="decimal" placeholder="اختياري" oninput="domePreview()"></div>
+          <div><label class="fld">التاريخ</label><input id="dm-date" type="date"></div>
+        </div>
         <div class="badge" id="dm-preview" style="margin-bottom:10px">الإجمالي: 0</div><br>
         <button class="btn btn-green" onclick="addDome()">إضافة الإيفنت</button>
       </div>
@@ -268,9 +271,9 @@
 
     <!-- PROFIT -->
     <div id="tab-profit" class="page">
-      <div class="note">👥 توزيع صافي الربح = الدخل − شريك 10% − المصاريف، ثم يتوزع: محمود 5% • جواد 62% • عقبة 33%. كل عملة تتوزع لحالها.</div>
+      <div class="note">👥 توزيع صافي الربح = الدخل − بلدية رام الله 10% − المصاريف، ثم يتوزع على الشركاء. كل عملة تتوزع لحالها.</div>
       <div class="section">
-        <h3>🤝 الشريك الصامت (10% من الدخل)</h3>
+        <h3>🏛️ بلدية رام الله (10% من الدخل)</h3>
         <div id="profit-silent"></div>
       </div>
       <div class="section">
@@ -282,7 +285,7 @@
         <h3>⚙️ تعديل النسب <span class="hint">المجموع لازم 100%</span></h3>
         <div id="partners-edit"></div>
         <div class="row" style="margin-top:8px">
-          <div><label class="fld">نسبة الشريك الصامت %</label><input id="silent-pct" type="number" inputmode="decimal" onchange="setSilent(this.value)"></div>
+          <div><label class="fld">نسبة بلدية رام الله %</label><input id="silent-pct" type="number" inputmode="decimal" onchange="setSilent(this.value)"></div>
         </div>
       </div>
     </div>
@@ -589,9 +592,8 @@ function compute(){
   const E = db.expo;
   const inc = { kiosks:curBucket(), sponsors:curBucket(), dome:curBucket() };
 
-  // kiosks
+  // kiosks — الدخل من الدفعات المسجّلة فقط (الإيجار يُسجَّل يدوياً كل شهر)
   Object.values(E.kiosks).forEach(k=>{
-    addCur(inc.kiosks, num(k.rent), k.rentCur);
     (k.others||[]).forEach(o=> addCur(inc.kiosks, num(o.amount), o.cur));
   });
   // sponsors
@@ -629,7 +631,7 @@ function renderDash(){
   // waterfall
   const wf = [
     ['📥 إجمالي الدخل', c.gross, 'var(--cyan)'],
-    ['🤝 − شريك 10%', neg(c.silent), 'var(--red)'],
+    ['🏛️ − بلدية رام الله', neg(c.silent), 'var(--red)'],
     ['💸 − المصاريف', neg(c.exp), 'var(--red)'],
   ];
   let html = wf.map(([l,o,col])=>`<div class="wf"><span class="lbl">${l}</span><span class="val">${dual(o)}</span></div>`).join('');
@@ -672,7 +674,6 @@ function renderKiosks(){
   for(let i=1;i<=11;i++){
     const id='ra'+i; const k=E.kiosks[id];
     const kt=curBucket();
-    addCur(kt, num(k.rent), k.rentCur);
     (k.others||[]).forEach(o=>addCur(kt,num(o.amount),o.cur));
     tot.ils+=kt.ils; tot.usd+=kt.usd;
     if(k.owner || num(k.rent)>0) rented++;
@@ -695,12 +696,13 @@ function renderKiosks(){
         <div class="row"><div><label class="fld">اسم صاحب الكشك</label>
           <input value="${esc(k.owner)}" placeholder="الاسم" onchange="setKiosk('${id}','owner',this.value)"></div></div>
         <div class="row">
-          <div><label class="fld">الإيجار الشهري</label>
+          <div><label class="fld">الإيجار الشهري المتّفق (افتراضي)</label>
             <input type="number" inputmode="decimal" value="${esc(k.rent)}" placeholder="0" onchange="setKiosk('${id}','rent',this.value)"></div>
           <div class="cur-sel"><label class="fld">عملة</label>
             <select onchange="setKiosk('${id}','rentCur',this.value)">${curOpts(k.rentCur)}</select></div>
         </div>
-        <div class="mini">دفعات أخرى من صاحب الكشك</div>
+        <button class="btn btn-green btn-sm" onclick="logKioskRent('${id}')">➕ سجّل إيجار هذا الشهر (${money(num(k.rent),k.rentCur)})</button>
+        <div class="mini" style="margin-top:12px">الإيجارات والدفعات المسجّلة</div>
         ${othersHtml}
         <div class="row" style="margin-top:8px">
           <div><input id="ko-l-${id}" placeholder="وصف الدفعة"></div>
@@ -733,6 +735,13 @@ function delKioskOther(id,oid){
   localStorage.setItem(DB_KEY,JSON.stringify(db));
   renderKiosks(); renderDash(); document.getElementById('kiosk-'+id).classList.add('open');
 }
+function logKioskRent(id){
+  const k=db.expo.kiosks[id];
+  if(!num(k.rent)) return;
+  k.others.push({id:uid(),label:'إيجار شهري',amount:k.rent,cur:k.rentCur,date:today()});
+  localStorage.setItem(DB_KEY,JSON.stringify(db));
+  renderKiosks(); renderDash(); document.getElementById('kiosk-'+id).classList.add('open');
+}
 
 /* ============================================================
    SPONSORS
@@ -745,9 +754,10 @@ function renderSponsors(){
     return `<div class="item" style="flex-wrap:wrap">
       <div class="info" style="flex:1 1 100%;margin-bottom:6px">
         <div class="t">🤝 ${s.label} ${s.fixed?'':'<span class="badge">أخرى</span>'}</div></div>
-      <div style="flex:2"><input value="${esc(s.sponsor)}" placeholder="اسم الراعي" onchange="setSponsor('${s.id}','sponsor',this.value)"></div>
+      <div style="flex:2 1 100%;margin-bottom:6px"><input value="${esc(s.sponsor)}" placeholder="اسم الراعي" onchange="setSponsor('${s.id}','sponsor',this.value)"></div>
       <div style="flex:1"><input type="number" inputmode="decimal" value="${esc(s.amount)}" placeholder="المبلغ" onchange="setSponsor('${s.id}','amount',this.value)"></div>
       <div class="cur-sel"><select onchange="setSponsor('${s.id}','cur',this.value)">${curOpts(s.cur)}</select></div>
+      <div style="flex:0 0 90px"><select onchange="setSponsor('${s.id}','period',this.value)">${periodOpts(s.period||'شهري')}</select></div>
       ${s.fixed?'':`<button class="btn-x btn" onclick="delSponsor('${s.id}')">✕</button>`}
     </div>`;
   }).join('');
@@ -756,23 +766,25 @@ function renderSponsors(){
   document.getElementById('sp-total').innerHTML=dual(tot);
 }
 function setSponsor(id,field,val){ const s=db.expo.sponsors.find(x=>x.id===id); if(s){ s[field]=val; if(field==='amount' && num(val)>0 && !s.date) s.date=today(); commit(); } }
-function addSponsor(){ db.expo.sponsors.push({id:uid(),label:'راعٍ إضافي',sponsor:'',amount:'',cur:'₪',fixed:false}); commit(); }
+function addSponsor(){ db.expo.sponsors.push({id:uid(),label:'راعٍ إضافي',sponsor:'',amount:'',cur:'₪',period:'شهري',fixed:false}); commit(); }
 function delSponsor(id){ db.expo.sponsors=db.expo.sponsors.filter(x=>x.id!==id); commit(); }
 
 /* ============================================================
    DOME
    ============================================================ */
 function domePreview(){
-  const t=num(document.getElementById('dm-days').value)*num(document.getElementById('dm-daily').value);
+  const t=num(document.getElementById('dm-days').value)*num(document.getElementById('dm-daily').value)+num(document.getElementById('dm-setup').value);
   document.getElementById('dm-preview').textContent='الإجمالي: '+money(t,document.getElementById('dm-cur').value);
 }
 function addDome(){
   const renter=document.getElementById('dm-renter').value||'جهة';
   const days=document.getElementById('dm-days').value; const daily=document.getElementById('dm-daily').value;
+  const setup=document.getElementById('dm-setup').value;
   const cur=document.getElementById('dm-cur').value; const date=document.getElementById('dm-date').value||today();
-  if(!num(days)||!num(daily)) return;
-  db.expo.dome.push({id:uid(),renter,days,daily,total:num(days)*num(daily),cur,date});
-  document.getElementById('dm-renter').value='';document.getElementById('dm-days').value='';document.getElementById('dm-daily').value='';
+  const total=num(days)*num(daily)+num(setup);
+  if(!total) return;
+  db.expo.dome.push({id:uid(),renter,days,daily,setup,total,cur,date});
+  document.getElementById('dm-renter').value='';document.getElementById('dm-days').value='';document.getElementById('dm-daily').value='';document.getElementById('dm-setup').value='';
   document.getElementById('dm-preview').textContent='الإجمالي: 0';
   commit();
 }
@@ -785,7 +797,7 @@ function renderDome(){
   const el=document.getElementById('dome-list');
   el.innerHTML = E.dome.length ? E.dome.slice().reverse().map(d=>`
     <div class="item"><div class="info"><div class="t">🎪 ${d.renter}</div>
-      <div class="s">${d.days} يوم × ${money(num(d.daily),d.cur)} • ${d.date}</div></div>
+      <div class="s">${num(d.days)} يوم × ${money(num(d.daily),d.cur)}${num(d.setup)>0?' + فك وتركيب '+money(num(d.setup),d.cur):''} • ${d.date}</div></div>
     <div class="amt cyan">${money(num(d.total),d.cur)}</div>
     <button class="btn-x btn" onclick="delDome('${d.id}')">✕</button></div>`).join('')
     : '<div class="empty">لا يوجد إيفنتات بعد</div>';
@@ -831,7 +843,7 @@ function renderExpenses(){
 function renderProfit(){
   const c=compute(); const E=db.expo;
   document.getElementById('profit-silent').innerHTML=`
-    <div class="item"><div class="info"><div class="t">🤝 الشريك الصامت</div>
+    <div class="item"><div class="info"><div class="t">🏛️ بلدية رام الله</div>
       <div class="s">${E.silentPct}% من إجمالي الدخل (قبل المصاريف)</div></div>
     <div class="amt">${dual(c.silent)}</div></div>`;
   document.getElementById('profit-partners').innerHTML=c.partners.map(p=>`
@@ -840,13 +852,18 @@ function renderProfit(){
   // edit
   const totalPct=E.partners.reduce((s,p)=>s+num(p.pct),0);
   document.getElementById('partners-edit').innerHTML=E.partners.map((p,i)=>`
-    <div class="row">
+    <div class="row" style="align-items:flex-end">
       <div><label class="fld">اسم الشريك</label><input value="${esc(p.name)}" onchange="setPartner(${i},'name',this.value)"></div>
-      <div class="cur-sel" style="flex:0 0 90px"><label class="fld">النسبة %</label><input type="number" inputmode="decimal" value="${esc(p.pct)}" onchange="setPartner(${i},'pct',this.value)"></div>
-    </div>`).join('') + `<div class="badge ${totalPct==100?'':'warn'}" style="${totalPct==100?'':'background:#3a2a0c;border-color:#a16207;color:#fde68a'}">مجموع النسب: ${totalPct}%</div>`;
+      <div class="cur-sel" style="flex:0 0 80px"><label class="fld">النسبة %</label><input type="number" inputmode="decimal" value="${esc(p.pct)}" onchange="setPartner(${i},'pct',this.value)"></div>
+      <button class="btn btn-x" onclick="delPartner(${i})">✕</button>
+    </div>`).join('')
+    + `<div class="badge ${totalPct==100?'':'warn'}" style="margin-top:6px;${totalPct==100?'':'background:#3a2a0c;border-color:#a16207;color:#fde68a'}">مجموع النسب: ${totalPct}%</div>`
+    + `<div><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addPartner()">➕ إضافة شريك</button></div>`;
   document.getElementById('silent-pct').value=E.silentPct;
 }
 function setPartner(i,field,val){ db.expo.partners[i][field]= field==='pct'?num(val):val; commit(); }
+function addPartner(){ db.expo.partners.push({name:'شريك جديد',pct:0}); commit(); }
+function delPartner(i){ if(db.expo.partners.length<=1) return; db.expo.partners.splice(i,1); commit(); }
 function setSilent(v){ db.expo.silentPct=num(v); commit(); }
 
 /* ============================================================
@@ -889,6 +906,7 @@ function renderBackup(){
    ============================================================ */
 function esc(s){ return String(s==null?'':s).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 function curOpts(sel){ return CURS.map(c=>`<option ${c===sel?'selected':''}>${c}</option>`).join(''); }
+function periodOpts(sel){ return ['يومي','أسبوعي','شهري'].map(p=>`<option ${p===sel?'selected':''}>${p}</option>`).join(''); }
 
 let activeTab='dash';
 function showTab(name){
@@ -1041,11 +1059,15 @@ function renderMobProfit(){
   document.getElementById('mprofit-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}% من الصافي</div></div><div class="amt">${dual(p)}</div></div>`).join('');
   const totalPct=M.partners.reduce((s,p)=>s+num(p.pct),0);
   document.getElementById('mpartners-edit').innerHTML=M.partners.map((p,i)=>`
-    <div class="row"><div><label class="fld">الشريك</label><input value="${esc(p.name)}" onchange="setMobPartner(${i},'name',this.value)"></div>
-    <div class="cur-sel" style="flex:0 0 90px"><label class="fld">النسبة %</label><input type="number" inputmode="decimal" value="${esc(p.pct)}" onchange="setMobPartner(${i},'pct',this.value)"></div></div>`).join('')
-    + `<div class="badge" style="${totalPct==100?'':'background:#3a2a0c;border-color:#a16207;color:#fde68a'}">مجموع النسب: ${totalPct}%</div>`;
+    <div class="row" style="align-items:flex-end"><div><label class="fld">الشريك</label><input value="${esc(p.name)}" onchange="setMobPartner(${i},'name',this.value)"></div>
+    <div class="cur-sel" style="flex:0 0 80px"><label class="fld">النسبة %</label><input type="number" inputmode="decimal" value="${esc(p.pct)}" onchange="setMobPartner(${i},'pct',this.value)"></div>
+    <button class="btn btn-x" onclick="delMobPartner(${i})">✕</button></div>`).join('')
+    + `<div class="badge" style="margin-top:6px;${totalPct==100?'':'background:#3a2a0c;border-color:#a16207;color:#fde68a'}">مجموع النسب: ${totalPct}%</div>`
+    + `<div><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addMobPartner()">➕ إضافة شريك</button></div>`;
 }
 function setMobPartner(i,f,v){ db.themob.partners[i][f]= f==='pct'?num(v):v; commit(); }
+function addMobPartner(){ db.themob.partners.push({name:'شريك جديد',pct:0}); commit(); }
+function delMobPartner(i){ if(db.themob.partners.length<=1) return; db.themob.partners.splice(i,1); commit(); }
 
 let activeMobTab='dash';
 function showTabMob(name){
@@ -1125,7 +1147,7 @@ function stmtToExcel(company){
   const exp = c.expense || c.costs;
   let body='';
   c.rows.forEach(r=>{ body+=`<tr><td>${rowGrp(r.t)}</td><td>${(r.t||'').replace(/<[^>]*>/g,'')}</td><td>${r.date||''}</td><td>${r.kind==='in'?Math.round(num(r.amount)):''}</td><td>${r.kind==='out'?Math.round(num(r.amount)):''}</td><td>${r.cur}</td></tr>`; });
-  if(c.silent && (c.silent.ils||c.silent.usd)){ if(c.silent.ils) body+=`<tr><td>اقتطاعات</td><td>شريك صامت 10%</td><td></td><td></td><td>${Math.round(c.silent.ils)}</td><td>₪</td></tr>`; if(c.silent.usd) body+=`<tr><td>اقتطاعات</td><td>شريك صامت 10%</td><td></td><td></td><td>${Math.round(c.silent.usd)}</td><td>$</td></tr>`; }
+  if(c.silent && (c.silent.ils||c.silent.usd)){ if(c.silent.ils) body+=`<tr><td>اقتطاعات</td><td>بلدية رام الله 10%</td><td></td><td></td><td>${Math.round(c.silent.ils)}</td><td>₪</td></tr>`; if(c.silent.usd) body+=`<tr><td>اقتطاعات</td><td>بلدية رام الله 10%</td><td></td><td></td><td>${Math.round(c.silent.usd)}</td><td>$</td></tr>`; }
   let ptr='';
   c.partners.forEach(p=>{ ptr+=`<tr><td>حصص الشركاء</td><td>${p.name} (${p.pct}%)</td><td></td><td colspan="3">${Math.round(p.ils)} ₪ / ${Math.round(p.usd)} $</td></tr>`; });
   const table=`<table border="1" cellspacing="0" cellpadding="4">
@@ -1150,13 +1172,8 @@ function expoStmt(scope){
   const E=db.expo; const isYear=scope.length===4; const mult=isYear?12:1;
   const inS=d=>ymOf(d).startsWith(scope);
   const income=curBucket(), expense=curBucket(); const rows=[];
-  const rent=curBucket();
-  Object.values(E.kiosks).forEach(k=>{ if(num(k.rent)>0) addCur(rent,num(k.rent),k.rentCur); });
-  const rentLbl='🏪 إيجارات الأكشاك ('+(isYear?'سنوي ×12':'متكرر')+')';
-  if(rent.ils>0){ income.ils+=rent.ils*mult; rows.push({t:rentLbl,amount:rent.ils*mult,cur:'₪',kind:'in'}); }
-  if(rent.usd>0){ income.usd+=rent.usd*mult; rows.push({t:rentLbl,amount:rent.usd*mult,cur:'$',kind:'in'}); }
   Object.entries(E.kiosks).forEach(([id,k])=>(k.others||[]).forEach(o=>{ if(inS(o.date)){ addCur(income,num(o.amount),o.cur); rows.push({t:'🏪 '+id.toUpperCase()+' — '+(o.label||'دفعة'),amount:o.amount,cur:o.cur,kind:'in',date:o.date}); } }));
-  E.sponsors.forEach(s=>{ if(num(s.amount)>0 && inS(s.date)){ addCur(income,num(s.amount),s.cur); rows.push({t:'🤝 '+(s.sponsor||s.label),amount:s.amount,cur:s.cur,kind:'in',date:s.date}); } });
+  E.sponsors.forEach(s=>{ if(num(s.amount)>0 && inS(s.date)){ addCur(income,num(s.amount),s.cur); rows.push({t:'🤝 '+(s.sponsor||s.label)+(s.period?' ('+s.period+')':''),amount:s.amount,cur:s.cur,kind:'in',date:s.date}); } });
   E.dome.forEach(d=>{ if(inS(d.date)){ addCur(income,num(d.total),d.cur); rows.push({t:'🎪 '+d.renter,amount:d.total,cur:d.cur,kind:'in',date:d.date}); } });
   E.expenses.forEach(x=>{ if(inS(x.date)){ addCur(expense,num(x.amount),x.cur); rows.push({t:'💸 '+x.cat+(x.note?' — '+x.note:''),amount:x.amount,cur:x.cur,kind:'out',date:x.date}); } });
   const silent={ils:income.ils*(E.silentPct/100), usd:income.usd*(E.silentPct/100)};
@@ -1179,7 +1196,7 @@ function renderStmt(){
     document.getElementById('stmt-breakdown').innerHTML=bd||'<div class="empty">لا يوجد حركات في هذه السنة</div>';
   } else sec.style.display='none';
   let html=stmtDetailHtml(c);
-  if(c.silent.ils||c.silent.usd) html+=`<div style="color:var(--red);font-weight:800;margin-top:10px">▼ اقتطاعات</div><div class="item" style="padding:7px 12px"><div class="info"><div class="t" style="font-size:13px">🤝 شريك صامت 10% (من الدخل)</div></div><div class="amt neg" style="font-size:13px">−${dualPlain(c.silent)}</div></div>`;
+  if(c.silent.ils||c.silent.usd) html+=`<div style="color:var(--red);font-weight:800;margin-top:10px">▼ اقتطاعات</div><div class="item" style="padding:7px 12px"><div class="info"><div class="t" style="font-size:13px">🏛️ بلدية رام الله (10% من الدخل)</div></div><div class="amt neg" style="font-size:13px">−${dualPlain(c.silent)}</div></div>`;
   document.getElementById('stmt-rows').innerHTML = html || '<div class="empty">لا يوجد حركات</div>';
 }
 
