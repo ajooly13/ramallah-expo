@@ -223,6 +223,20 @@
         <div class="stat"><div class="l">إجمالي دخل القبة</div><div class="v" id="dm-total">—</div></div>
       </div>
       <div class="section">
+        <h3>📆 أجندة حجوزات القبة <span class="hint" id="dc-booked">—</span></h3>
+        <div style="display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:12px">
+          <button class="btn btn-ghost" onclick="domeCalMonth(-1)">‹</button>
+          <span id="domecal-label" style="font-weight:800;min-width:130px;text-align:center">—</span>
+          <button class="btn btn-ghost" onclick="domeCalMonth(1)">›</button>
+        </div>
+        <div id="domecal"></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--muted);display:flex;gap:14px;justify-content:center">
+          <span><span style="display:inline-block;width:12px;height:12px;background:var(--amber);border-radius:3px;vertical-align:middle"></span> محجوز</span>
+          <span><span style="display:inline-block;width:12px;height:12px;background:var(--panel2);border:1px solid var(--line);border-radius:3px;vertical-align:middle"></span> متاح</span>
+        </div>
+      </div>
+      <div class="section"><h3>📋 حجوزات سنة <span id="domecal-year-label"></span></h3><div id="domecal-year"></div></div>
+      <div class="section">
         <h3>➕ تسجيل إيجار قبة</h3>
         <div class="row"><div><label class="fld">الجهة المستأجرة</label><input id="dm-renter" placeholder="اسم الجهة"></div></div>
         <div class="row">
@@ -811,6 +825,62 @@ function renderDome(){
     <div class="amt cyan">${money(num(d.total),d.cur)}</div>
     <button class="btn-x btn" onclick="delDome('${d.id}')">✕</button></div>`).join('')
     : '<div class="empty">لا يوجد إيفنتات بعد</div>';
+  renderDomeCal();
+}
+
+/* ============================================================
+   DOME BOOKING CALENDAR — أجندة حجوزات القبة
+   ============================================================ */
+let dcMonth=(new Date()).toISOString().slice(0,7);   // YYYY-MM
+function domeCalMonth(delta){
+  const [y,m]=dcMonth.split('-').map(Number);
+  const d=new Date(y,(m-1)+delta,1);
+  dcMonth=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  renderDomeCal();
+}
+function renderDomeCal(){
+  const [y,m]=dcMonth.split('-').map(Number);
+  document.getElementById('domecal-label').textContent=MONTHS_AR[m-1]+' '+y;
+  document.getElementById('domecal-year-label').textContent=y;
+  // map booked days in this month → list of renters
+  const booked={};
+  db.expo.dome.forEach(d=>{
+    const from=d.dateFrom||d.date; if(!from) return;
+    const to=d.dateTo||d.dateFrom||d.date;
+    let cur=new Date(from), end=new Date(to);
+    let guard=0;
+    while(cur<=end && guard<400){
+      if(cur.getFullYear()===y && (cur.getMonth()+1)===m){ const dd=cur.getDate(); (booked[dd]=booked[dd]||[]).push(d.renter); }
+      cur.setDate(cur.getDate()+1); guard++;
+    }
+  });
+  const firstDay=new Date(y,m-1,1).getDay();       // 0=أحد
+  const daysInMonth=new Date(y,m,0).getDate();
+  const dayNames=['أحد','إثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+  let h='<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center">';
+  h+=dayNames.map(n=>`<div style="font-size:10px;color:var(--dim);font-weight:700;padding:3px 0">${n}</div>`).join('');
+  for(let i=0;i<firstDay;i++) h+='<div></div>';
+  for(let day=1;day<=daysInMonth;day++){
+    const b=booked[day];
+    if(b){
+      h+=`<div style="background:var(--amber);color:#241a00;border-radius:8px;padding:3px 2px;min-height:44px;overflow:hidden">
+        <div style="font-weight:800;font-size:13px">${day}</div>
+        <div style="font-size:8px;line-height:1.1">${esc(b[0])}${b.length>1?' +'+(b.length-1):''}</div></div>`;
+    } else {
+      h+=`<div style="background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 2px;min-height:44px;color:var(--muted);font-size:13px;display:flex;align-items:center;justify-content:center">${day}</div>`;
+    }
+  }
+  h+='</div>';
+  document.getElementById('domecal').innerHTML=h;
+  document.getElementById('dc-booked').textContent=Object.keys(booked).length+' يوم محجوز بالشهر';
+  // year list
+  const yb=db.expo.dome.filter(d=>{ const f=d.dateFrom||d.date; return f && new Date(f).getFullYear()===y; })
+    .sort((a,b)=>((a.dateFrom||a.date)||'').localeCompare((b.dateFrom||b.date)||''));
+  document.getElementById('domecal-year').innerHTML = yb.length ? yb.map(d=>`
+    <div class="item"><div class="info"><div class="t">🎪 ${esc(d.renter)}</div>
+      <div class="s">📅 ${(d.dateFrom||d.date)||'—'} ← ${d.dateTo||'—'} • ${num(d.days)} يوم</div></div>
+    <div class="amt cyan">${money(num(d.total),d.cur)}</div></div>`).join('')
+    : '<div class="empty">لا يوجد حجوزات هذه السنة</div>';
 }
 
 /* ============================================================
