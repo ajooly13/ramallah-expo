@@ -205,6 +205,33 @@
   ::-webkit-scrollbar{width:8px;height:6px}
   ::-webkit-scrollbar-thumb{background:#27336b;border-radius:8px}
 
+  /* ── الواجهة الرئيسية: القبة المضيئة ── */
+  #hero{position:fixed;inset:0;z-index:800;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px;background:linear-gradient(180deg,#03071a 0%,#081030 45%,#0c1740 100%)}
+  #heroSky{position:absolute;inset:0;pointer-events:none}
+  #heroSky .sp{position:absolute;border-radius:50%;background:#dbe6ff;animation:tw var(--d) ease-in-out infinite;animation-delay:var(--dl)}
+  .hero-title{font-size:clamp(28px,6vw,42px);font-weight:900;letter-spacing:1px;background:linear-gradient(120deg,#fff,#ffd77a 55%,#9db4ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;z-index:2}
+  .hero-sub{color:#93a5e8;font-size:11px;letter-spacing:3px;text-transform:uppercase;z-index:2;margin-bottom:4px}
+  .hero-stage{position:relative;width:min(94vw,560px);aspect-ratio:1.08;z-index:2}
+  .hero-dome{position:absolute;left:50%;bottom:2%;transform:translateX(-50%);width:84%}
+  .breathe{animation:breathe 4.5s ease-in-out infinite}
+  @keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
+  .hicon{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;z-index:3;animation:bob 5.5s ease-in-out infinite;animation-delay:var(--bd,0s)}
+  @keyframes bob{0%,100%{margin-top:0}50%{margin-top:-9px}}
+  .hicon .ic{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:25px;background:rgba(14,22,58,.75);border:1px solid rgba(255,214,120,.4);backdrop-filter:blur(8px);box-shadow:0 0 16px rgba(255,205,100,.18);transition:.25s}
+  .hicon:hover .ic{transform:scale(1.14);border-color:#ffd76a;box-shadow:0 0 30px rgba(255,214,110,.5)}
+  .hicon .lb{font-size:11px;font-weight:800;color:#d5defc;text-shadow:0 2px 8px #000;white-space:nowrap}
+  .hero-hint{color:#7787c9;font-size:12px;z-index:2;animation:breathe 3s ease-in-out infinite}
+  @media (max-width:480px){.hicon .ic{width:47px;height:47px;font-size:20px}.hicon .lb{font-size:9.5px}}
+
+  /* ── وضع الاطلاع فقط (بلدية رام الله) ── */
+  body.viewer-mode .company-switch{display:none}
+  body.viewer-mode #co-expo .tab{display:none}
+  body.viewer-mode #co-expo .tab[data-tab="dome"]{display:block}
+  body.viewer-mode #hero{display:none !important}
+  body.viewer-mode #homeBtn{display:none}
+  body.viewer-mode #dome-add-sec{display:none}
+  body.viewer-mode .btn-x{display:none !important}
+
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}}
 }
 </style>
@@ -232,6 +259,56 @@
   </div>
 </div>
 
+<!-- ============ الواجهة الرئيسية: القبة المضيئة ============ -->
+<div id="hero">
+  <div id="heroSky" aria-hidden="true"></div>
+  <div class="hero-title">Ramallah Expo</div>
+  <div class="hero-sub">Cherish every moment of your event</div>
+  <div class="hero-stage">
+    <svg class="hero-dome" viewBox="0 0 600 240" aria-hidden="true">
+      <defs>
+        <radialGradient id="gIn" cx="50%" cy="82%" r="72%">
+          <stop offset="0%" stop-color="#ffe9a8" stop-opacity=".95"/>
+          <stop offset="38%" stop-color="#ffcf5e" stop-opacity=".7"/>
+          <stop offset="72%" stop-color="#c07f1c" stop-opacity=".22"/>
+          <stop offset="100%" stop-color="#c07f1c" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="gHalo" cx="50%" cy="60%" r="55%">
+          <stop offset="0%" stop-color="#ffd76a" stop-opacity=".45"/>
+          <stop offset="100%" stop-color="#ffd76a" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <ellipse class="breathe" cx="300" cy="195" rx="260" ry="100" fill="url(#gHalo)"/>
+      <rect x="0" y="210" width="600" height="30" fill="#04091d"/>
+      <path d="M110 210 A190 190 0 0 1 490 210 Z" fill="url(#gIn)" stroke="#ffdf9e" stroke-opacity=".3" stroke-width="1.5"/>
+      <g fill="none" stroke="#ffe7b0" stroke-opacity=".5" stroke-width="1.5">
+        <path d="M120 150 Q300 128 480 150"/>
+        <path d="M153 90 Q300 72 447 90"/>
+        <path d="M206 45 Q300 33 394 45"/>
+        <path d="M150 210 A150 190 0 0 1 450 210"/>
+        <path d="M205 210 A95 190 0 0 1 395 210"/>
+        <path d="M260 210 A40 190 0 0 1 340 210"/>
+        <path d="M300 20 L300 210"/>
+      </g>
+      <circle cx="300" cy="20" r="3" fill="#fff3cf"/>
+      <path d="M285 210 L315 210 L310 174 L290 174 Z" fill="#fff3c2" opacity=".92"/>
+      <ellipse cx="300" cy="218" rx="160" ry="9" fill="#f7b733" opacity=".14"/>
+      <circle cx="512" cy="52" r="19" fill="#e8edff" opacity=".95"/>
+      <circle cx="520" cy="45" r="17" fill="#081030"/>
+    </svg>
+    <div class="hicon" style="left:50%;top:4%;--bd:0s" onclick="heroGo('dash')"><div class="ic">📊</div><div class="lb">لوحة التحكم</div></div>
+    <div class="hicon" style="left:19%;top:13%;--bd:.4s" onclick="heroGo('kiosks')"><div class="ic">🏪</div><div class="lb">الأكشاك</div></div>
+    <div class="hicon" style="left:81%;top:13%;--bd:.8s" onclick="heroGo('sponsors')"><div class="ic">🤝</div><div class="lb">الرعاية</div></div>
+    <div class="hicon" style="left:5%;top:40%;--bd:1.2s" onclick="heroGo('dome')"><div class="ic">🎪</div><div class="lb">Ramallah Expo</div></div>
+    <div class="hicon" style="left:95%;top:40%;--bd:1.6s" onclick="heroGo('expenses')"><div class="ic">💸</div><div class="lb">المصاريف</div></div>
+    <div class="hicon" style="left:9%;top:68%;--bd:2s" onclick="heroGo('profit')"><div class="ic">👥</div><div class="lb">الأرباح</div></div>
+    <div class="hicon" style="left:91%;top:68%;--bd:2.4s" onclick="heroGo('stmt')"><div class="ic">📅</div><div class="lb">الكشف</div></div>
+    <div class="hicon" style="left:15%;top:91%;--bd:2.8s" onclick="heroGo('backup')"><div class="ic">💾</div><div class="lb">النسخ</div></div>
+    <div class="hicon" style="left:85%;top:91%;--bd:3.2s" onclick="heroMob()"><div class="ic">🎬</div><div class="lb">TheMob</div></div>
+  </div>
+  <div class="hero-hint">✨ اضغط على أي قسم للدخول</div>
+</div>
+
 <div class="topbar">
   <div class="topbar-row">
     <div class="brand">
@@ -239,6 +316,7 @@
       <span style="display:flex;flex-direction:column;line-height:1.25">Ramallah Expo<small id="subBrand">المحاسبة ومتابعة المصاريف</small></span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;order:3">
+      <button id="homeBtn" class="btn btn-ghost btn-sm" onclick="openHero()" title="الرئيسية">🏠</button>
       <span id="sync-status" class="badge" style="font-size:11px">⏳</span>
       <button id="logout-btn" class="btn btn-ghost btn-sm" style="display:none" onclick="authSignOut()">خروج</button>
     </div>
@@ -255,7 +333,7 @@
     <div class="tab active" data-tab="dash" onclick="showTab('dash')">📊 لوحة التحكم</div>
     <div class="tab" data-tab="kiosks" onclick="showTab('kiosks')">🏪 الأكشاك</div>
     <div class="tab" data-tab="sponsors" onclick="showTab('sponsors')">🤝 الرعاية</div>
-    <div class="tab" data-tab="dome" onclick="showTab('dome')">🎪 القبة</div>
+    <div class="tab" data-tab="dome" onclick="showTab('dome')">🎪 Ramallah Expo</div>
     <div class="tab" data-tab="expenses" onclick="showTab('expenses')">💸 المصاريف</div>
     <div class="tab" data-tab="profit" onclick="showTab('profit')">👥 الأرباح</div>
     <div class="tab" data-tab="stmt" onclick="showTab('stmt')">📅 كشف شهري</div>
@@ -317,13 +395,13 @@
 
     <!-- DOME -->
     <div id="tab-dome" class="page">
-      <div class="note">🎪 معرض القبة — تأجير القبة للإيفنتات. سجّل الجهة المستأجرة، مدة الإيجار، الإيجار اليومي، والإجمالي يتحسب تلقائياً.</div>
+      <div class="note">🎪 Ramallah Expo — تأجير القاعة للإيفنتات. سجّل الجهة المستأجرة، المدة من–إلى، الإيجار اليومي، والإجمالي يتحسب تلقائياً.</div>
       <div class="cards">
         <div class="stat"><div class="l">عدد الإيفنتات</div><div class="v cyan" id="dm-count">0</div></div>
-        <div class="stat"><div class="l">إجمالي دخل القبة</div><div class="v" id="dm-total">—</div></div>
+        <div class="stat"><div class="l">إجمالي دخل Ramallah Expo</div><div class="v" id="dm-total">—</div></div>
       </div>
       <div class="section">
-        <h3>📆 أجندة حجوزات القبة <span class="hint" id="dc-booked">—</span></h3>
+        <h3>📆 أجندة حجوزات Ramallah Expo <span class="hint" id="dc-booked">—</span></h3>
         <div style="display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:12px">
           <button class="btn btn-ghost" onclick="domeCalMonth(-1)">‹</button>
           <span id="domecal-label" style="font-weight:800;min-width:130px;text-align:center">—</span>
@@ -336,8 +414,8 @@
         </div>
       </div>
       <div class="section"><h3>📋 حجوزات سنة <span id="domecal-year-label"></span></h3><div id="domecal-year"></div></div>
-      <div class="section">
-        <h3>➕ تسجيل إيجار قبة</h3>
+      <div class="section" id="dome-add-sec">
+        <h3>➕ تسجيل إيجار Ramallah Expo</h3>
         <div class="row"><div><label class="fld">الجهة المستأجرة</label><input id="dm-renter" placeholder="اسم الجهة"></div></div>
         <div class="row">
           <div><label class="fld">المدة (أيام)</label><input id="dm-days" type="number" inputmode="decimal" placeholder="مثلاً 3" oninput="domePreview()"></div>
@@ -765,7 +843,7 @@ function renderDash(){
     <div class="amt">${dual(p)}</div></div>`).join('');
 
   // chart (income sources, ils-equivalent for shape)
-  const labels=['الأكشاك','الرعاية','القبة'];
+  const labels=['الأكشاك','الرعاية','Ramallah Expo'];
   const colors=['#3987e5','#199e70','#9085e9'];
   const vals=[c.inc.kiosks, c.inc.sponsors, c.inc.dome].map(o=>o.ils + o.usd*rate);
   document.getElementById('incomeLegend').innerHTML = labels.map((l,i)=>
@@ -1101,6 +1179,7 @@ function showTab(name){
   renderActive();
 }
 function showCompany(co){
+  if(viewerMode && co==='themob') return;
   currentCompany=co;
   document.getElementById('btn-expo').classList.toggle('active',co==='expo');
   document.getElementById('btn-themob').classList.toggle('active',co==='themob');
@@ -1306,7 +1385,7 @@ function dualPlain(o){ const a=[]; if(Math.round(o.ils)!==0) a.push(money(o.ils,
 function rowGrp(t){
   if(t.indexOf('🏪')===0) return 'الأكشاك';
   if(t.indexOf('🤝')===0) return 'الرعاية والإعلان';
-  if(t.indexOf('🎪')===0) return 'القبة';
+  if(t.indexOf('🎪')===0) return 'Ramallah Expo';
   if(t.indexOf('🏠')===0) return 'التأجير';
   if(t.indexOf('🔧')===0) return 'التركيب';
   if(t.indexOf('💡')===0) return 'التكاليف الثابتة';
@@ -1432,6 +1511,8 @@ const firebaseConfig = {
   appId: "1:374909398111:web:eda6ba3ce9a41d2eb1bfea"
 };
 let fbReady=false, fbAuth=null, fbDb=null, userDocRef=null, pushTimer=null, applyingRemote=false;
+let viewerMode=false, snapUnsub=null;
+const WS_VIEWERS=['ramallahmunicipalit@gmail.com'];   // إيميلات الاطلاع فقط (القبة)
 function setSync(txt,color){ const e=document.getElementById('sync-status'); if(e){ e.textContent=txt; if(color){e.style.color=color; e.style.borderColor=color;} } }
 function renderCurrent(){ if(currentCompany==='expo') renderActive(); else renderActiveMob(); }
 function dbIsEmpty(d){
@@ -1457,39 +1538,76 @@ try {
   setSync('💾 محلي فقط','#f59e0b');
 }
 
+function attachSnap(ref){
+  if(snapUnsub){ snapUnsub(); snapUnsub=null; }
+  snapUnsub = ref.onSnapshot(snap=>{
+    if(snap.metadata.hasPendingWrites) return;        // تجاهل صدى كتابتنا
+    const cloudData = snap.exists ? ((snap.data()||{}).data) : null;
+    if(cloudData && !dbIsEmpty(cloudData)){
+      // السحابة فيها بيانات حقيقية → استخدمها
+      if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak', JSON.stringify(db)); // نسخة أمان قبل الاستبدال
+      applyingRemote=true; db=ensureMob(cloudData); localStorage.setItem(DB_KEY,JSON.stringify(db)); renderCurrent(); applyingRemote=false;
+      setSync(viewerMode?'👁️ اطلاع فقط':'☁️ متزامن', viewerMode?'#f5b942':'#22c55e');
+    } else {
+      // السحابة فاضية أو غير موجودة → لا تمسح المحلي أبداً؛ لو عندنا بيانات ارفعها
+      if(!viewerMode && !dbIsEmpty(db)){ pushCloud(true); } else { setSync(viewerMode?'👁️ اطلاع فقط':'☁️ متزامن', viewerMode?'#f5b942':'#22c55e'); }
+    }
+  }, ()=> setSync('⚠️ خطأ','#ef4444'));
+}
+
+function enterViewerMode(){
+  viewerMode=true;
+  document.body.classList.add('viewer-mode');
+  const h=document.getElementById('hero'); if(h) h.style.display='none';
+  showCompany('expo'); showTab('dome');
+  setSync('👁️ اطلاع فقط','#f5b942');
+}
+
 function handleAuth(user){
   const overlay=document.getElementById('auth-overlay');
   const logout=document.getElementById('logout-btn');
-  if(user){
-    overlay.style.display='none';
-    if(logout) logout.style.display='inline-block';
-    setSync('☁️ متصل','#22c55e');
-    userDocRef = fbDb.collection('users').doc(user.uid);
-    userDocRef.onSnapshot(snap=>{
-      if(snap.metadata.hasPendingWrites) return;        // تجاهل صدى كتابتنا
-      const cloudData = snap.exists ? ((snap.data()||{}).data) : null;
-      if(cloudData && !dbIsEmpty(cloudData)){
-        // السحابة فيها بيانات حقيقية → استخدمها
-        if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak', JSON.stringify(db)); // نسخة أمان قبل الاستبدال
-        applyingRemote=true; db=ensureMob(cloudData); localStorage.setItem(DB_KEY,JSON.stringify(db)); renderCurrent(); applyingRemote=false;
-        setSync('☁️ متزامن','#22c55e');
-      } else {
-        // السحابة فاضية أو غير موجودة → لا تمسح المحلي أبداً؛ لو عندنا بيانات ارفعها
-        if(!dbIsEmpty(db)){ pushCloud(true); } else { setSync('☁️ متزامن','#22c55e'); }
-      }
-    }, ()=> setSync('⚠️ خطأ','#ef4444'));
-  } else {
+  if(!user){
     overlay.style.display='flex';
     if(logout) logout.style.display='none';
-    userDocRef=null;
+    userDocRef=null; viewerMode=false;
+    document.body.classList.remove('viewer-mode');
+    if(snapUnsub){ snapUnsub(); snapUnsub=null; }
     setSync('⏳','#8aa0c4');
+    return;
   }
+  overlay.style.display='none';
+  if(logout) logout.style.display='inline-block';
+  setSync('☁️ متصل','#22c55e');
+  const email=String(user.email||'').toLowerCase();
+  const ws=fbDb.collection('workspaces').doc('main');
+  ws.get().then(snap=>{
+    if(snap.exists){
+      const w=snap.data()||{};
+      const viewers=(w.viewers||[]).map(v=>String(v).toLowerCase());
+      if(w.owner===user.uid){
+        userDocRef=ws;
+        ws.set({owner:user.uid, viewers:WS_VIEWERS},{merge:true}).catch(()=>{});
+        attachSnap(ws);
+      } else if(viewers.indexOf(email)>=0){
+        userDocRef=null; enterViewerMode(); attachSnap(ws);
+      } else {
+        userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef);
+      }
+    } else if(WS_VIEWERS.indexOf(email)>=0){
+      enterViewerMode(); setSync('⏳ بانتظار المالك','#f5b942');
+    } else {
+      // أول دخول للمالك: أنشئ مساحة العمل المشتركة وارفع بياناته
+      ws.set({owner:user.uid, viewers:WS_VIEWERS, data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()})
+        .then(()=>{ userDocRef=ws; attachSnap(ws); })
+        .catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); });
+    }
+  }).catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); });
 }
 
 function pushCloud(immediate){
-  if(!userDocRef) return;
+  if(!userDocRef || viewerMode) return;
   clearTimeout(pushTimer);
-  const doIt=()=>{ setSync('⏳ يحفظ…','#f59e0b'); userDocRef.set({data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>setSync('☁️ متزامن','#22c55e')).catch(()=>setSync('⚠️ غير متصل','#ef4444')); };
+  const doIt=()=>{ setSync('⏳ يحفظ…','#f59e0b'); userDocRef.set({data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>setSync('☁️ متزامن','#22c55e')).catch(()=>setSync('⚠️ غير متصل','#ef4444')); };
   if(immediate) doIt(); else pushTimer=setTimeout(doIt,800);
 }
 
@@ -1514,18 +1632,27 @@ function authSignUp(){ document.getElementById('auth-error').style.display='none
 function authSignOut(){ if(fbAuth) fbAuth.signOut(); }
 
 /* ── V2 FX: شفق + نجوم متلألئة ── */
+function sprinkleStars(el,count){
+  if(!el) return; let h='';
+  for(let i=0;i<count;i++){
+    const s=(1.5+Math.random()*2.6).toFixed(1);
+    h+='<div class="sp" style="left:'+(Math.random()*100).toFixed(1)+'%;top:'+(Math.random()*100).toFixed(1)+'%;width:'+s+'px;height:'+s+'px;--d:'+(4+Math.random()*7).toFixed(1)+'s;--dl:-'+(Math.random()*7).toFixed(1)+'s"></div>';
+  }
+  el.innerHTML+=h;
+}
 (function(){
   try{
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const fx=document.getElementById('fx');
-    if(!fx || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-    let h='<div class="aur a1"></div><div class="aur a2"></div>';
-    for(let i=0;i<26;i++){
-      const s=(2+Math.random()*2.5).toFixed(1);
-      h+='<div class="sp" style="left:'+(Math.random()*100).toFixed(1)+'%;top:'+(Math.random()*100).toFixed(1)+'%;width:'+s+'px;height:'+s+'px;--d:'+(4+Math.random()*7).toFixed(1)+'s;--dl:-'+(Math.random()*7).toFixed(1)+'s"></div>';
-    }
-    fx.innerHTML=h;
+    if(fx){ fx.innerHTML='<div class="aur a1"></div><div class="aur a2"></div>'; sprinkleStars(fx,26); }
+    sprinkleStars(document.getElementById('heroSky'),44);
   }catch(e){}
 })();
+
+/* ── الواجهة الرئيسية ── */
+function heroGo(tab){ const h=document.getElementById('hero'); if(h) h.style.display='none'; showCompany('expo'); showTab(tab); }
+function heroMob(){ const h=document.getElementById('hero'); if(h) h.style.display='none'; showCompany('themob'); }
+function openHero(){ if(viewerMode) return; const h=document.getElementById('hero'); if(h) h.style.display='flex'; }
 </script>
 </body>
 </html>
