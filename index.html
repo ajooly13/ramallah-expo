@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0b1120">
+<meta name="theme-color" content="#070d26">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Business Portal">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230b1120'/%3E%3Ctext x='90' y='122' font-size='90' text-anchor='middle'%3E%F0%9F%8F%A2%3C/text%3E%3C/svg%3E">
-<title>بوابة الشركات — المحاسبة</title>
+<meta name="apple-mobile-web-app-title" content="Ramallah Expo">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23101c4d'/%3E%3Cg fill='none' stroke='white' stroke-linecap='round'%3E%3Cpath d='M35 122 A55 55 0 0 1 145 122' stroke-width='7' stroke-dasharray='0.1 12'/%3E%3Cpath d='M52 122 A38 38 0 0 1 128 122' stroke-width='7' stroke-dasharray='0.1 13'/%3E%3Cpath d='M69 122 A21 21 0 0 1 111 122' stroke-width='7' stroke-dasharray='0.1 14'/%3E%3Cpath d='M28 122 H152' stroke-width='7' stroke-dasharray='0.1 12'/%3E%3C/g%3E%3Ctext x='124' y='55' font-size='34' fill='white'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<title>Ramallah Expo — بوابة الشركات</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -116,14 +116,111 @@
     .pos{ color:#0a0 !important; } .neg{ color:#c00 !important; } .cyan,.ils{ color:#036 !important; } .usd{ color:#060 !important; }
   }
 </style>
+<style id="v2">
+@media screen{
+  :root{
+    --bg:#070d26; --panel:#111a44; --panel2:#0c1338; --line:#27336b;
+    --text:#eef2ff; --muted:#9fabdd; --dim:#6472a8;
+    --blue:#4f7dff; --green:#2fd28f; --red:#ff5f6b; --amber:#f5b942;
+    --purple:#a98bff; --cyan:#37d3f2; --teal:#2cd4b4;
+    --glow:0 10px 34px rgba(79,125,255,.22);
+  }
+  body{background:
+    radial-gradient(1100px 560px at 88% -12%, rgba(79,125,255,.16), transparent 60%),
+    radial-gradient(900px 520px at -12% 112%, rgba(55,211,242,.10), transparent 55%),
+    var(--bg);}
+
+  /* خلفية متحركة: شفق + نجوم */
+  #fx{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  #fx .aur{position:absolute;width:65vmax;height:65vmax;border-radius:50%;filter:blur(70px);animation:drift 26s ease-in-out infinite alternate}
+  #fx .a1{background:radial-gradient(circle,rgba(79,125,255,.18),transparent 62%);top:-24vmax;right:-18vmax}
+  #fx .a2{background:radial-gradient(circle,rgba(55,211,242,.11),transparent 62%);bottom:-28vmax;left:-18vmax;animation-delay:-13s}
+  @keyframes drift{to{transform:translate(-7vmax,5vmax) scale(1.18)}}
+  #fx .sp{position:absolute;border-radius:50%;background:#cfe0ff;animation:tw var(--d) ease-in-out infinite;animation-delay:var(--dl)}
+  @keyframes tw{0%,100%{opacity:.08;transform:translateY(0) scale(.7)}50%{opacity:.75;transform:translateY(-16px) scale(1.2)}}
+
+  /* لوغو القبة المنقّطة المتحرك */
+  .domesvg{display:block}
+  .domesvg path{animation:march 7s linear infinite}
+  .domesvg .d2{animation-duration:10s;animation-direction:reverse}
+  .domesvg .d3{animation-duration:12s}
+  .domesvg .d4{animation-duration:8.5s;animation-direction:reverse}
+  @keyframes march{to{stroke-dashoffset:-18.2}}
+  .domesvg .star{transform-box:fill-box;transform-origin:center;animation:sparkle 2.8s ease-in-out infinite}
+  @keyframes sparkle{0%,100%{opacity:.4;transform:scale(.75) rotate(0deg)}50%{opacity:1;transform:scale(1.25) rotate(25deg)}}
+
+  .topbar{background:rgba(9,15,42,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(79,125,255,.22);box-shadow:0 10px 34px rgba(0,0,0,.35)}
+  .brand{display:flex;align-items:center;gap:11px;font-size:19px;font-weight:900;letter-spacing:.4px}
+  .brand small{margin-top:3px}
+
+  .company-switch button{border-radius:12px;transition:all .25s}
+  .company-switch button.active{background:linear-gradient(135deg,#4f7dff,#37d3f2);border-color:transparent;color:#fff;box-shadow:var(--glow)}
+
+  .tabs{background:rgba(12,19,56,.82);backdrop-filter:blur(12px)}
+  .tab{position:relative;border-bottom:2px solid transparent !important;transition:color .2s}
+  .tab::after{content:'';position:absolute;right:12px;left:12px;bottom:-1px;height:3px;border-radius:3px;background:linear-gradient(90deg,#4f7dff,#37d3f2);transform:scaleX(0);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  .tab.active::after{transform:scaleX(1)}
+
+  .page.active{animation:pageIn .4s cubic-bezier(.2,.75,.2,1) both}
+  @keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  .section,.stat{border-radius:16px;border:1px solid rgba(79,125,255,.15);background:linear-gradient(180deg,rgba(79,125,255,.07),rgba(17,26,68,.92));box-shadow:0 8px 26px rgba(0,0,0,.3);transition:transform .25s,box-shadow .25s,border-color .25s}
+  .stat:hover{transform:translateY(-3px);border-color:rgba(79,125,255,.45);box-shadow:var(--glow)}
+  .cards .stat{animation:pageIn .55s both}
+  .cards .stat:nth-child(2){animation-delay:.07s}
+  .cards .stat:nth-child(3){animation-delay:.14s}
+  .cards .stat:nth-child(4){animation-delay:.21s}
+  .cards .stat:nth-child(5){animation-delay:.28s}
+  .cards .stat:nth-child(6){animation-delay:.35s}
+
+  .btn{border-radius:12px;transition:transform .15s,box-shadow .2s,filter .2s}
+  .btn:hover{filter:brightness(1.12);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+  .btn:active{transform:scale(.95)}
+  .btn-blue{background:linear-gradient(135deg,#4f7dff,#3557e0)}
+  .btn-green{background:linear-gradient(135deg,#2fd28f,#17a86d)}
+  .btn-amber{background:linear-gradient(135deg,#ffd35c,#f0a221);color:#221a00}
+  input,select{border-radius:11px;transition:border-color .2s,box-shadow .2s}
+  input:focus,select:focus{border-color:#4f7dff;box-shadow:0 0 0 3px rgba(79,125,255,.25)}
+
+  .item{border-radius:12px;transition:border-color .2s,transform .2s}
+  .item:hover{border-color:rgba(79,125,255,.4);transform:translateY(-1px)}
+
+  .kiosk{border-radius:14px;transition:.25s}
+  .kiosk.open{border-color:rgba(79,125,255,.5);box-shadow:var(--glow)}
+  .kiosk .tag{background:linear-gradient(135deg,#4f7dff,#37d3f2)}
+  .kiosk-body{animation:pageIn .32s both}
+
+  .note{background:linear-gradient(135deg,rgba(79,125,255,.13),rgba(55,211,242,.07));border:1px solid rgba(79,125,255,.3);color:#c6d6ff}
+  .badge{background:rgba(12,19,56,.7)}
+
+  #auth-overlay{background:
+    radial-gradient(900px 500px at 50% -8%, rgba(79,125,255,.28), transparent 60%),
+    radial-gradient(700px 420px at 100% 100%, rgba(55,211,242,.12), transparent 55%),
+    var(--bg)}
+  #auth-overlay>div{background:rgba(15,23,60,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(79,125,255,.32);box-shadow:0 24px 70px rgba(0,0,0,.55);border-radius:22px;animation:authIn .6s cubic-bezier(.2,.75,.2,1) both}
+  @keyframes authIn{from{opacity:0;transform:translateY(26px) scale(.96)}to{opacity:1;transform:none}}
+  .auth-brand{text-align:center;font-size:26px;font-weight:900;letter-spacing:.5px;background:linear-gradient(120deg,#fff,#9db4ff 70%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0 2px}
+  .auth-tag{text-align:center;color:#8fa2e0;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+
+  ::-webkit-scrollbar{width:8px;height:6px}
+  ::-webkit-scrollbar-thumb{background:#27336b;border-radius:8px}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}}
+}
+</style>
 </head>
 <body>
 
+<div id="fx" aria-hidden="true"></div>
+
 <div id="auth-overlay" style="position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px">
   <div style="width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px">
-    <div style="text-align:center;font-size:36px">🏢</div>
-    <h2 style="text-align:center;margin:6px 0 4px;font-size:20px">بوابة الشركات</h2>
-    <p style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px">سجّل دخول لمزامنة بياناتك على كل أجهزتك</p>
+    <div style="display:flex;justify-content:center;margin-top:4px">
+      <svg class="domesvg" viewBox="0 0 120 64" width="150" aria-hidden="true"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="4"><path class="d1" d="M12 58 A48 48 0 0 1 108 58" stroke-dasharray="0.1 9"/><path class="d2" d="M27 58 A33 33 0 0 1 93 58" stroke-dasharray="0.1 9.5"/><path class="d3" d="M42 58 A18 18 0 0 1 78 58" stroke-dasharray="0.1 10"/><path class="d4" d="M8 58 H112" stroke-dasharray="0.1 9"/></g><text class="star" x="92" y="16" font-size="18" fill="#fff">✦</text></svg>
+    </div>
+    <div class="auth-brand">Ramallah Expo</div>
+    <div class="auth-tag">Cherish every moment of your event</div>
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px">بوابة الشركات — سجّل دخول لمزامنة بياناتك على كل أجهزتك</p>
     <label class="fld">الإيميل</label>
     <input id="auth-email" type="email" placeholder="you@example.com" style="margin-bottom:10px">
     <label class="fld">كلمة السر</label>
@@ -137,7 +234,10 @@
 
 <div class="topbar">
   <div class="topbar-row">
-    <div class="brand">🏢 بوابة الشركات<small id="subBrand">المحاسبة ومتابعة المصاريف</small></div>
+    <div class="brand">
+      <svg class="domesvg" viewBox="0 0 120 64" width="52" aria-hidden="true"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="4"><path class="d1" d="M12 58 A48 48 0 0 1 108 58" stroke-dasharray="0.1 9"/><path class="d2" d="M27 58 A33 33 0 0 1 93 58" stroke-dasharray="0.1 9.5"/><path class="d3" d="M42 58 A18 18 0 0 1 78 58" stroke-dasharray="0.1 10"/><path class="d4" d="M8 58 H112" stroke-dasharray="0.1 9"/></g><text class="star" x="92" y="16" font-size="18" fill="#fff">✦</text></svg>
+      <span style="display:flex;flex-direction:column;line-height:1.25">Ramallah Expo<small id="subBrand">المحاسبة ومتابعة المصاريف</small></span>
+    </div>
     <div style="display:flex;align-items:center;gap:8px;order:3">
       <span id="sync-status" class="badge" style="font-size:11px">⏳</span>
       <button id="logout-btn" class="btn btn-ghost btn-sm" style="display:none" onclick="authSignOut()">خروج</button>
@@ -666,7 +766,7 @@ function renderDash(){
 
   // chart (income sources, ils-equivalent for shape)
   const labels=['الأكشاك','الرعاية','القبة'];
-  const colors=['#3b82f6','#a855f7','#14b8a6'];
+  const colors=['#3987e5','#199e70','#9085e9'];
   const vals=[c.inc.kiosks, c.inc.sponsors, c.inc.dome].map(o=>o.ils + o.usd*rate);
   document.getElementById('incomeLegend').innerHTML = labels.map((l,i)=>
     `<span style="font-size:12px;display:flex;align-items:center;gap:5px"><i style="width:10px;height:10px;border-radius:50%;background:${colors[i]};display:inline-block"></i>${l}</span>`).join('');
@@ -674,7 +774,7 @@ function renderDash(){
     const ctx=document.getElementById('incomeChart');
     if(incomeChart) incomeChart.destroy();
     if(vals.some(v=>v>0)){
-      incomeChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderColor:'#0b1120',borderWidth:3}]},
+      incomeChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderColor:'#0c1338',borderWidth:3}]},
         options:{cutout:'66%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.label}: ${money(c.parsed,'₪')} (تقريبي)`}}}}});
     } else if(incomeChart){ incomeChart.destroy(); incomeChart=null; }
   }
@@ -776,13 +876,17 @@ function renderSponsors(){
       <div class="cur-sel"><select onchange="setSponsor('${s.id}','cur',this.value)">${curOpts(s.cur)}</select></div>
       <div style="flex:0 0 90px"><select onchange="setSponsor('${s.id}','period',this.value)">${periodOpts(s.period||'شهري')}</select></div>
       ${s.fixed?'':`<button class="btn-x btn" onclick="delSponsor('${s.id}')">✕</button>`}
+      <div style="flex:1 1 100%;display:flex;gap:8px;margin-top:6px">
+        <div style="flex:1"><label class="fld">من تاريخ</label><input type="date" value="${esc(s.dateFrom||'')}" onchange="setSponsor('${s.id}','dateFrom',this.value)"></div>
+        <div style="flex:1"><label class="fld">إلى تاريخ</label><input type="date" value="${esc(s.dateTo||'')}" onchange="setSponsor('${s.id}','dateTo',this.value)"></div>
+      </div>
     </div>`;
   }).join('');
   document.getElementById('sponsors-list').innerHTML=html;
   document.getElementById('sp-count').textContent=count;
   document.getElementById('sp-total').innerHTML=dual(tot);
 }
-function setSponsor(id,field,val){ const s=db.expo.sponsors.find(x=>x.id===id); if(s){ s[field]=val; if(field==='amount' && num(val)>0 && !s.date) s.date=today(); commit(); } }
+function setSponsor(id,field,val){ const s=db.expo.sponsors.find(x=>x.id===id); if(s){ s[field]=val; if(field==='amount' && num(val)>0 && !s.date) s.date=today(); if(field==='dateFrom' && val) s.date=val; commit(); } }
 function addSponsor(){ db.expo.sponsors.push({id:uid(),label:'راعٍ إضافي',sponsor:'',amount:'',cur:'₪',period:'شهري',fixed:false}); commit(); }
 function delSponsor(id){ db.expo.sponsors=db.expo.sponsors.filter(x=>x.id!==id); commit(); }
 
@@ -1408,6 +1512,20 @@ function authSignIn(){ document.getElementById('auth-error').style.display='none
 function authSignUp(){ document.getElementById('auth-error').style.display='none';
   fbAuth.createUserWithEmailAndPassword(val('auth-email').trim(), val('auth-pass')).catch(err=>authShowErr(mapAuthErr(err.code))); }
 function authSignOut(){ if(fbAuth) fbAuth.signOut(); }
+
+/* ── V2 FX: شفق + نجوم متلألئة ── */
+(function(){
+  try{
+    const fx=document.getElementById('fx');
+    if(!fx || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    let h='<div class="aur a1"></div><div class="aur a2"></div>';
+    for(let i=0;i<26;i++){
+      const s=(2+Math.random()*2.5).toFixed(1);
+      h+='<div class="sp" style="left:'+(Math.random()*100).toFixed(1)+'%;top:'+(Math.random()*100).toFixed(1)+'%;width:'+s+'px;height:'+s+'px;--d:'+(4+Math.random()*7).toFixed(1)+'s;--dl:-'+(Math.random()*7).toFixed(1)+'s"></div>';
+    }
+    fx.innerHTML=h;
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
