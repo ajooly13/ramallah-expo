@@ -262,14 +262,22 @@
   .btn,.tab,.hicon,.item,.kiosk-head,.company-switch button{touch-action:manipulation}
   @media (max-width:768px){ input,select,textarea{font-size:16px !important} }
 
-  /* ── وضع الاطلاع فقط (بلدية رام الله) ── */
+  /* ── وضع الاطلاع فقط (بلدية رام الله): كل اكسبو ما عدا الشركاء — بدون تعديل ── */
   body.viewer-mode .company-switch{display:none}
-  body.viewer-mode #co-expo .tab{display:none}
-  body.viewer-mode #co-expo .tab[data-tab="dome"]{display:block}
   body.viewer-mode #hero{display:none !important}
   body.viewer-mode #homeBtn{display:none}
-  body.viewer-mode #dome-add-sec{display:none}
+  body.viewer-mode #co-expo .tab[data-tab="profit"]{display:none}
+  body.viewer-mode .partners-sec{display:none !important}
+  body.viewer-mode #co-expo input,body.viewer-mode #co-expo select{pointer-events:none;opacity:.65}
   body.viewer-mode .btn-x{display:none !important}
+  body.viewer-mode #dome-add-sec{display:none !important}
+  body.viewer-mode [onclick="addExpense()"],body.viewer-mode [onclick="addSponsor()"],
+  body.viewer-mode [onclick="addPartner()"],body.viewer-mode [onclick="wipeAll()"],
+  body.viewer-mode [onclick^="logKioskRent"],body.viewer-mode [onclick^="addKioskOther"]{display:none !important}
+
+  /* نافذة إنشاء الحسابات — للأدمن فقط */
+  #admin-users-sec{display:none}
+  body.admin-mode #admin-users-sec{display:block}
 
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}}
 }
@@ -293,8 +301,8 @@
     <input id="auth-pass" type="password" placeholder="6 أحرف على الأقل" style="margin-bottom:14px">
     <div id="auth-error" style="color:var(--red);font-size:13px;margin-bottom:10px;display:none"></div>
     <button class="btn btn-green" style="width:100%;margin-bottom:8px" onclick="authSignIn()">تسجيل الدخول</button>
-    <button class="btn btn-ghost" style="width:100%" onclick="authSignUp()">إنشاء حساب جديد</button>
     <div style="text-align:center;margin-top:12px"><a href="#" onclick="authForgot();return false" style="color:#8fa2e0;font-size:12.5px;text-decoration:underline">🔑 نسيت كلمة السر؟</a></div>
+    <p style="text-align:center;color:var(--dim);font-size:11px;margin-top:8px">الحسابات الجديدة تُنشأ من الإدارة فقط</p>
     <p style="text-align:center;color:var(--dim);font-size:11px;margin-top:14px">🔒 بياناتك محفوظة بأمان في حسابك فقط</p>
   </div>
 </div>
@@ -425,7 +433,7 @@
         <div id="incomeLegend" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px"></div>
       </div>
 
-      <div class="section">
+      <div class="section partners-sec">
         <h3>👥 حصص الشركاء من صافي الربح</h3>
         <div id="dash-partners"></div>
       </div>
@@ -571,7 +579,7 @@
         <div class="stat full"><div class="l">💰 صافي الربح</div><div class="v" id="stmt-net">—</div></div>
       </div>
       <div class="section" id="stmt-breakdown-sec" style="display:none"><h3>📊 تفصيل شهور السنة (صافي كل شهر)</h3><div id="stmt-breakdown"></div></div>
-      <div class="section"><h3>👥 حصص الشركاء</h3><div id="stmt-partners"></div></div>
+      <div class="section partners-sec"><h3>👥 حصص الشركاء</h3><div id="stmt-partners"></div></div>
       <div class="section"><h3>📋 حركات الشهر</h3><div id="stmt-rows"></div></div>
     </div>
 
@@ -595,6 +603,17 @@
           <div><label class="fld">1 دولار = كم شيكل؟</label><input id="rate" type="number" inputmode="decimal" onchange="setRate(this.value)"></div>
         </div>
       </div>
+      <div class="section" id="admin-users-sec">
+        <h3>👤 إدارة الحسابات <span class="hint">للأدمن فقط — علي وجواد</span></h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">إنشاء حساب جديد للتطبيق. الحساب الجديد بيشوف بياناته الخاصة فقط إلا إذا أضفنا صلاحيات إله.</p>
+        <div class="row">
+          <div><label class="fld">الإيميل</label><input id="au-email" type="email" placeholder="user@example.com"></div>
+          <div><label class="fld">كلمة السر (6 أحرف+)</label><input id="au-pass" type="text" placeholder="******"></div>
+        </div>
+        <div id="au-msg" style="font-size:13px;margin-bottom:8px;display:none"></div>
+        <button class="btn btn-blue" onclick="adminCreateUser()">➕ إنشاء الحساب</button>
+      </div>
+
       <div class="section">
         <h3>🗑️ تصفير</h3>
         <button class="btn btn-ghost btn-sm" onclick="wipeAll()">حذف كل بيانات Ramallah Expo</button>
@@ -1474,7 +1493,7 @@ function stmtToExcel(company){
   c.rows.forEach(r=>{ body+=`<tr><td>${rowGrp(r.t)}</td><td>${(r.t||'').replace(/<[^>]*>/g,'')}</td><td>${r.date||''}</td><td>${r.kind==='in'?Math.round(num(r.amount)):''}</td><td>${r.kind==='out'?Math.round(num(r.amount)):''}</td><td>${r.cur}</td></tr>`; });
   if(c.silent && (c.silent.ils||c.silent.usd)){ if(c.silent.ils) body+=`<tr><td>اقتطاعات</td><td>بلدية رام الله 10%</td><td></td><td></td><td>${Math.round(c.silent.ils)}</td><td>₪</td></tr>`; if(c.silent.usd) body+=`<tr><td>اقتطاعات</td><td>بلدية رام الله 10%</td><td></td><td></td><td>${Math.round(c.silent.usd)}</td><td>$</td></tr>`; }
   let ptr='';
-  c.partners.forEach(p=>{ ptr+=`<tr><td>حصص الشركاء</td><td>${p.name} (${p.pct}%)</td><td></td><td colspan="3">${Math.round(p.ils)} ₪ / ${Math.round(p.usd)} $</td></tr>`; });
+  if(!viewerMode){ c.partners.forEach(p=>{ ptr+=`<tr><td>حصص الشركاء</td><td>${p.name} (${p.pct}%)</td><td></td><td colspan="3">${Math.round(p.ils)} ₪ / ${Math.round(p.usd)} $</td></tr>`; }); }
   const table=`<table border="1" cellspacing="0" cellpadding="4">
     <tr><th colspan="6" style="font-size:16px">${title}</th></tr>
     <tr><th>القسم</th><th>البند</th><th>التاريخ</th><th>دخل</th><th>مصروف</th><th>العملة</th></tr>
@@ -1574,7 +1593,9 @@ const firebaseConfig = {
 };
 let fbReady=false, fbAuth=null, fbDb=null, userDocRef=null, pushTimer=null, applyingRemote=false;
 let viewerMode=false, snapUnsub=null;
-const WS_VIEWERS=['ramallahmunicipalit@gmail.com'];   // إيميلات الاطلاع فقط (القبة)
+const WS_ADMINS=['ali8ittqanlaw@gmail.com','jmaher2023@icloud.com'];   // بيقدروا ينشئوا حسابات من جوا التطبيق
+const WS_OWNER=['jmaher2023@icloud.com'];                              // دفتر اكسبو اللي بتراقبه البلدية = حساب جواد (خاص، علي ما بيشوفه)
+const WS_VIEWERS=['ramallahmunicipalit@gmail.com'];                    // اطلاع فقط: كل اكسبو ما عدا الشركاء
 function setSync(txt,color){ const e=document.getElementById('sync-status'); if(e){ e.textContent=txt; if(color){e.style.color=color; e.style.borderColor=color;} } }
 function renderCurrent(){ if(currentCompany==='expo') renderActive(); else renderActiveMob(); }
 function dbIsEmpty(d){
@@ -1622,7 +1643,7 @@ function enterViewerMode(){
   viewerMode=true;
   document.body.classList.add('viewer-mode');
   const h=document.getElementById('hero'); if(h) h.style.display='none';
-  showCompany('expo'); showTab('dome');
+  showCompany('expo'); showTab('dash');
   setSync('👁️ اطلاع فقط','#f5b942');
 }
 
@@ -1643,34 +1664,35 @@ function handleAuth(user){
   if(logout) logout.style.display='inline-block';
   setSync('☁️ متصل','#22c55e');
   const email=String(user.email||'').toLowerCase();
-  const isViewerEmail = WS_VIEWERS.indexOf(email)>=0;
-  if(isViewerEmail){ enterViewerMode(); }   // البلدية: من أول لحظة قبة فقط — لا واجهة ولا TheMob
+  const isAdmin = WS_ADMINS.indexOf(email)>=0;          // نافذة إنشاء الحسابات
+  const isWsOwner = WS_OWNER.indexOf(email)>=0;          // جواد: دفتر اكسبو المُراقَب
+  const isViewerEmail = WS_VIEWERS.indexOf(email)>=0;    // البلدية
+  document.body.classList.toggle('admin-mode', isAdmin);
+  if(isViewerEmail){ enterViewerMode(); }   // البلدية: اطلاع فقط من أول لحظة — لا واجهة ولا TheMob ولا شركاء
   const ws=fbDb.collection('workspaces').doc('main');
-  ws.get().then(snap=>{
-    if(snap.exists){
-      const w=snap.data()||{};
-      const viewers=(w.viewers||[]).map(v=>String(v).toLowerCase());
-      if(!isViewerEmail && w.owner===user.uid){
+  if(isWsOwner){
+    // جواد: مساحته الخاصة (اللي بتشوفها البلدية) — علي ما إله علاقة فيها
+    ws.get().then(snap=>{
+      if(snap.exists){
         userDocRef=ws;
-        ws.set({owner:user.uid, viewers:WS_VIEWERS},{merge:true}).catch(()=>{});
+        ws.set({viewers:WS_VIEWERS},{merge:true}).catch(()=>{});
         attachSnap(ws); openHero();
-      } else if(isViewerEmail || viewers.indexOf(email)>=0){
-        userDocRef=null; if(!viewerMode) enterViewerMode(); attachSnap(ws);
       } else {
-        userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero();
+        ws.set({owner:user.uid, viewers:WS_VIEWERS, data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()})
+          .then(()=>{ userDocRef=ws; attachSnap(ws); openHero(); })
+          .catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero(); });
       }
-    } else if(isViewerEmail){
-      setSync('⏳ بانتظار المالك','#f5b942');
-    } else {
-      // أول دخول للمالك: أنشئ مساحة العمل المشتركة وارفع بياناته
-      ws.set({owner:user.uid, viewers:WS_VIEWERS, data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()})
-        .then(()=>{ userDocRef=ws; attachSnap(ws); openHero(); })
-        .catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero(); });
-    }
-  }).catch(()=>{
-    if(isViewerEmail){ setSync('⚠️ لا يمكن الاتصال','#ef4444'); return; }
+    }).catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero(); });
+  } else if(isViewerEmail){
+    // البلدية: قراءة دفتر جواد فقط
+    ws.get().then(snap=>{
+      if(snap.exists){ userDocRef=null; attachSnap(ws); }
+      else { setSync('⏳ بانتظار حساب جواد يفتح أول مرة','#f5b942'); }
+    }).catch(()=>{ setSync('⚠️ الصلاحيات لسا ما تفعّلت','#ef4444'); });
+  } else {
+    // علي وباقي الحسابات: بيانات خاصة لكل حساب لحاله (خصوصية كاملة)
     userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero();
-  });
+  }
 }
 
 function pushCloud(immediate){
@@ -1699,6 +1721,18 @@ function authSignIn(){ document.getElementById('auth-error').style.display='none
 function authSignUp(){ document.getElementById('auth-error').style.display='none';
   fbAuth.createUserWithEmailAndPassword(val('auth-email').trim(), val('auth-pass')).catch(err=>authShowErr(mapAuthErr(err.code))); }
 function authSignOut(){ if(fbAuth) fbAuth.signOut(); }
+let secApp=null;
+function adminCreateUser(){
+  const msg=document.getElementById('au-msg');
+  const show=(t,ok)=>{ msg.textContent=t; msg.style.display='block'; msg.style.color= ok?'var(--green)':'var(--red)'; };
+  const em=val('au-email').trim(), pw=val('au-pass');
+  if(!em || pw.length<6){ show('اكتب إيميل صحيح وكلمة سر 6 أحرف على الأقل', false); return; }
+  try{ if(!secApp) secApp=firebase.initializeApp(firebaseConfig,'secondary'); }catch(e){}
+  const sAuth=firebase.auth(secApp);
+  sAuth.createUserWithEmailAndPassword(em,pw)
+    .then(()=>{ sAuth.signOut(); show('✅ تم إنشاء الحساب: '+em+' — سلّمه الإيميل وكلمة السر', true); document.getElementById('au-email').value=''; document.getElementById('au-pass').value=''; })
+    .catch(err=>show(mapAuthErr(err.code), false));
+}
 function authForgot(){
   const errEl=document.getElementById('auth-error');
   errEl.style.display='none'; errEl.style.color='var(--red)';
