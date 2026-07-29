@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#070d26">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -223,6 +223,11 @@
   .hero-hint{color:#7787c9;font-size:12px;z-index:2;animation:breathe 3s ease-in-out infinite}
   @media (max-width:480px){.hicon .ic{width:47px;height:47px;font-size:20px}.hicon .lb{font-size:9.5px}}
 
+  /* ── إلغاء الزوم على التلفون عند الضغط ── */
+  html,body{touch-action:manipulation}
+  .btn,.tab,.hicon,.item,.kiosk-head,.company-switch button{touch-action:manipulation}
+  @media (max-width:768px){ input,select,textarea{font-size:16px !important} }
+
   /* ── وضع الاطلاع فقط (بلدية رام الله) ── */
   body.viewer-mode .company-switch{display:none}
   body.viewer-mode #co-expo .tab{display:none}
@@ -259,8 +264,8 @@
   </div>
 </div>
 
-<!-- ============ الواجهة الرئيسية: القبة المضيئة ============ -->
-<div id="hero">
+<!-- ============ الواجهة الرئيسية: القبة المضيئة (تظهر بعد تسجيل الدخول فقط) ============ -->
+<div id="hero" style="display:none">
   <div id="heroSky" aria-hidden="true"></div>
   <div class="hero-title">Ramallah Expo</div>
   <div class="hero-sub">Cherish every moment of your event</div>
@@ -1535,6 +1540,7 @@ try {
   fbAuth.onAuthStateChanged(handleAuth);
 } catch(e){
   document.getElementById('auth-overlay').style.display='none';
+  const hh=document.getElementById('hero'); if(hh) hh.style.display='flex';
   setSync('💾 محلي فقط','#f59e0b');
 }
 
@@ -1571,6 +1577,7 @@ function handleAuth(user){
     if(logout) logout.style.display='none';
     userDocRef=null; viewerMode=false;
     document.body.classList.remove('viewer-mode');
+    const hh=document.getElementById('hero'); if(hh) hh.style.display='none';   // الواجهة تختفي قبل الدخول
     if(snapUnsub){ snapUnsub(); snapUnsub=null; }
     setSync('⏳','#8aa0c4');
     return;
@@ -1579,29 +1586,34 @@ function handleAuth(user){
   if(logout) logout.style.display='inline-block';
   setSync('☁️ متصل','#22c55e');
   const email=String(user.email||'').toLowerCase();
+  const isViewerEmail = WS_VIEWERS.indexOf(email)>=0;
+  if(isViewerEmail){ enterViewerMode(); }   // البلدية: من أول لحظة قبة فقط — لا واجهة ولا TheMob
   const ws=fbDb.collection('workspaces').doc('main');
   ws.get().then(snap=>{
     if(snap.exists){
       const w=snap.data()||{};
       const viewers=(w.viewers||[]).map(v=>String(v).toLowerCase());
-      if(w.owner===user.uid){
+      if(!isViewerEmail && w.owner===user.uid){
         userDocRef=ws;
         ws.set({owner:user.uid, viewers:WS_VIEWERS},{merge:true}).catch(()=>{});
-        attachSnap(ws);
-      } else if(viewers.indexOf(email)>=0){
-        userDocRef=null; enterViewerMode(); attachSnap(ws);
+        attachSnap(ws); openHero();
+      } else if(isViewerEmail || viewers.indexOf(email)>=0){
+        userDocRef=null; if(!viewerMode) enterViewerMode(); attachSnap(ws);
       } else {
-        userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef);
+        userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero();
       }
-    } else if(WS_VIEWERS.indexOf(email)>=0){
-      enterViewerMode(); setSync('⏳ بانتظار المالك','#f5b942');
+    } else if(isViewerEmail){
+      setSync('⏳ بانتظار المالك','#f5b942');
     } else {
       // أول دخول للمالك: أنشئ مساحة العمل المشتركة وارفع بياناته
       ws.set({owner:user.uid, viewers:WS_VIEWERS, data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()})
-        .then(()=>{ userDocRef=ws; attachSnap(ws); })
-        .catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); });
+        .then(()=>{ userDocRef=ws; attachSnap(ws); openHero(); })
+        .catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero(); });
     }
-  }).catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); });
+  }).catch(()=>{
+    if(isViewerEmail){ setSync('⚠️ لا يمكن الاتصال','#ef4444'); return; }
+    userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero();
+  });
 }
 
 function pushCloud(immediate){
