@@ -300,6 +300,16 @@
   </div>
 </div>
 
+<!-- ============ قفل البصمة ============ -->
+<div id="bioLock" style="display:none;position:fixed;inset:0;z-index:990;background:linear-gradient(180deg,#03071a,#0a1236);flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;text-align:center">
+  <div style="font-size:54px">🔒</div>
+  <div style="font-size:19px;font-weight:900">Ramallah Expo مقفول</div>
+  <div style="color:var(--muted);font-size:13px">أكّد هويتك ببصمة الوجه أو الإصبع للمتابعة</div>
+  <div id="bio-err" style="display:none;color:var(--red);font-size:13px"></div>
+  <button class="btn btn-blue" style="font-size:16px;padding:13px 26px" onclick="bioUnlock()">👆 افتح بالبصمة</button>
+  <a href="#" onclick="bioUsePassword();return false" style="color:#8fa2e0;font-size:12.5px;text-decoration:underline">استخدم كلمة السر بدلاً منها</a>
+</div>
+
 <!-- ============ الواجهة الرئيسية: القبة المضيئة (تظهر بعد تسجيل الدخول فقط) ============ -->
 <div id="hero" style="display:none">
   <div id="heroSky" aria-hidden="true"></div>
@@ -603,6 +613,15 @@
           <div><label class="fld">1 دولار = كم شيكل؟</label><input id="rate" type="number" inputmode="decimal" onchange="setRate(this.value)"></div>
         </div>
       </div>
+      <div class="section">
+        <h3>🔐 قفل البصمة <span class="hint">لهذا الجهاز</span></h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">لما يكون مفعّل: كل ما تفتح التطبيق بيطلب بصمة الوجه أو الإصبع قبل ما يبيّن أي شي — حتى لو الدخول تلقائي.</p>
+        <p id="bio-status" style="font-size:13px;margin-bottom:10px;color:var(--text)">—</p>
+        <div id="bio-msg" style="font-size:13px;margin-bottom:8px;display:none"></div>
+        <button id="bio-on" class="btn btn-green" onclick="bioEnable()">👆 فعّل قفل البصمة</button>
+        <button id="bio-off" class="btn btn-ghost" style="display:none" onclick="bioDisable()">إلغاء قفل البصمة</button>
+      </div>
+
       <div class="section" id="admin-users-sec">
         <h3>👤 إدارة الحسابات <span class="hint">للأدمن فقط — علي وجواد</span></h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:8px">إنشاء حساب جديد للتطبيق. الحساب الجديد بيشوف بياناته الخاصة فقط إلا إذا أضفنا صلاحيات إله.</p>
@@ -1245,6 +1264,7 @@ function wipeAll(){
 function renderBackup(){
   document.getElementById('last-backup').textContent=db.meta.lastBackup||'لا يوجد';
   document.getElementById('rate').value=db.meta.usdToIls;
+  if(typeof renderBioSec==='function') renderBioSec();
 }
 
 /* ============================================================
@@ -1659,12 +1679,14 @@ function handleAuth(user){
     userDocRef=null; viewerMode=false;
     document.body.classList.remove('viewer-mode');
     const hh=document.getElementById('hero'); if(hh) hh.style.display='none';   // الواجهة تختفي قبل الدخول
+    const bl=document.getElementById('bioLock'); if(bl) bl.style.display='none';
     if(snapUnsub){ snapUnsub(); snapUnsub=null; }
     setSync('⏳','#8aa0c4');
     return;
   }
   overlay.style.display='none';
   if(logout) logout.style.display='inline-block';
+  maybeBioLock();   // قفل البصمة قبل ما يبيّن أي شي
   setSync('☁️ متصل','#22c55e');
   const email=String(user.email||'').toLowerCase();
   const isAdmin = WS_ADMINS.indexOf(email)>=0;          // نافذة إنشاء الحسابات
@@ -1724,6 +1746,56 @@ function authSignIn(){ document.getElementById('auth-error').style.display='none
 function authSignUp(){ document.getElementById('auth-error').style.display='none';
   fbAuth.createUserWithEmailAndPassword(val('auth-email').trim(), val('auth-pass')).catch(err=>authShowErr(mapAuthErr(err.code))); }
 function authSignOut(){ if(fbAuth) fbAuth.signOut(); }
+/* ── قفل البصمة (Face ID / بصمة الإصبع / Windows Hello) ── */
+function b64u(buf){ return btoa(String.fromCharCode.apply(null,new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64uDec(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const bin=atob(s); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i); return a.buffer; }
+function rndBytes(n){ const a=new Uint8Array(n); crypto.getRandomValues(a); return a; }
+function bioSupported(){ return !!(window.PublicKeyCredential && navigator.credentials && window.isSecureContext); }
+function bioEnabled(){ return localStorage.getItem('bio-lock')==='1' && !!localStorage.getItem('bio-cred'); }
+function maybeBioLock(){ if(bioEnabled() && sessionStorage.getItem('bio-ok')!=='1'){ const l=document.getElementById('bioLock'); if(l) l.style.display='flex'; } }
+async function bioEnable(){
+  const msg=document.getElementById('bio-msg'); const say=(t,ok)=>{ msg.textContent=t; msg.style.display='block'; msg.style.color= ok?'var(--green)':'var(--red)'; };
+  if(!bioSupported()){ say('جهازك أو متصفحك ما بيدعم البصمة', false); return; }
+  try{
+    const u=fbAuth&&fbAuth.currentUser; const email=(u&&u.email)||'user';
+    const cred=await navigator.credentials.create({publicKey:{
+      challenge:rndBytes(32), rp:{name:'Ramallah Expo', id:location.hostname},
+      user:{id:rndBytes(16), name:email, displayName:email},
+      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+      authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},
+      timeout:60000
+    }});
+    localStorage.setItem('bio-cred', b64u(cred.rawId));
+    localStorage.setItem('bio-lock','1');
+    sessionStorage.setItem('bio-ok','1');
+    say('✅ تفعّل قفل البصمة على هذا الجهاز', true); renderBioSec();
+  }catch(e){ say(e && e.name==='NotAllowedError' ? 'تم الإلغاء — ما اتفعّل' : ('ما تم التفعيل: '+(e&&e.message||e)), false); }
+}
+function bioDisable(){ localStorage.removeItem('bio-lock'); localStorage.removeItem('bio-cred'); const m=document.getElementById('bio-msg'); if(m) m.style.display='none'; renderBioSec(); }
+async function bioUnlock(){
+  const err=document.getElementById('bio-err');
+  try{
+    await navigator.credentials.get({publicKey:{
+      challenge:rndBytes(32),
+      allowCredentials:[{type:'public-key', id:b64uDec(localStorage.getItem('bio-cred')), transports:['internal']}],
+      userVerification:'required', timeout:60000
+    }});
+    sessionStorage.setItem('bio-ok','1');
+    document.getElementById('bioLock').style.display='none';
+    if(err) err.style.display='none';
+  }catch(e){ if(err){ err.textContent='ما نجحت البصمة — جرّب مرة ثانية أو ادخل بكلمة السر'; err.style.display='block'; } }
+}
+function bioUsePassword(){ sessionStorage.removeItem('bio-ok'); document.getElementById('bioLock').style.display='none'; authSignOut(); }
+function renderBioSec(){
+  const st=document.getElementById('bio-status'); if(!st) return;
+  const on=document.getElementById('bio-on'), off=document.getElementById('bio-off');
+  if(!bioSupported()){ st.textContent='⚠️ هذا الجهاز/المتصفح ما بيدعم قفل البصمة'; if(on) on.style.display='none'; if(off) off.style.display='none'; return; }
+  const en=bioEnabled();
+  st.textContent= en ? '✅ مفعّل — كل ما تفتح التطبيق بيطلب البصمة' : 'غير مفعّل على هذا الجهاز';
+  if(on) on.style.display= en?'none':'inline-block';
+  if(off) off.style.display= en?'inline-block':'none';
+}
+
 let secApp=null;
 function adminCreateUser(){
   const msg=document.getElementById('au-msg');
