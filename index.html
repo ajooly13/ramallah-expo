@@ -139,24 +139,19 @@
   #fx .sp{position:absolute;border-radius:50%;background:#cfe0ff;animation:tw var(--d) ease-in-out infinite;animation-delay:var(--dl)}
   @keyframes tw{0%,100%{opacity:.08;transform:translateY(0) scale(.7)}50%{opacity:.75;transform:translateY(-16px) scale(1.2)}}
 
-  /* لوغو القبة المنقّطة المتحرك */
+  /* لوغو القبة المنقّطة */
   .domesvg{display:block}
-  .domesvg path{animation:march 7s linear infinite}
-  .domesvg .d2{animation-duration:10s;animation-direction:reverse}
-  .domesvg .d3{animation-duration:12s}
-  .domesvg .d4{animation-duration:8.5s;animation-direction:reverse}
-  @keyframes march{to{stroke-dashoffset:-18.2}}
-  .domesvg .star{transform-box:fill-box;transform-origin:center;animation:sparkle 2.8s ease-in-out infinite}
-  @keyframes sparkle{0%,100%{opacity:.4;transform:scale(.75) rotate(0deg)}50%{opacity:1;transform:scale(1.25) rotate(25deg)}}
+  .domesvg .star{animation:sparkle 3s steps(2,jump-none) infinite}
+  @keyframes sparkle{0%,100%{opacity:.45}50%{opacity:1}}
 
-  .topbar{background:rgba(9,15,42,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(79,125,255,.22);box-shadow:0 10px 34px rgba(0,0,0,.35)}
+  .topbar{background:rgba(9,15,42,.96);border-bottom:1px solid rgba(79,125,255,.22);box-shadow:0 10px 34px rgba(0,0,0,.35)}
   .brand{display:flex;align-items:center;gap:11px;font-size:19px;font-weight:900;letter-spacing:.4px}
   .brand small{margin-top:3px}
 
   .company-switch button{border-radius:12px;transition:all .25s}
   .company-switch button.active{background:linear-gradient(135deg,#4f7dff,#37d3f2);border-color:transparent;color:#fff;box-shadow:var(--glow)}
 
-  .tabs{background:rgba(12,19,56,.82);backdrop-filter:blur(12px)}
+  .tabs{background:rgba(12,19,56,.97)}
   .tab{position:relative;border-bottom:2px solid transparent !important;transition:color .2s}
   .tab::after{content:'';position:absolute;right:12px;left:12px;bottom:-1px;height:3px;border-radius:3px;background:linear-gradient(90deg,#4f7dff,#37d3f2);transform:scaleX(0);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
   .tab.active::after{transform:scaleX(1)}
@@ -166,12 +161,6 @@
 
   .section,.stat{border-radius:16px;border:1px solid rgba(79,125,255,.15);background:linear-gradient(180deg,rgba(79,125,255,.07),rgba(17,26,68,.92));box-shadow:0 8px 26px rgba(0,0,0,.3);transition:transform .25s,box-shadow .25s,border-color .25s}
   .stat:hover{transform:translateY(-3px);border-color:rgba(79,125,255,.45);box-shadow:var(--glow)}
-  .cards .stat{animation:pageIn .55s both}
-  .cards .stat:nth-child(2){animation-delay:.07s}
-  .cards .stat:nth-child(3){animation-delay:.14s}
-  .cards .stat:nth-child(4){animation-delay:.21s}
-  .cards .stat:nth-child(5){animation-delay:.28s}
-  .cards .stat:nth-child(6){animation-delay:.35s}
 
   .btn{border-radius:12px;transition:transform .15s,box-shadow .2s,filter .2s}
   .btn:hover{filter:brightness(1.12);box-shadow:0 8px 22px rgba(0,0,0,.35)}
@@ -197,7 +186,7 @@
     radial-gradient(900px 500px at 50% -8%, rgba(79,125,255,.28), transparent 60%),
     radial-gradient(700px 420px at 100% 100%, rgba(55,211,242,.12), transparent 55%),
     var(--bg)}
-  #auth-overlay>div{background:rgba(15,23,60,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(79,125,255,.32);box-shadow:0 24px 70px rgba(0,0,0,.55);border-radius:22px;animation:authIn .6s cubic-bezier(.2,.75,.2,1) both}
+  #auth-overlay>div{background:rgba(15,23,60,.97);border:1px solid rgba(79,125,255,.32);box-shadow:0 24px 70px rgba(0,0,0,.55);border-radius:22px;animation:authIn .6s cubic-bezier(.2,.75,.2,1) both}
   @keyframes authIn{from{opacity:0;transform:translateY(26px) scale(.96)}to{opacity:1;transform:none}}
   .auth-brand{text-align:center;font-size:26px;font-weight:900;letter-spacing:.5px;background:linear-gradient(120deg,#fff,#9db4ff 70%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0 2px}
   .auth-tag{text-align:center;color:#8fa2e0;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
@@ -208,26 +197,30 @@
   /* ── الواجهة الرئيسية: القبة المضيئة ── */
   #hero{position:fixed;inset:0;z-index:800;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:linear-gradient(180deg,#03071a 0%,#081030 45%,#0c1740 100%)}
   .hero-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px;width:100%}
-  .hero-scrolldown{color:#8fa2e0;font-size:24px;animation:bob 2s ease-in-out infinite;margin-top:4px;cursor:pointer}
+  .hero-scrolldown{color:#8fa2e0;font-size:15px;font-weight:800;animation:bob 2s ease-in-out infinite;margin-top:4px;cursor:pointer}
+
+  /* صفحة المحاسبة — أيقونات بتظهر بأنيميشن عند السكرول */
+  .hero-screen2{min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;width:100%;padding:34px 14px}
+  .hero-sec-title{font-size:21px;font-weight:900;color:#ffd77a}
+  .hero-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:20px 10px;width:min(94vw,520px)}
+  .hero-nav .hicon{position:static;transform:none;animation:none;opacity:0;translate:0 26px;transition:opacity .5s ease,translate .5s ease;transition-delay:calc(var(--i,0)*70ms)}
+  .hero-nav.inview .hicon{opacity:1;translate:0 0}
+  .hero-nav .hicon .ic{width:62px;height:62px;margin:0 auto;font-size:27px}
   .hero-events{width:min(94vw,560px);padding:10px 0 70px;z-index:2;display:flex;flex-direction:column;gap:10px}
   .hero-events h2{font-size:17px;font-weight:900;color:#ffd77a;text-align:center;margin:8px 0 4px}
-  .hev{background:rgba(16,24,60,.75);border:1px solid rgba(79,125,255,.25);border-radius:14px;padding:14px;backdrop-filter:blur(10px)}
+  .hev{background:rgba(16,24,60,.94);border:1px solid rgba(79,125,255,.25);border-radius:14px;padding:14px}
   .hev .nm{font-size:16px;font-weight:800}
   .hev .dt{font-size:12px;color:#9fabdd;margin-top:4px}
   .hev.today{border-color:#ffd76a;box-shadow:0 0 24px rgba(255,214,106,.25)}
   .hev.today .tag{color:#ffd76a;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:4px}
 
-  /* كشّافات وأكشاك القبة */
-  .beamL,.beamR{transform-box:fill-box;transform-origin:50% 100%;opacity:.45;animation:sweep 8s ease-in-out infinite alternate;pointer-events:none}
-  .beamR{animation-delay:-4s}
-  @keyframes sweep{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
-  .glowP{animation:glowp 5s ease-in-out infinite}
-  @keyframes glowp{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
-  .bw{animation:flick 3.2s ease-in-out infinite}
-  @keyframes flick{0%,100%{opacity:.4}50%{opacity:1}}
+  /* كشّافات وأكشاك القبة — خفيفة على الأداء */
+  .beamL,.beamR{opacity:.38;pointer-events:none}
+  .bw{animation:flick 3.6s steps(2,jump-none) infinite}
+  @keyframes flick{0%,100%{opacity:.45}50%{opacity:1}}
 
   /* المشهد السينمائي عند الضغط على القبة */
-  #domeCine{position:fixed;inset:0;z-index:950;background:rgba(2,5,18,.93);display:none;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px}
+  #domeCine{position:fixed;inset:0;z-index:950;background:rgba(2,5,18,.97);display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px}
   #domeCine.open{display:flex}
   .cine-beam{position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(85vw,430px);height:60vh;background:linear-gradient(180deg,rgba(255,232,155,.5),rgba(255,214,106,.08) 70%,transparent);clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);animation:lampOn 1s ease-out both;pointer-events:none}
   @keyframes lampOn{0%{opacity:0}30%{opacity:.9}45%{opacity:.15}60%{opacity:1}72%{opacity:.4}100%{opacity:1}}
@@ -245,13 +238,13 @@
   #heroSky .sp{position:absolute;border-radius:50%;background:#dbe6ff;animation:tw var(--d) ease-in-out infinite;animation-delay:var(--dl)}
   .hero-title{font-size:clamp(28px,6vw,42px);font-weight:900;letter-spacing:1px;background:linear-gradient(120deg,#fff,#ffd77a 55%,#9db4ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;z-index:2}
   .hero-sub{color:#93a5e8;font-size:11px;letter-spacing:3px;text-transform:uppercase;z-index:2;margin-bottom:4px}
-  .hero-stage{position:relative;width:min(94vw,560px);aspect-ratio:1.08;z-index:2}
-  .hero-dome{position:absolute;left:50%;bottom:2%;transform:translateX(-50%);width:84%}
+  .hero-stage{position:relative;width:min(96vw,620px);aspect-ratio:1.45;z-index:2}
+  .hero-dome{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:97%}
   .breathe{animation:breathe 4.5s ease-in-out infinite}
   @keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
   .hicon{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;z-index:3;animation:bob 5.5s ease-in-out infinite;animation-delay:var(--bd,0s)}
   @keyframes bob{0%,100%{margin-top:0}50%{margin-top:-9px}}
-  .hicon .ic{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:25px;background:rgba(14,22,58,.75);border:1px solid rgba(255,214,120,.4);backdrop-filter:blur(8px);box-shadow:0 0 16px rgba(255,205,100,.18);transition:.25s}
+  .hicon .ic{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:25px;background:rgba(14,22,58,.92);border:1px solid rgba(255,214,120,.4);box-shadow:0 0 16px rgba(255,205,100,.18);transition:.25s}
   .hicon:hover .ic{transform:scale(1.14);border-color:#ffd76a;box-shadow:0 0 30px rgba(255,214,110,.5)}
   .hicon .lb{font-size:11px;font-weight:800;color:#d5defc;text-shadow:0 2px 8px #000;white-space:nowrap}
   .hero-hint{color:#7787c9;font-size:12px;z-index:2;animation:breathe 3s ease-in-out infinite}
@@ -353,18 +346,25 @@
       <g id="kioskRow"></g>
       <path d="M110 210 A190 190 0 0 1 490 210 Z" fill="transparent" style="cursor:pointer" onclick="openCine()"/>
     </svg>
-    <div class="hicon" style="left:50%;top:4%;--bd:0s" onclick="heroGo('dash')"><div class="ic">📊</div><div class="lb">لوحة التحكم</div></div>
-    <div class="hicon" style="left:19%;top:13%;--bd:.4s" onclick="heroGo('kiosks')"><div class="ic">🏪</div><div class="lb">الأكشاك</div></div>
-    <div class="hicon" style="left:81%;top:13%;--bd:.8s" onclick="heroGo('sponsors')"><div class="ic">🤝</div><div class="lb">الرعاية</div></div>
-    <div class="hicon" style="left:5%;top:40%;--bd:1.2s" onclick="heroGo('dome')"><div class="ic">🎪</div><div class="lb">Ramallah Expo</div></div>
-    <div class="hicon" style="left:95%;top:40%;--bd:1.6s" onclick="heroGo('expenses')"><div class="ic">💸</div><div class="lb">المصاريف</div></div>
-    <div class="hicon" style="left:9%;top:68%;--bd:2s" onclick="heroGo('profit')"><div class="ic">👥</div><div class="lb">الأرباح</div></div>
-    <div class="hicon" style="left:91%;top:68%;--bd:2.4s" onclick="heroGo('stmt')"><div class="ic">📅</div><div class="lb">الكشف</div></div>
-    <div class="hicon" style="left:15%;top:91%;--bd:2.8s" onclick="heroGo('backup')"><div class="ic">💾</div><div class="lb">النسخ</div></div>
-    <div class="hicon" style="left:85%;top:91%;--bd:3.2s" onclick="heroMob()"><div class="ic">🎬</div><div class="lb">TheMob</div></div>
   </div>
-  <div class="hero-hint">✨ اضغط على أي قسم للدخول — واضغط على القبة لمشهد الحجز</div>
-  <div class="hero-scrolldown" onclick="heroScrollDown()">⌄</div>
+  <div class="hero-hint">✨ اضغط على القبة لمشهد الحجز</div>
+  <div class="hero-scrolldown" onclick="heroScrollDown()">⌄ اسحب لأسفل</div>
+  </div>
+
+  <!-- صفحة المحاسبة: بتظهر بأنيميشن عند السكرول -->
+  <div class="hero-screen2">
+    <div class="hero-sec-title">💼 صفحة المحاسبة</div>
+    <div class="hero-nav" id="heroNav">
+      <div class="hicon" style="--i:0" onclick="heroGo('dash')"><div class="ic">📊</div><div class="lb">لوحة التحكم</div></div>
+      <div class="hicon" style="--i:1" onclick="heroGo('kiosks')"><div class="ic">🏪</div><div class="lb">الأكشاك</div></div>
+      <div class="hicon" style="--i:2" onclick="heroGo('sponsors')"><div class="ic">🤝</div><div class="lb">الرعاية</div></div>
+      <div class="hicon" style="--i:3" onclick="heroGo('dome')"><div class="ic">🎪</div><div class="lb">Ramallah Expo</div></div>
+      <div class="hicon" style="--i:4" onclick="heroGo('expenses')"><div class="ic">💸</div><div class="lb">المصاريف</div></div>
+      <div class="hicon" style="--i:5" onclick="heroGo('profit')"><div class="ic">👥</div><div class="lb">الأرباح</div></div>
+      <div class="hicon" style="--i:6" onclick="heroGo('stmt')"><div class="ic">📅</div><div class="lb">الكشف</div></div>
+      <div class="hicon" style="--i:7" onclick="heroGo('backup')"><div class="ic">💾</div><div class="lb">النسخ</div></div>
+      <div class="hicon" style="--i:8" onclick="heroMob()"><div class="ic">🎬</div><div class="lb">TheMob</div></div>
+    </div>
   </div>
   <div class="hero-events" id="heroEvents"></div>
 
@@ -930,12 +930,15 @@ function renderDash(){
   document.getElementById('incomeLegend').innerHTML = labels.map((l,i)=>
     `<span style="font-size:12px;display:flex;align-items:center;gap:5px"><i style="width:10px;height:10px;border-radius:50%;background:${colors[i]};display:inline-block"></i>${l}</span>`).join('');
   if(window.Chart){
+    const sig=vals.map(v=>Math.round(v)).join('|');
+    if(incomeChart && incomeChart.__sig===sig) return;   // نفس الأرقام؟ لا تعيد البناء
     const ctx=document.getElementById('incomeChart');
-    if(incomeChart) incomeChart.destroy();
+    if(incomeChart){ incomeChart.destroy(); incomeChart=null; }
     if(vals.some(v=>v>0)){
       incomeChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderColor:'#0c1338',borderWidth:3}]},
-        options:{cutout:'66%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.label}: ${money(c.parsed,'₪')} (تقريبي)`}}}}});
-    } else if(incomeChart){ incomeChart.destroy(); incomeChart=null; }
+        options:{animation:false,cutout:'66%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.label}: ${money(c.parsed,'₪')} (تقريبي)`}}}}});
+      incomeChart.__sig=sig;
+    }
   }
 }
 function neg(o){ return {ils:-o.ils, usd:-o.usd}; }
@@ -1757,9 +1760,8 @@ function sprinkleStars(el,count){
 (function(){
   try{
     if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const fx=document.getElementById('fx');
-    if(fx){ fx.innerHTML='<div class="aur a1"></div><div class="aur a2"></div>'; sprinkleStars(fx,26); }
-    sprinkleStars(document.getElementById('heroSky'),44);
+    sprinkleStars(document.getElementById('fx'),12);
+    sprinkleStars(document.getElementById('heroSky'),20);
   }catch(e){}
 })();
 
@@ -1768,6 +1770,16 @@ function heroGo(tab){ closeCine(); const h=document.getElementById('hero'); if(h
 function heroMob(){ closeCine(); const h=document.getElementById('hero'); if(h) h.style.display='none'; showCompany('themob'); }
 function openHero(){ if(viewerMode) return; const h=document.getElementById('hero'); if(h){ h.style.display='flex'; h.scrollTop=0; } buildKioskRow(); renderHeroEvents(); }
 function heroScrollDown(){ const h=document.getElementById('hero'); if(h) h.scrollTo({top:h.clientHeight,behavior:'smooth'}); }
+/* أنيميشن ظهور صفحة المحاسبة عند السكرول */
+(function(){
+  try{
+    const nav=document.getElementById('heroNav'), hero=document.getElementById('hero');
+    if(nav && hero && 'IntersectionObserver' in window){
+      const io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting) nav.classList.add('inview'); }); },{root:hero,threshold:.2});
+      io.observe(nav);
+    } else if(nav){ nav.classList.add('inview'); }
+  }catch(e){ const n=document.getElementById('heroNav'); if(n) n.classList.add('inview'); }
+})();
 
 /* أكشاك RA1–RA11 حول القبة */
 function buildKioskRow(){
