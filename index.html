@@ -1633,7 +1633,7 @@ let fbReady=false, fbAuth=null, fbDb=null, userDocRef=null, pushTimer=null, appl
 let viewerMode=false, snapUnsub=null;
 const WS_ADMINS=['ali8ittqanlaw@gmail.com','jmaher2023@icloud.com'];   // بيقدروا ينشئوا حسابات من جوا التطبيق
 const WS_OWNER=['jmaher2023@icloud.com'];                              // دفتر اكسبو اللي بتراقبه البلدية = حساب جواد (خاص، علي ما بيشوفه)
-const WS_VIEWERS=['ramallahmunicipalit@gmail.com'];                    // اطلاع فقط: كل اكسبو ما عدا الشركاء
+const WS_VIEWERS=['ramallahmunicipalit@expo.com','ramallahmunicipalit@gmail.com'];   // اطلاع فقط: كل اكسبو ما عدا الشركاء
 function setSync(txt,color){ const e=document.getElementById('sync-status'); if(e){ e.textContent=txt; if(color){e.style.color=color; e.style.borderColor=color;} } }
 function renderCurrent(){ if(currentCompany==='expo') renderActive(); else renderActiveMob(); }
 function dbIsEmpty(d){
