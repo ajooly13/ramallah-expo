@@ -257,8 +257,6 @@
 
   /* ── وضع الاطلاع فقط (بلدية رام الله): كل اكسبو ما عدا الشركاء — بدون تعديل ── */
   body.viewer-mode .company-switch{display:none}
-  body.no-mob #btn-themob{display:none !important}
-  body.no-mob #heroMobIcon{display:none !important}
   body.viewer-mode #hero{display:none !important}
   body.viewer-mode #homeBtn{display:none}
   body.viewer-mode #co-expo .tab[data-tab="profit"]{display:none}
@@ -375,7 +373,7 @@
       <div class="hicon" style="--i:5" onclick="heroGo('profit')"><div class="ic">👥</div><div class="lb">الأرباح</div></div>
       <div class="hicon" style="--i:6" onclick="heroGo('stmt')"><div class="ic">📅</div><div class="lb">الكشف</div></div>
       <div class="hicon" style="--i:7" onclick="heroGo('backup')"><div class="ic">💾</div><div class="lb">النسخ</div></div>
-      <div class="hicon" id="heroMobIcon" style="--i:8" onclick="heroMob()"><div class="ic">🎬</div><div class="lb">TheMob</div></div>
+      <div class="hicon" style="--i:8" onclick="heroMob()"><div class="ic">🎬</div><div class="lb">TheMob</div></div>
     </div>
   </div>
   <div class="hero-events" id="heroEvents"></div>
@@ -527,10 +525,25 @@
         <div class="row">
           <div><label class="fld">البند</label>
             <select id="ex-cat">
-              <option>حراسة وأمن</option><option>خدمات تنظيف</option><option>المحاسب</option>
-              <option>ماء وكهرباء</option><option>إنترنت</option><option>صيانة</option>
-              <option>ضريبة بلدية</option><option>ضريبة دخل</option><option>ضريبة المعارف</option>
-              <option>ضريبة القيمة المضافة</option><option>أخرى</option>
+              <optgroup label="مأكولات ومشروبات">
+                <option>مشروبات</option><option>مأكولات</option><option>معجنات</option><option>أدوات مطبخ</option>
+              </optgroup>
+              <optgroup label="تنظيف">
+                <option>مواد تنظيف</option><option>تنظيف</option><option>شباب تنظيف</option>
+              </optgroup>
+              <optgroup label="عمال وموظفين">
+                <option>عمال</option><option>عمال فك</option><option>عمال تركيب</option><option>موظف مشرف</option><option>حراسة وأمن (أبو شاويش)</option>
+              </optgroup>
+              <optgroup label="صوت وإضاءة">
+                <option>إضاءة</option><option>صوت وشاشات</option><option>دي جي / صوت</option>
+              </optgroup>
+              <optgroup label="مرافق وخدمات">
+                <option>كهرباء</option><option>ماء</option><option>خدمات</option><option>ازمقنا</option><option>إنترنت</option><option>صيانة</option><option>المحاسب</option>
+              </optgroup>
+              <optgroup label="ضرائب">
+                <option>ضريبة بلدية</option><option>ضريبة دخل</option><option>ضريبة المعارف</option><option>ضريبة القيمة المضافة</option>
+              </optgroup>
+              <option>أخرى</option>
             </select>
           </div>
         </div>
@@ -1285,7 +1298,7 @@ function showTab(name){
   renderActive();
 }
 function showCompany(co){
-  if(co==='themob' && (viewerMode || !mobAllowed)) return;
+  if(viewerMode && co==='themob') return;
   currentCompany=co;
   document.getElementById('btn-expo').classList.toggle('active',co==='expo');
   document.getElementById('btn-themob').classList.toggle('active',co==='themob');
@@ -1621,8 +1634,6 @@ let viewerMode=false, snapUnsub=null;
 const WS_ADMINS=['ali8ittqanlaw@gmail.com','jmaher2023@icloud.com'];   // بيقدروا ينشئوا حسابات من جوا التطبيق
 const WS_OWNER=['jmaher2023@icloud.com'];                              // دفتر اكسبو اللي بتراقبه البلدية = حساب جواد (خاص، علي ما بيشوفه)
 const WS_VIEWERS=['ramallahmunicipalit@gmail.com'];                    // اطلاع فقط: كل اكسبو ما عدا الشركاء
-const MOB_ALLOWED=['ali8ittqanlaw@gmail.com','jmaher2023@icloud.com']; // TheMob يبين بس لعلي وجواد
-let mobAllowed=false;
 function setSync(txt,color){ const e=document.getElementById('sync-status'); if(e){ e.textContent=txt; if(color){e.style.color=color; e.style.borderColor=color;} } }
 function renderCurrent(){ if(currentCompany==='expo') renderActive(); else renderActiveMob(); }
 function dbIsEmpty(d){
@@ -1645,7 +1656,6 @@ try {
   fbAuth.onAuthStateChanged(handleAuth);
 } catch(e){
   document.getElementById('auth-overlay').style.display='none';
-  mobAllowed=true; document.body.classList.remove('no-mob');   // وضع محلي بدون حسابات: ما منقدر نميّز المستخدم
   const hh=document.getElementById('hero'); if(hh) hh.style.display='flex';
   setSync('💾 محلي فقط','#f59e0b');
 }
@@ -1682,7 +1692,6 @@ function handleAuth(user){
     overlay.style.display='flex';
     if(logout) logout.style.display='none';
     userDocRef=null; viewerMode=false;
-    mobAllowed=false; document.body.classList.add('no-mob');
     document.body.classList.remove('viewer-mode');
     const hh=document.getElementById('hero'); if(hh) hh.style.display='none';   // الواجهة تختفي قبل الدخول
     const bl=document.getElementById('bioLock'); if(bl) bl.style.display='none';
@@ -1695,9 +1704,6 @@ function handleAuth(user){
   maybeBioLock();   // قفل البصمة قبل ما يبيّن أي شي
   setSync('☁️ متصل','#22c55e');
   const email=String(user.email||'').toLowerCase();
-  mobAllowed = MOB_ALLOWED.indexOf(email)>=0;            // TheMob بس لعلي وجواد
-  document.body.classList.toggle('no-mob', !mobAllowed);
-  if(!mobAllowed && currentCompany==='themob'){ showCompany('expo'); }
   const isAdmin = WS_ADMINS.indexOf(email)>=0;          // نافذة إنشاء الحسابات
   const isWsOwner = WS_OWNER.indexOf(email)>=0;          // جواد: دفتر اكسبو المُراقَب
   const isViewerEmail = WS_VIEWERS.indexOf(email)>=0;    // البلدية
@@ -1848,7 +1854,7 @@ function sprinkleStars(el,count){
 
 /* ── الواجهة الرئيسية ── */
 function heroGo(tab){ closeCine(); const h=document.getElementById('hero'); if(h) h.style.display='none'; showCompany('expo'); showTab(tab); }
-function heroMob(){ if(!mobAllowed) return; closeCine(); const h=document.getElementById('hero'); if(h) h.style.display='none'; showCompany('themob'); }
+function heroMob(){ closeCine(); const h=document.getElementById('hero'); if(h) h.style.display='none'; showCompany('themob'); }
 function openHero(){ if(viewerMode) return; const h=document.getElementById('hero'); if(h){ h.style.display='flex'; h.scrollTop=0; } buildKioskRow(); renderHeroEvents(); }
 function heroScrollDown(){ const h=document.getElementById('hero'); if(h) h.scrollTo({top:h.clientHeight,behavior:'smooth'}); }
 /* أنيميشن ظهور صفحة المحاسبة عند السكرول */
