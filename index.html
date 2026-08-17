@@ -255,18 +255,31 @@
   .btn,.tab,.hicon,.item,.kiosk-head,.company-switch button{touch-action:manipulation}
   @media (max-width:768px){ input,select,textarea{font-size:16px !important} }
 
-  /* ── وضع الاطلاع فقط (بلدية رام الله): كل اكسبو ما عدا الشركاء — بدون تعديل ── */
-  body.viewer-mode .company-switch{display:none}
+  /* ── وضع الاطلاع فقط (بلدية رام الله) ──
+     يشوف فقط: لوحة التحكم • الأكشاك • الرعاية • Ramallah Expo • الأرباح (بدون الصافي) */
+  body.viewer-mode #co-themob{display:none !important}
+  body.viewer-mode .company-switch{display:none !important}
   body.viewer-mode #hero{display:none !important}
-  body.viewer-mode #homeBtn{display:none}
-  body.viewer-mode #co-expo .tab[data-tab="profit"]{display:none}
-  body.viewer-mode .partners-sec{display:none !important}
-  body.viewer-mode #co-expo input,body.viewer-mode #co-expo select{pointer-events:none;opacity:.65}
+  body.viewer-mode #homeBtn{display:none !important}
+  /* أخفِ كل التبويبات ثم أظهر المسموح فقط */
+  body.viewer-mode #co-expo .tab{display:none !important}
+  body.viewer-mode #co-expo .tab[data-tab="dash"],
+  body.viewer-mode #co-expo .tab[data-tab="kiosks"],
+  body.viewer-mode #co-expo .tab[data-tab="sponsors"],
+  body.viewer-mode #co-expo .tab[data-tab="dome"],
+  body.viewer-mode #co-expo .tab[data-tab="profit"]{display:block !important}
+  /* أقسام ممنوعة على البلدية */
+  body.viewer-mode .v-hide{display:none !important}
+  /* قراءة فقط: لا تعديل ولا إضافة ولا حذف */
+  body.viewer-mode #co-expo input,body.viewer-mode #co-expo select,
+  body.viewer-mode #co-expo textarea{pointer-events:none;opacity:.65}
   body.viewer-mode .btn-x{display:none !important}
   body.viewer-mode #dome-add-sec{display:none !important}
   body.viewer-mode [onclick="addExpense()"],body.viewer-mode [onclick="addSponsor()"],
   body.viewer-mode [onclick="addPartner()"],body.viewer-mode [onclick="wipeAll()"],
-  body.viewer-mode [onclick^="logKioskRent"],body.viewer-mode [onclick^="addKioskOther"]{display:none !important}
+  body.viewer-mode [onclick="exportBackup()"],body.viewer-mode [onclick="adminCreateUser()"],
+  body.viewer-mode [onclick^="logKioskRent"],body.viewer-mode [onclick^="addKioskOther"],
+  body.viewer-mode [onclick^="delPartner"],body.viewer-mode [onclick^="stmtToExcel"]{display:none !important}
 
   /* نافذة إنشاء الحسابات — للأدمن فقط */
   #admin-users-sec{display:none}
@@ -426,12 +439,12 @@
     <div id="tab-dash" class="page active">
       <div class="cards">
         <div class="stat"><div class="l">📥 إجمالي الدخل</div><div class="v" id="d-income">—</div></div>
-        <div class="stat"><div class="l">📤 إجمالي المصاريف</div><div class="v" id="d-expenses">—</div></div>
+        <div class="stat v-hide"><div class="l">📤 إجمالي المصاريف</div><div class="v" id="d-expenses">—</div></div>
         <div class="stat"><div class="l">🏛️ بلدية رام الله (10%)</div><div class="v" id="d-silent">—</div></div>
-        <div class="stat"><div class="l">💰 صافي الربح</div><div class="v" id="d-net">—</div></div>
+        <div class="stat v-hide"><div class="l">💰 صافي الربح</div><div class="v" id="d-net">—</div></div>
       </div>
 
-      <div class="section">
+      <div class="section v-hide">
         <h3>🔻 من الدخل إلى صافي الربح <span class="hint">₪ و $ منفصلين</span></h3>
         <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
         <div id="waterfall"></div>
@@ -571,7 +584,7 @@
         <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
         <div id="profit-partners"></div>
       </div>
-      <div class="section">
+      <div class="section v-hide">
         <h3>⚙️ تعديل النسب <span class="hint">المجموع لازم 100%</span></h3>
         <div id="partners-edit"></div>
         <div class="row" style="margin-top:8px">
