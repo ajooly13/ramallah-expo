@@ -270,6 +270,7 @@
   body.viewer-mode #co-expo .tab[data-tab="profit"]{display:block !important}
   /* أقسام ممنوعة على البلدية */
   body.viewer-mode .v-hide{display:none !important}
+  body.viewer-mode #viewer-profit-note{display:block !important}
   /* قراءة فقط: لا تعديل ولا إضافة ولا حذف */
   body.viewer-mode #co-expo input,body.viewer-mode #co-expo select,
   body.viewer-mode #co-expo textarea{pointer-events:none;opacity:.65}
@@ -456,7 +457,7 @@
         <div id="incomeLegend" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px"></div>
       </div>
 
-      <div class="section partners-sec">
+      <div class="section partners-sec v-hide">
         <h3>👥 حصص الشركاء من صافي الربح</h3>
         <div id="dash-partners"></div>
       </div>
@@ -574,12 +575,13 @@
 
     <!-- PROFIT -->
     <div id="tab-profit" class="page">
-      <div class="note">👥 توزيع صافي الربح = الدخل − بلدية رام الله 10% − المصاريف، ثم يتوزع على الشركاء. كل عملة تتوزع لحالها.</div>
+      <div class="note v-hide">👥 توزيع صافي الربح = الدخل − بلدية رام الله 10% − المصاريف، ثم يتوزع على الشركاء. كل عملة تتوزع لحالها.</div>
+      <div class="note" style="display:none" id="viewer-profit-note">🏛️ مستحقات بلدية رام الله = 10% من إجمالي دخل الشركة (قبل خصم أي مصاريف).</div>
       <div class="section">
         <h3>🏛️ بلدية رام الله (10% من الدخل)</h3>
         <div id="profit-silent"></div>
       </div>
-      <div class="section">
+      <div class="section v-hide">
         <h3>👥 الشركاء الثلاثة</h3>
         <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
         <div id="profit-partners"></div>
