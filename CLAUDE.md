@@ -13,7 +13,8 @@
 - مشروع Firebase: `ramallah--mob` (شرطتين!). الإعدادات (config) موجودة داخل index.html.
 - **علي: ali8ittqanlaw@gmail.com** — أدمن (نافذة إنشاء الحسابات) + بياناته خاصة فيه (`users/{uid}`) — ما بيشوف بيانات جواد (خصوصية).
 - **جواد: jmaher2023@icloud.com** — أدمن + صاحب دفتر اكسبو المُراقَب: بياناته بمستند مشترك `workspaces/main` (هو owner).
-- **البلدية: ramallahmunicipalit@gmail.com** — اطلاع فقط على دفتر جواد: كل تبويبات اكسبو **ما عدا الأرباح/الشركاء**، بدون أي تعديل، بدون TheMob وبدون hero. (تحقق من إملاء الإيميل مع علي — ناقصه y).
+- **البلدية: ramallahmunicipalit@expo.com** (هذا الحساب الفعلي المُنشأ) — اطلاع فقط على دفتر جواد. `WS_VIEWERS` فيه ٣ إملاءات احتياطاً (expo.com + gmail.com بإملاءين). بتشوف: لوحة التحكم، الأكشاك، الرعاية، Ramallah Expo، والأرباح (بس بند بلدية رام الله 10% — بدون المصاريف/الصافي/الشركاء). بدون تعديل، بدون TheMob، بدون hero.
+- **TheMob مقيّد**: يبين فقط لعلي وجواد عبر `MOB_ALLOWED` + كلاس `no-mob` على body (يخفي `#btn-themob` و`#heroMobIcon`) + حراسة داخل `showCompany()` و`heroMob()`. ⚠️ هذه الميزة انمسحت مرة عند التعديل من محرر GitHub بالمتصفح فوق نسخة قديمة — انتبه لها بعد أي تعديل خارجي.
 - إنشاء الحسابات ممنوع من شاشة الدخول — فقط من قسم "👤 إدارة الحسابات" بتبويب النسخ (يظهر للأدمن، ينشئ عبر Firebase app ثانوي).
 - "نسيت كلمة السر" موجودة (sendPasswordResetEmail).
 
@@ -44,7 +45,16 @@ echo "=== DONE ==="
 بعدها بالترتيب: (1) حساب جواد يفتح التطبيق أول مرة (بينشئ workspaces/main ببياناته) — حسابه ينُنشأ من نافذة إدارة الحسابات عند علي. (2) حساب البلدية يفتح بعده.
 
 ## طريقة النشر (مهم!)
-جهاز علي ما عليه Node/Python/gh. النشر عبر **محرر GitHub بالمتصفح** (امتداد Claude in Chrome):
+**على جهاز naser (ويندوز): git شغّال ومربوط.** النسخة المحلية `C:\Users\naser\ramallah-expo`. النشر مباشرة:
+```
+git add index.html
+git commit -m "..."
+git -c credential.interactive=always push origin main
+```
+(بدون `-c credential.interactive=always` بيفشل الـ push مع "terminal prompts disabled". Node/gh مش منصّبين، بس python موجود لتشغيل سيرفر معاينة محلي.)
+⚠️ **قبل أي push اعمل `git fetch` وقارن** — التعديلات من محرر GitHub بالمتصفح بتلصق ملف كامل وممكن ترجّع الكود لنسخة قديمة وتشيل ميزات.
+
+### الطريقة القديمة (أجهزة بدون git): محرر GitHub بالمتصفح
 1. عدّل النسخة المحلية `C:\Users\areej\Desktop\ramallah-expo.html` (على جهاز علي الأساسي) أو نزّل index.html من الريبو.
 2. PowerShell: اقرأ الملف بـ `[IO.File]::ReadAllText(path,[Text.Encoding]::UTF8)` ثم `Set-Clipboard` (لا تستخدم Get-Content -Raw — بيخرب العربي!).
 3. افتح `github.com/ajooly13/ramallah-expo/edit/main/index.html` → انقر على سطر كود → Ctrl+A → Ctrl+V → تأكد إن زر Commit صار **أخضر** وعدد الأسطر منطقي (اللصقة أول مرة كثير مرات ما بتمسك — أعد النقر واللصق) → Commit.
