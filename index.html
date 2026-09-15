@@ -195,18 +195,73 @@
   ::-webkit-scrollbar-thumb{background:#27336b;border-radius:8px}
 
   /* ── الواجهة الرئيسية: القبة المضيئة ── */
-  #hero{position:fixed;inset:0;z-index:800;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:linear-gradient(180deg,#03071a 0%,#081030 45%,#0c1740 100%)}
-  .hero-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px;width:100%}
-  .hero-scrolldown{color:#8fa2e0;font-size:15px;font-weight:800;animation:bob 2s ease-in-out infinite;margin-top:4px;cursor:pointer}
+  /* ── الواجهة الرئيسية: فيديو سينمائي ── */
+  #hero{position:fixed;inset:0;z-index:800;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:#080A19}
+  .hero-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .hero-veil{position:fixed;inset:0;z-index:1;pointer-events:none;background:
+    linear-gradient(180deg,rgba(8,10,25,.72) 0%,rgba(8,10,25,.28) 26%,rgba(8,10,25,.30) 55%,rgba(8,10,25,.80) 100%)}
+  .hero-screen{position:relative;z-index:2;min-height:100vh;min-height:100dvh;width:100%;display:flex;flex-direction:column;padding:0}
+
+  /* شريط علوي */
+  .hx-bar{width:100%;max-width:1800px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .hx-brand{display:flex;align-items:center;gap:10px}
+  .hx-brand .wm{color:#fff;font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .hx-pill{height:52px;padding:0 22px;display:flex;align-items:center;gap:26px;background:rgba(10,7,7,.42);border-radius:11px}
+  .hx-pill span{color:rgba(255,255,255,.82);font-size:14px;font-weight:600;cursor:pointer;transition:color .2s;white-space:nowrap}
+  .hx-pill span:hover{color:#fff}
+  .hx-auth{height:52px;padding:3px;background:rgba(0,0,0,.42);border-radius:13px;display:flex;align-items:center;gap:5px}
+  .hx-ghost{height:46px;padding:0 20px;border-radius:11px;color:#fff;font-size:14px;font-weight:600;background:none;border:0;cursor:pointer;white-space:nowrap}
+  .hx-ghost:hover{background:rgba(255,255,255,.08)}
+  .hx-solid{height:46px;padding:0 20px;background:#E9E9E9;border-radius:11px;color:#0A0707;font-size:14px;font-weight:700;border:0;cursor:pointer;white-space:nowrap}
+  .hx-solid:hover{background:#fff}
+  .hx-burger{display:none;width:44px;height:44px;align-items:center;justify-content:center;border-radius:11px;background:rgba(10,7,7,.42);border:0;cursor:pointer;font-size:19px;color:#fff}
+
+  /* الصف الرئيسي */
+  .hx-row{flex:1;display:flex;align-items:center;padding:28px 0;min-height:0}
+  .hx-grid{width:100%;max-width:1800px;margin:0 auto;padding:0 20px;display:flex;flex-direction:column;gap:34px}
+  .hx-copy{max-width:593px}
+  .hx-h1{color:#fff;font-size:36px;font-weight:800;line-height:1.05;margin-bottom:18px;text-shadow:0 2px 34px rgba(4,8,24,.85)}
+  .hx-sub{color:rgba(255,255,255,.88);font-size:16px;font-weight:500;line-height:1.45;max-width:390px;margin-bottom:26px}
+  .hx-cta{display:flex;flex-wrap:wrap;gap:12px}
+  .hx-btn1{height:48px;padding:0 22px;background:#E9E9E9;border-radius:12px;color:#0A0707;font-size:14.5px;font-weight:700;border:0;cursor:pointer;display:inline-flex;align-items:center}
+  .hx-btn1:hover{opacity:.9}
+  .hx-btn2{height:48px;padding:0 22px;border-radius:12px;border:1px solid #fff;background:transparent;color:#fff;font-size:14.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center}
+  .hx-btn2:hover{opacity:.8}
+
+  /* بطاقة الأرقام الحقيقية */
+  .hx-card{width:100%;max-width:420px;margin:0 auto;border-radius:24px;background:rgba(12,18,44,.62);border:1px solid rgba(255,255,255,.10);padding:20px}
+  .hx-card .lb{color:rgba(255,255,255,.72);font-size:13px;font-weight:600;margin-bottom:6px}
+  .hx-card .big{color:#fff;font-size:26px;font-weight:800;line-height:1.15;margin-bottom:14px}
+  .hx-line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.08);font-size:13px}
+  .hx-line .k{color:rgba(255,255,255,.75);font-weight:600;white-space:nowrap}
+  .hx-line .v{font-weight:800;text-align:left;direction:ltr}
+  .hx-scroll{position:relative;z-index:2;text-align:center;padding:0 0 18px}
+  .hero-scrolldown{color:#cfe0ff;font-size:15px;font-weight:800;animation:bob 2s ease-in-out infinite;margin-top:4px;cursor:pointer;text-shadow:0 2px 12px #000}
+
+  @media (min-width:640px){
+    .hx-bar{padding:30px 32px 0}
+    .hx-grid{padding:0 32px}
+    .hx-h1{font-size:52px;margin-bottom:26px}
+    .hx-sub{font-size:18px;margin-bottom:34px}
+    .hx-card{padding:28px;border-radius:30px}
+    .hx-card .big{font-size:38px}
+  }
+  @media (min-width:768px){ .hx-bar{padding:30px 60px 0} .hx-grid{padding:0 60px} .hx-h1{font-size:62px} }
+  @media (min-width:1024px){
+    .hx-grid{flex-direction:row;align-items:center;justify-content:space-between;gap:44px}
+    .hx-card{margin:0}
+    .hx-h1{font-size:68px}
+  }
+  @media (max-width:1023px){ .hx-pill,.hx-auth{display:none} .hx-burger{display:flex} }
 
   /* صفحة المحاسبة — أيقونات بتظهر بأنيميشن عند السكرول */
-  .hero-screen2{min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;width:100%;padding:34px 14px}
-  .hero-sec-title{font-size:21px;font-weight:900;color:#ffd77a}
+  .hero-screen2{position:relative;z-index:2;min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;width:100%;padding:34px 14px}
+  .hero-sec-title{font-size:21px;font-weight:900;color:#ffd77a;text-shadow:0 2px 14px #000}
   .hero-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:20px 10px;width:min(94vw,520px)}
   .hero-nav .hicon{position:static;transform:none;animation:none;opacity:0;translate:0 26px;transition:opacity .5s ease,translate .5s ease;transition-delay:calc(var(--i,0)*70ms)}
   .hero-nav.inview .hicon{opacity:1;translate:0 0}
   .hero-nav .hicon .ic{width:62px;height:62px;margin:0 auto;font-size:27px}
-  .hero-events{width:min(94vw,560px);padding:10px 0 70px;z-index:2;display:flex;flex-direction:column;gap:10px}
+  .hero-events{position:relative;z-index:2;width:min(94vw,560px);padding:10px 0 70px;display:flex;flex-direction:column;gap:10px}
   .hero-events h2{font-size:17px;font-weight:900;color:#ffd77a;text-align:center;margin:8px 0 4px}
   .hev{background:rgba(16,24,60,.94);border:1px solid rgba(79,125,255,.25);border-radius:14px;padding:14px}
   .hev .nm{font-size:16px;font-weight:800}
@@ -234,20 +289,11 @@
   .cine-name{font-size:clamp(26px,7vw,46px);font-weight:900;color:#ffe9a8;text-shadow:0 0 34px rgba(255,214,106,.6);text-align:center;z-index:2;animation:pageIn .5s .25s both}
   .cine-sub{color:#9fabdd;font-size:13px;margin-top:10px;text-align:center;z-index:2;animation:pageIn .5s .4s both}
   .cine-x{position:absolute;top:16px;right:16px;z-index:3;background:rgba(16,24,60,.85);border:1px solid var(--line);color:#fff;width:40px;height:40px;border-radius:50%;font-size:16px;cursor:pointer}
-  #heroSky{position:absolute;inset:0;pointer-events:none}
-  #heroSky .sp{position:absolute;border-radius:50%;background:#dbe6ff;animation:tw var(--d) ease-in-out infinite;animation-delay:var(--dl)}
-  .hero-title{font-size:clamp(28px,6vw,42px);font-weight:900;letter-spacing:1px;background:linear-gradient(120deg,#fff,#ffd77a 55%,#9db4ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;z-index:2}
-  .hero-sub{color:#93a5e8;font-size:11px;letter-spacing:3px;text-transform:uppercase;z-index:2;margin-bottom:4px}
-  .hero-stage{position:relative;width:min(96vw,620px);aspect-ratio:1.45;z-index:2}
-  .hero-dome{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:97%}
-  .breathe{animation:breathe 4.5s ease-in-out infinite}
-  @keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
-  .hicon{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;z-index:3;animation:bob 5.5s ease-in-out infinite;animation-delay:var(--bd,0s)}
+  .hicon{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;z-index:3}
   @keyframes bob{0%,100%{margin-top:0}50%{margin-top:-9px}}
   .hicon .ic{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:25px;background:rgba(14,22,58,.92);border:1px solid rgba(255,214,120,.4);box-shadow:0 0 16px rgba(255,205,100,.18);transition:.25s}
   .hicon:hover .ic{transform:scale(1.14);border-color:#ffd76a;box-shadow:0 0 30px rgba(255,214,110,.5)}
   .hicon .lb{font-size:11px;font-weight:800;color:#d5defc;text-shadow:0 2px 8px #000;white-space:nowrap}
-  .hero-hint{color:#7787c9;font-size:12px;z-index:2;animation:breathe 3s ease-in-out infinite}
   @media (max-width:480px){.hicon .ic{width:47px;height:47px;font-size:20px}.hicon .lb{font-size:9.5px}}
 
   /* ── إلغاء الزوم على التلفون عند الضغط ── */
@@ -329,53 +375,56 @@
 
 <!-- ============ الواجهة الرئيسية: القبة المضيئة (تظهر بعد تسجيل الدخول فقط) ============ -->
 <div id="hero" style="display:none">
-  <div id="heroSky" aria-hidden="true"></div>
+  <video class="hero-video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260813_092641_de52eb87-daf2-41db-92cb-7a56eae012a5.mp4" autoplay loop muted playsinline></video>
+  <div class="hero-veil" aria-hidden="true"></div>
+
   <div class="hero-screen">
-  <div class="hero-title">Ramallah Expo</div>
-  <div class="hero-sub">Cherish every moment of your event</div>
-  <div class="hero-stage">
-    <svg class="hero-dome" viewBox="0 -160 600 400" aria-hidden="true">
-      <defs>
-        <radialGradient id="gIn" cx="50%" cy="82%" r="72%">
-          <stop offset="0%" stop-color="#ffe9a8" stop-opacity=".95"/>
-          <stop offset="38%" stop-color="#ffcf5e" stop-opacity=".7"/>
-          <stop offset="72%" stop-color="#c07f1c" stop-opacity=".22"/>
-          <stop offset="100%" stop-color="#c07f1c" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="gHalo" cx="50%" cy="60%" r="55%">
-          <stop offset="0%" stop-color="#ffd76a" stop-opacity=".45"/>
-          <stop offset="100%" stop-color="#ffd76a" stop-opacity="0"/>
-        </radialGradient>
-        <linearGradient id="gBeam" x1="0" y1="1" x2="0" y2="0">
-          <stop offset="0%" stop-color="#ffe9a8" stop-opacity=".55"/>
-          <stop offset="100%" stop-color="#ffe9a8" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <polygon class="beamL" points="285,25 175,-155 255,-155" fill="url(#gBeam)"/>
-      <polygon class="beamR" points="315,25 345,-155 425,-155" fill="url(#gBeam)"/>
-      <ellipse class="breathe" cx="300" cy="195" rx="260" ry="100" fill="url(#gHalo)"/>
-      <rect x="0" y="210" width="600" height="30" fill="#04091d"/>
-      <path class="glowP" d="M110 210 A190 190 0 0 1 490 210 Z" fill="url(#gIn)" stroke="#ffdf9e" stroke-opacity=".3" stroke-width="1.5"/>
-      <g fill="none" stroke="#ffe7b0" stroke-opacity=".5" stroke-width="1.5">
-        <path d="M120 150 Q300 128 480 150"/>
-        <path d="M153 90 Q300 72 447 90"/>
-        <path d="M206 45 Q300 33 394 45"/>
-        <path d="M150 210 A150 190 0 0 1 450 210"/>
-        <path d="M205 210 A95 190 0 0 1 395 210"/>
-        <path d="M260 210 A40 190 0 0 1 340 210"/>
-        <path d="M300 20 L300 210"/>
-      </g>
-      <circle cx="300" cy="20" r="3" fill="#fff3cf"/>
-      <path d="M285 210 L315 210 L310 174 L290 174 Z" fill="#fff3c2" opacity=".92"/>
-      <ellipse cx="300" cy="218" rx="160" ry="9" fill="#f7b733" opacity=".14"/>
-      <circle cx="512" cy="52" r="19" fill="#e8edff" opacity=".95"/>
-      <circle cx="520" cy="45" r="17" fill="#081030"/>
-      <g id="kioskRow"></g>
-      <path d="M110 210 A190 190 0 0 1 490 210 Z" fill="transparent" style="cursor:pointer" onclick="openCine()"/>
-    </svg>
-  </div>
-  <div class="hero-hint">✨ اضغط على القبة لمشهد الحجز</div>
-  <div class="hero-scrolldown" onclick="heroScrollDown()">⌄ اسحب لأسفل</div>
+    <div class="hx-bar">
+      <div class="hx-brand">
+        <svg class="domesvg" viewBox="0 0 120 64" width="46" aria-hidden="true"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="4"><path d="M12 58 A48 48 0 0 1 108 58" stroke-dasharray="0.1 9"/><path d="M27 58 A33 33 0 0 1 93 58" stroke-dasharray="0.1 9.5"/><path d="M42 58 A18 18 0 0 1 78 58" stroke-dasharray="0.1 10"/><path d="M8 58 H112" stroke-dasharray="0.1 9"/></g><text class="star" x="92" y="16" font-size="18" fill="#fff">✦</text></svg>
+        <span class="wm">Ramallah Expo</span>
+      </div>
+
+      <div class="hx-pill">
+        <span onclick="openCine()">🎪 القبة</span>
+        <span onclick="heroGo('kiosks')">🏪 الأكشاك</span>
+        <span onclick="heroGo('sponsors')">🤝 الرعاية</span>
+        <span onclick="heroGo('dash')">📊 الحسابات</span>
+      </div>
+
+      <div class="hx-auth">
+        <button class="hx-ghost" onclick="heroGo('dash')">دخول الحسابات</button>
+        <button class="hx-solid" onclick="openCine()">احجز القبة</button>
+      </div>
+
+      <button class="hx-burger" onclick="heroScrollDown()" aria-label="القائمة">☰</button>
+    </div>
+
+    <div class="hx-row">
+      <div class="hx-grid">
+        <div class="hx-copy">
+          <h1 class="hx-h1">ارفع مناسباتك إلى آفاق جديدة</h1>
+          <p class="hx-sub">قبة معارض ضخمة، أكشاك، رعاية، وحسابات مرتّبة — كل شي بمكان واحد</p>
+          <div class="hx-cta">
+            <button class="hx-btn1" onclick="openCine()">🎪 احجز القبة</button>
+            <button class="hx-btn2" onclick="heroGo('dash')">📊 دخول الحسابات</button>
+          </div>
+        </div>
+
+        <div class="hx-card">
+          <div class="lb">📥 إجمالي الدخل</div>
+          <div class="big" id="hx-income">—</div>
+          <div class="hx-line"><span class="k">🏪 الأكشاك</span><span class="v" id="hx-kiosks">—</span></div>
+          <div class="hx-line"><span class="k">🤝 الرعاية</span><span class="v" id="hx-sponsors">—</span></div>
+          <div class="hx-line"><span class="k">🎪 Ramallah Expo</span><span class="v" id="hx-dome">—</span></div>
+          <div class="hx-line"><span class="k">🏛️ مستحقات البلدية</span><span class="v" id="hx-muni">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hx-scroll">
+      <div class="hero-scrolldown" onclick="heroScrollDown()">⌄ اسحب لأسفل</div>
+    </div>
   </div>
 
   <!-- صفحة المحاسبة: بتظهر بأنيميشن عند السكرول -->
@@ -1880,7 +1929,19 @@ function sprinkleStars(el,count){
 /* ── الواجهة الرئيسية ── */
 function heroGo(tab){ closeCine(); const h=document.getElementById('hero'); if(h) h.style.display='none'; showCompany('expo'); showTab(tab); }
 function heroMob(){ if(!mobAllowed) return; closeCine(); const h=document.getElementById('hero'); if(h) h.style.display='none'; showCompany('themob'); }
-function openHero(){ if(viewerMode) return; const h=document.getElementById('hero'); if(h){ h.style.display='flex'; h.scrollTop=0; } buildKioskRow(); renderHeroEvents(); }
+function openHero(){ if(viewerMode) return; const h=document.getElementById('hero'); if(h){ h.style.display='flex'; h.scrollTop=0; } buildKioskRow(); renderHeroEvents(); renderHeroStats(); }
+/* أرقام الواجهة الحقيقية — من compute() نفسها اللي بتغذّي لوحة التحكم */
+function renderHeroStats(){
+  try{
+    const c=compute();
+    const set=(id,html)=>{ const el=document.getElementById(id); if(el) el.innerHTML=html; };
+    set('hx-income',   dual(c.gross));
+    set('hx-kiosks',   dual(c.inc.kiosks));
+    set('hx-sponsors', dual(c.inc.sponsors));
+    set('hx-dome',     dual(c.inc.dome));
+    set('hx-muni',     dual(c.silent));
+  }catch(e){}
+}
 function heroScrollDown(){ const h=document.getElementById('hero'); if(h) h.scrollTo({top:h.clientHeight,behavior:'smooth'}); }
 /* أنيميشن ظهور صفحة المحاسبة عند السكرول */
 (function(){
