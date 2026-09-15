@@ -182,14 +182,32 @@
   .note{background:linear-gradient(135deg,rgba(79,125,255,.13),rgba(55,211,242,.07));border:1px solid rgba(79,125,255,.3);color:#c6d6ff}
   .badge{background:rgba(12,19,56,.7)}
 
-  #auth-overlay{background:
-    radial-gradient(900px 500px at 50% -8%, rgba(79,125,255,.28), transparent 60%),
-    radial-gradient(700px 420px at 100% 100%, rgba(55,211,242,.12), transparent 55%),
-    var(--bg)}
-  #auth-overlay>div{background:rgba(15,23,60,.97);border:1px solid rgba(79,125,255,.32);box-shadow:0 24px 70px rgba(0,0,0,.55);border-radius:22px;animation:authIn .6s cubic-bezier(.2,.75,.2,1) both}
+  /* ── شاشة الدخول: نفس هوية الواجهة ── */
+  #auth-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;background:#080A19;overflow:hidden}
+  .auth-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .auth-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:
+    linear-gradient(180deg,rgba(8,10,25,.80) 0%,rgba(8,10,25,.55) 40%,rgba(8,10,25,.88) 100%)}
+  .auth-card{position:relative;z-index:2;width:100%;max-width:380px;
+    background:rgba(12,18,44,.72);border:1px solid rgba(255,255,255,.12);
+    border-radius:24px;padding:26px 22px;
+    box-shadow:0 26px 70px rgba(0,0,0,.6);
+    animation:authIn .6s cubic-bezier(.2,.75,.2,1) both}
   @keyframes authIn{from{opacity:0;transform:translateY(26px) scale(.96)}to{opacity:1;transform:none}}
-  .auth-brand{text-align:center;font-size:26px;font-weight:900;letter-spacing:.5px;background:linear-gradient(120deg,#fff,#9db4ff 70%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0 2px}
-  .auth-tag{text-align:center;color:#8fa2e0;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .auth-brand{text-align:center;font-size:27px;font-weight:800;letter-spacing:-.3px;color:#fff;margin:10px 0 3px}
+  .auth-tag{text-align:center;color:rgba(255,255,255,.62);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+  .auth-note{text-align:center;color:rgba(255,255,255,.72);font-size:12.5px;line-height:1.5;margin-bottom:18px}
+  #auth-overlay label.fld{color:rgba(255,255,255,.7)}
+  #auth-overlay input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+    color:#fff;border-radius:12px;padding:12px 13px;font-size:14px;font-family:inherit}
+  #auth-overlay input::placeholder{color:rgba(255,255,255,.38)}
+  #auth-overlay input:focus{border-color:#E9E9E9;box-shadow:0 0 0 3px rgba(233,233,233,.16);outline:none}
+  .auth-btn{width:100%;height:50px;background:#E9E9E9;border:0;border-radius:12px;
+    color:#0A0707;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:opacity .2s}
+  .auth-btn:hover{opacity:.9}
+  .auth-btn:active{transform:scale(.99)}
+  .auth-link{color:rgba(255,255,255,.75);font-size:12.5px;text-decoration:underline}
+  .auth-link:hover{color:#fff}
+  .auth-fine{text-align:center;color:rgba(255,255,255,.45);font-size:11px;margin-top:8px}
 
   ::-webkit-scrollbar{width:8px;height:6px}
   ::-webkit-scrollbar-thumb{background:#27336b;border-radius:8px}
@@ -343,23 +361,26 @@
 
 <div id="fx" aria-hidden="true"></div>
 
-<div id="auth-overlay" style="position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px">
-  <div style="width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px">
+<div id="auth-overlay">
+  <video class="auth-video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260813_092641_de52eb87-daf2-41db-92cb-7a56eae012a5.mp4" autoplay loop muted playsinline aria-hidden="true"></video>
+  <div class="auth-veil" aria-hidden="true"></div>
+
+  <div class="auth-card">
     <div style="display:flex;justify-content:center;margin-top:4px">
-      <svg class="domesvg" viewBox="0 0 120 64" width="150" aria-hidden="true"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="4"><path class="d1" d="M12 58 A48 48 0 0 1 108 58" stroke-dasharray="0.1 9"/><path class="d2" d="M27 58 A33 33 0 0 1 93 58" stroke-dasharray="0.1 9.5"/><path class="d3" d="M42 58 A18 18 0 0 1 78 58" stroke-dasharray="0.1 10"/><path class="d4" d="M8 58 H112" stroke-dasharray="0.1 9"/></g><text class="star" x="92" y="16" font-size="18" fill="#fff">✦</text></svg>
+      <svg class="domesvg" viewBox="0 0 120 64" width="66" aria-hidden="true"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="4"><path class="d1" d="M12 58 A48 48 0 0 1 108 58" stroke-dasharray="0.1 9"/><path class="d2" d="M27 58 A33 33 0 0 1 93 58" stroke-dasharray="0.1 9.5"/><path class="d3" d="M42 58 A18 18 0 0 1 78 58" stroke-dasharray="0.1 10"/><path class="d4" d="M8 58 H112" stroke-dasharray="0.1 9"/></g><text class="star" x="92" y="16" font-size="18" fill="#fff">✦</text></svg>
     </div>
     <div class="auth-brand">Ramallah Expo</div>
     <div class="auth-tag">Cherish every moment of your event</div>
-    <p style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px">بوابة الشركات — سجّل دخول لمزامنة بياناتك على كل أجهزتك</p>
+    <p class="auth-note">بوابة الشركات — سجّل دخول لمزامنة بياناتك على كل أجهزتك</p>
     <label class="fld">الإيميل</label>
-    <input id="auth-email" type="email" placeholder="you@example.com" style="margin-bottom:10px">
+    <input id="auth-email" type="email" placeholder="you@example.com" style="margin-bottom:12px">
     <label class="fld">كلمة السر</label>
-    <input id="auth-pass" type="password" placeholder="6 أحرف على الأقل" style="margin-bottom:14px">
-    <div id="auth-error" style="color:var(--red);font-size:13px;margin-bottom:10px;display:none"></div>
-    <button class="btn btn-green" style="width:100%;margin-bottom:8px" onclick="authSignIn()">تسجيل الدخول</button>
-    <div style="text-align:center;margin-top:12px"><a href="#" onclick="authForgot();return false" style="color:#8fa2e0;font-size:12.5px;text-decoration:underline">🔑 نسيت كلمة السر؟</a></div>
-    <p style="text-align:center;color:var(--dim);font-size:11px;margin-top:8px">الحسابات الجديدة تُنشأ من الإدارة فقط</p>
-    <p style="text-align:center;color:var(--dim);font-size:11px;margin-top:14px">🔒 بياناتك محفوظة بأمان في حسابك فقط</p>
+    <input id="auth-pass" type="password" placeholder="6 أحرف على الأقل" style="margin-bottom:16px">
+    <div id="auth-error" style="color:#ff8a8a;font-size:13px;margin-bottom:10px;display:none"></div>
+    <button class="auth-btn" onclick="authSignIn()">تسجيل الدخول</button>
+    <div style="text-align:center;margin-top:14px"><a href="#" class="auth-link" onclick="authForgot();return false">🔑 نسيت كلمة السر؟</a></div>
+    <p class="auth-fine">الحسابات الجديدة تُنشأ من الإدارة فقط</p>
+    <p class="auth-fine" style="margin-top:12px">🔒 بياناتك محفوظة بأمان في حسابك فقط</p>
   </div>
 </div>
 
