@@ -1891,11 +1891,11 @@ function attachSnap(ref){
     if(cloudData && !dbIsEmpty(cloudData)){
       // السحابة فيها بيانات حقيقية → استخدمها
       if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak', JSON.stringify(db)); // نسخة أمان قبل الاستبدال
-      applyingRemote=true; db=ensureMob(cloudData); localStorage.setItem(DB_KEY,JSON.stringify(db)); renderCurrent(); try{ renderHeroStats(); renderHeroEvents(); }catch(e){} applyingRemote=false;
+      applyingRemote=true; db=ensureMob(cloudData); localStorage.setItem(DB_KEY,JSON.stringify(db)); if(currentUid){ setCacheOwner(currentUid); cacheVerified=true; } renderCurrent(); try{ renderHeroStats(); renderHeroEvents(); }catch(e){} applyingRemote=false;
       setSync(viewerMode?'👁️ اطلاع فقط':'☁️ متزامن', viewerMode?'#f5b942':'#22c55e');
     } else {
       // السحابة فاضية أو غير موجودة → لا تمسح المحلي أبداً؛ لو عندنا بيانات ارفعها
-      if(!viewerMode && !dbIsEmpty(db)){ pushCloud(true); } else { setSync(viewerMode?'👁️ اطلاع فقط':'☁️ متزامن', viewerMode?'#f5b942':'#22c55e'); }
+      if(!viewerMode && !dbIsEmpty(db) && confirmLegacyCache(currentUid)){ pushCloud(true); } else { setSync(viewerMode?'👁️ اطلاع فقط':'☁️ متزامن', viewerMode?'#f5b942':'#22c55e'); }
     }
   }, ()=> setSync('⚠️ خطأ','#ef4444'));
 }
@@ -1908,13 +1908,66 @@ function enterViewerMode(){
   setSync('👁️ اطلاع فقط','#f5b942');
 }
 
+/* ── خصوصية: بيانات المتصفح مربوطة بالحساب — ما بتنتقل بيانات حساب لحساب ثاني على نفس الجهاز ── */
+var DB_OWNER_KEY='rexpo_db_owner';
+var cacheVerified=false, currentUid=null;
+function cacheOwner(){ try{ return localStorage.getItem(DB_OWNER_KEY)||''; }catch(e){ return ''; } }
+function setCacheOwner(uid){ try{ if(uid) localStorage.setItem(DB_OWNER_KEY, uid); }catch(e){} }
+function resetCacheFor(uid, why){
+  try{ if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak_'+(why||'other')+'_'+Date.now(), JSON.stringify(db)); }catch(e){}
+  db=defaultDB();
+  try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
+  setCacheOwner(uid); cacheVerified=true;
+  try{ renderCurrent(); renderHeroStats(); renderHeroEvents(); }catch(e){}
+}
+function bindCacheTo(uid, isViewer){
+  currentUid=uid;
+  const tag=cacheOwner();
+  if(tag && tag!==uid){ resetCacheFor(uid,'acct'); return; }           // بيانات حساب ثاني → نسخة احتياطية + بداية نظيفة
+  cacheVerified = (tag===uid) || dbIsEmpty(db);
+  if(!cacheVerified && isViewer){ resetCacheFor(uid,'viewer'); return; } // البلدية ما بتشوف أي بيانات قديمة بالمتصفح
+  if(cacheVerified) setCacheOwner(uid);
+}
+function confirmLegacyCache(uid){
+  if(cacheVerified) return true;
+  const ok=confirm('في بيانات محفوظة على هذا المتصفح من قبل، ومش معروف لأي حساب.\n\nهل هي بيانات الحساب اللي داخل فيه هلأ؟\n\nموافق (OK) = نعم، ارفعها لهذا الحساب\nإلغاء (Cancel) = لا، ابدأ من جديد\n\n(البيانات القديمة بتضل محفوظة نسخة احتياطية على هذا الجهاز)');
+  if(ok){ setCacheOwner(uid); cacheVerified=true; return true; }
+  resetCacheFor(uid,'unknown'); return false;
+}
+function fallbackPrivate(user){ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero(); }
+function pickOwnerSeed(user){
+  if(cacheVerified && !dbIsEmpty(db)) return Promise.resolve(db);
+  let q; try{ q=fbDb.collection('users').doc(user.uid).get(); }catch(e){ return Promise.resolve(null); } return q.then(p=>{
+    const own = p.exists ? ((p.data()||{}).data) : null;
+    if(own && !dbIsEmpty(own) && confirm('لقينا بيانات محفوظة على حسابك الخاص على السحابة.\n\nبدك تنقلها للدفتر اللي بتشوفه البلدية؟\n\nموافق (OK) = نعم انقلها\nإلغاء (Cancel) = لا')) return own;
+    if(!dbIsEmpty(db) && confirmLegacyCache(user.uid)) return db;
+    return null;
+  }).catch(()=> null);
+}
+function ownerOpenWorkspace(user, ws){
+  ws.get().then(snap=>{
+    const wsData = snap.exists ? ((snap.data()||{}).data) : null;
+    if(wsData && !dbIsEmpty(wsData)){
+      userDocRef=ws; ws.set({viewers:WS_VIEWERS},{merge:true}).catch(()=>{}); attachSnap(ws); openHero(); return;
+    }
+    // الدفتر مش موجود أو فاضي → نعبّيه فقط ببيانات مؤكَّدة
+    pickOwnerSeed(user).then(seed=>{
+      const base={owner:user.uid, viewers:WS_VIEWERS, updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+      const op = snap.exists
+        ? ws.set(seed ? Object.assign({data:seed}, base) : base, {merge:true})
+        : ws.set(Object.assign({data: seed || defaultDB()}, base));
+      op.then(()=>{ userDocRef=ws; attachSnap(ws); openHero(); })
+        .catch(()=> fallbackPrivate(user));
+    });
+  }).catch(()=> fallbackPrivate(user));
+}
 function handleAuth(user){
   const overlay=document.getElementById('auth-overlay');
   const logout=document.getElementById('logout-btn');
   if(!user){
     overlay.style.display='flex';
     if(logout) logout.style.display='none';
-    userDocRef=null; viewerMode=false;
+    userDocRef=null; viewerMode=false; cacheVerified=false; currentUid=null;
     mobAllowed=false; document.body.classList.add('no-mob');
     document.body.classList.remove('viewer-mode');
     const hh=document.getElementById('hero'); if(hh) hh.style.display='none';   // الواجهة تختفي قبل الدخول
@@ -1934,22 +1987,13 @@ function handleAuth(user){
   const isAdmin = WS_ADMINS.indexOf(email)>=0;          // نافذة إنشاء الحسابات
   const isWsOwner = WS_OWNER.indexOf(email)>=0;          // جواد: دفتر اكسبو المُراقَب
   const isViewerEmail = WS_VIEWERS.indexOf(email)>=0;    // البلدية
+  bindCacheTo(user.uid, isViewerEmail);   // بيانات هذا المتصفح لازم تكون لهذا الحساب قبل أي مزامنة
   document.body.classList.toggle('admin-mode', isAdmin);
   if(isViewerEmail){ enterViewerMode(); }   // البلدية: اطلاع فقط من أول لحظة — لا واجهة ولا TheMob ولا شركاء
   const ws=fbDb.collection('workspaces').doc('main');
   if(isWsOwner){
     // جواد: مساحته الخاصة (اللي بتشوفها البلدية) — علي ما إله علاقة فيها
-    ws.get().then(snap=>{
-      if(snap.exists){
-        userDocRef=ws;
-        ws.set({viewers:WS_VIEWERS},{merge:true}).catch(()=>{});
-        attachSnap(ws); openHero();
-      } else {
-        ws.set({owner:user.uid, viewers:WS_VIEWERS, data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()})
-          .then(()=>{ userDocRef=ws; attachSnap(ws); openHero(); })
-          .catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero(); });
-      }
-    }).catch(()=>{ userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero(); });
+    ownerOpenWorkspace(user, ws);   // بيتعبّى فقط ببيانات مؤكَّد إنها لجواد
   } else if(isViewerEmail){
     // البلدية: قراءة دفتر جواد فقط
     ws.get().then(snap=>{
@@ -1963,7 +2007,7 @@ function handleAuth(user){
 }
 
 function pushCloud(immediate){
-  if(!userDocRef || viewerMode) return;
+  if(!userDocRef || viewerMode || !cacheVerified) return;
   clearTimeout(pushTimer);
   const doIt=()=>{ setSync('⏳ يحفظ…','#f59e0b'); userDocRef.set({data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>setSync('☁️ متزامن','#22c55e')).catch(()=>setSync('⚠️ غير متصل','#ef4444')); };
   if(immediate) doIt(); else pushTimer=setTimeout(doIt,800);
