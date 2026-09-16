@@ -355,9 +355,80 @@
 
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}}
 }
+  /* ═══ UI v3: أيقونات خطّية + تبويبات كبسولة + بطاقات زجاج بلمسة لون ═══ */
+  .ico{width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:middle}
+
+  /* التبويبات: كبسولات زجاجية */
+  .tabs{background:rgba(8,10,25,.94) !important;border-bottom:1px solid rgba(255,255,255,.08) !important;padding:10px 12px !important;gap:6px !important;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs .tab{display:inline-flex;align-items:center;gap:7px;padding:9px 14px !important;border-radius:999px;border:1px solid rgba(255,255,255,.10) !important;background:rgba(255,255,255,.04);color:rgba(255,255,255,.66) !important;font-size:13px;font-weight:600;transition:background .2s,color .2s,border-color .2s}
+  .tabs .tab::after{display:none !important}
+  .tabs .tab:hover{color:#fff !important;background:rgba(255,255,255,.08)}
+  .tabs .tab.active{background:#E9E9E9;color:#0A0707 !important;border-color:#E9E9E9 !important}
+  .tabs .tab .ico{width:16px;height:16px}
+  body.viewer-mode #co-expo .tabs .tab[data-tab="dash"],
+  body.viewer-mode #co-expo .tabs .tab[data-tab="kiosks"],
+  body.viewer-mode #co-expo .tabs .tab[data-tab="sponsors"],
+  body.viewer-mode #co-expo .tabs .tab[data-tab="dome"],
+  body.viewer-mode #co-expo .tabs .tab[data-tab="profit"]{display:inline-flex !important}
+
+  /* زر الرئيسية */
+  #homeBtn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;padding:0 !important}
+  #homeBtn .ico{width:18px;height:18px}
+
+  /* صفحة المحاسبة: بطاقات زجاج بلمسة لون + أرقام حقيقية */
+  .hero-sec-title{color:#fff !important;font-size:21px !important;font-weight:800 !important;letter-spacing:-.2px;text-shadow:0 2px 18px rgba(0,0,0,.6) !important}
+  .hero-sec-sub{position:relative;z-index:2;color:rgba(255,255,255,.62);font-size:12.5px;margin-top:-14px;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+  .hero-nav{grid-template-columns:1fr 1fr !important;gap:10px !important;width:min(94vw,520px) !important}
+  .hero-nav .hc{display:block !important;position:relative !important;overflow:hidden;cursor:pointer;border-radius:18px;padding:12px 13px 13px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);box-shadow:0 10px 24px rgba(0,0,0,.35);text-align:right}
+  .hero-nav .hc::after{content:'';position:absolute;left:-30px;bottom:-42px;width:92px;height:92px;border-radius:50%;background:var(--tint);opacity:.17;pointer-events:none}
+  .hero-nav .hc:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.28)}
+  .hero-nav .hc:active{transform:scale(.98)}
+  .hc-h{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .hc-i{flex:0 0 auto;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--tint);color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+  .hc-i .ico{width:17px;height:17px;stroke-width:1.9}
+  .hc-t{font-size:12.5px;font-weight:700;color:rgba(255,255,255,.92);line-height:1.2}
+  .hc-v{display:block;font-size:17px;font-weight:800;color:#fff;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hc-s{display:block;font-size:10.5px;color:rgba(255,255,255,.55);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hero-nav .hc.wide{grid-column:1/-1;display:flex !important;align-items:center;gap:12px}
+  .hero-nav .hc.wide .hc-h{margin:0;flex:1}
+  .hero-nav .hc.wide .hc-val{text-align:left}
+
+  /* بطاقة الأرقام بالواجهة: أيقونات صغيرة */
+  .hx-line .k{display:inline-flex;align-items:center;gap:7px}
+  .hx-line .k .ico{width:15px;height:15px;opacity:.7}
+
+  /* المناسبات */
+  .hero-events h2{color:#fff !important;font-weight:800 !important}
+  .hev .tag{display:inline-flex;align-items:center;gap:7px}
+  .hev.today .tag::before{content:'';width:7px;height:7px;border-radius:50%;background:#ffd76a;box-shadow:0 0 10px #ffd76a}
+
+  /* مبدّل الشركات: نفس لغة الكبسولات */
+  .company-switch button{border-radius:999px !important;background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.12) !important;color:rgba(255,255,255,.72) !important;box-shadow:none !important}
+  .company-switch button.active{background:#E9E9E9 !important;color:#0A0707 !important;border-color:#E9E9E9 !important}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-dash" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0a3 3 0 0 1-6 0a3 3 0 0 1-6 0z"/><path d="M5 13.5V20h14v-6.5"/><path d="M10 20v-4h4v4"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></symbol>
+    <symbol id="i-dome" viewBox="0 0 24 24"><path d="M2.5 20h19"/><path d="M4 20a8 8 0 0 1 16 0"/><path d="M8.5 20a3.5 8 0 0 1 7 0"/><path d="M12 12v8"/><path d="M12 9v3"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></symbol>
+    <symbol id="i-pie" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+    <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="M22 7l-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+    <symbol id="i-cash" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M12 2l8 5H4z"/></symbol>
+  </defs>
+</svg>
 
 <div id="fx" aria-hidden="true"></div>
 
@@ -407,10 +478,10 @@
       </div>
 
       <div class="hx-pill">
-        <span onclick="openCine()">🎪 القبة</span>
-        <span onclick="heroGo('kiosks')">🏪 الأكشاك</span>
-        <span onclick="heroGo('sponsors')">🤝 الرعاية</span>
-        <span onclick="heroGo('dash')">📊 الحسابات</span>
+        <span onclick="openCine()">القبة</span>
+        <span onclick="heroGo('kiosks')">الأكشاك</span>
+        <span onclick="heroGo('sponsors')">الرعاية</span>
+        <span onclick="heroGo('dash')">الحسابات</span>
       </div>
 
       <div class="hx-auth">
@@ -427,18 +498,18 @@
           <h1 class="hx-h1">ارفع مناسباتك إلى آفاق جديدة</h1>
           <p class="hx-sub">قبة معارض ضخمة، أكشاك، رعاية، وحسابات مرتّبة — كل شي بمكان واحد</p>
           <div class="hx-cta">
-            <button class="hx-btn1" onclick="openCine()">🎪 احجز القبة</button>
-            <button class="hx-btn2" onclick="heroGo('dash')">📊 دخول الحسابات</button>
+            <button class="hx-btn1" onclick="openCine()">احجز القبة</button>
+            <button class="hx-btn2" onclick="heroGo('dash')">دخول الحسابات</button>
           </div>
         </div>
 
         <div class="hx-card">
-          <div class="lb">📥 إجمالي الدخل</div>
+          <div class="lb">إجمالي الدخل</div>
           <div class="big" id="hx-income">—</div>
-          <div class="hx-line"><span class="k">🏪 الأكشاك</span><span class="v" id="hx-kiosks">—</span></div>
-          <div class="hx-line"><span class="k">🤝 الرعاية</span><span class="v" id="hx-sponsors">—</span></div>
-          <div class="hx-line"><span class="k">🎪 Ramallah Expo</span><span class="v" id="hx-dome">—</span></div>
-          <div class="hx-line"><span class="k">🏛️ مستحقات البلدية</span><span class="v" id="hx-muni">—</span></div>
+          <div class="hx-line"><span class="k"><svg class="ico"><use href="#i-store"/></svg>الأكشاك</span><span class="v" id="hx-kiosks">—</span></div>
+          <div class="hx-line"><span class="k"><svg class="ico"><use href="#i-hand"/></svg>الرعاية</span><span class="v" id="hx-sponsors">—</span></div>
+          <div class="hx-line"><span class="k"><svg class="ico"><use href="#i-dome"/></svg>Ramallah Expo</span><span class="v" id="hx-dome">—</span></div>
+          <div class="hx-line"><span class="k"><svg class="ico"><use href="#i-landmark"/></svg>مستحقات البلدية</span><span class="v" id="hx-muni">—</span></div>
         </div>
       </div>
     </div>
@@ -450,17 +521,18 @@
 
   <!-- صفحة المحاسبة: بتظهر بأنيميشن عند السكرول -->
   <div class="hero-screen2">
-    <div class="hero-sec-title">💼 صفحة المحاسبة</div>
+    <div class="hero-sec-title">صفحة المحاسبة</div>
+    <div class="hero-sec-sub">اختار القسم اللي بدك تشتغل عليه</div>
     <div class="hero-nav" id="heroNav">
-      <div class="hicon" style="--i:0" onclick="heroGo('dash')"><div class="ic">📊</div><div class="lb">لوحة التحكم</div></div>
-      <div class="hicon" style="--i:1" onclick="heroGo('kiosks')"><div class="ic">🏪</div><div class="lb">الأكشاك</div></div>
-      <div class="hicon" style="--i:2" onclick="heroGo('sponsors')"><div class="ic">🤝</div><div class="lb">الرعاية</div></div>
-      <div class="hicon" style="--i:3" onclick="heroGo('dome')"><div class="ic">🎪</div><div class="lb">Ramallah Expo</div></div>
-      <div class="hicon" style="--i:4" onclick="heroGo('expenses')"><div class="ic">💸</div><div class="lb">المصاريف</div></div>
-      <div class="hicon" style="--i:5" onclick="heroGo('profit')"><div class="ic">👥</div><div class="lb">الأرباح</div></div>
-      <div class="hicon" style="--i:6" onclick="heroGo('stmt')"><div class="ic">📅</div><div class="lb">الكشف</div></div>
-      <div class="hicon" style="--i:7" onclick="heroGo('backup')"><div class="ic">💾</div><div class="lb">النسخ</div></div>
-      <div class="hicon" id="heroMobIcon" style="--i:8" onclick="heroMob()"><div class="ic">🎬</div><div class="lb">TheMob</div></div>
+      <div class="hicon hc" style="--i:0;--tint:#3b82f6" onclick="heroGo('dash')"><div class="hc-h"><span class="hc-i"><svg class="ico"><use href="#i-dash"/></svg></span><span class="hc-t">لوحة التحكم</span></div><span class="hc-v" id="hc-dash">—</span><span class="hc-s" id="hc-dash-s">إجمالي الدخل</span></div>
+      <div class="hicon hc" style="--i:1;--tint:#f59e0b" onclick="heroGo('kiosks')"><div class="hc-h"><span class="hc-i"><svg class="ico"><use href="#i-store"/></svg></span><span class="hc-t">الأكشاك</span></div><span class="hc-v" id="hc-kiosks">—</span><span class="hc-s" id="hc-kiosks-s">—</span></div>
+      <div class="hicon hc" style="--i:2;--tint:#db2777" onclick="heroGo('sponsors')"><div class="hc-h"><span class="hc-i"><svg class="ico"><use href="#i-hand"/></svg></span><span class="hc-t">الرعاية</span></div><span class="hc-v" id="hc-sponsors">—</span><span class="hc-s" id="hc-sponsors-s">—</span></div>
+      <div class="hicon hc" style="--i:3;--tint:#ca8a04" onclick="heroGo('dome')"><div class="hc-h"><span class="hc-i"><svg class="ico"><use href="#i-dome"/></svg></span><span class="hc-t">Ramallah Expo</span></div><span class="hc-v" id="hc-dome">—</span><span class="hc-s" id="hc-dome-s">—</span></div>
+      <div class="hicon hc" style="--i:4;--tint:#dc2626" onclick="heroGo('expenses')"><div class="hc-h"><span class="hc-i"><svg class="ico"><use href="#i-receipt"/></svg></span><span class="hc-t">المصاريف</span></div><span class="hc-v" id="hc-exp">—</span><span class="hc-s" id="hc-exp-s">—</span></div>
+      <div class="hicon hc" style="--i:5;--tint:#16a34a" onclick="heroGo('profit')"><div class="hc-h"><span class="hc-i"><svg class="ico"><use href="#i-pie"/></svg></span><span class="hc-t">الأرباح</span></div><span class="hc-v" id="hc-net">—</span><span class="hc-s" id="hc-net-s">صافي الربح</span></div>
+      <div class="hicon hc" style="--i:6;--tint:#9333ea" onclick="heroGo('stmt')"><div class="hc-h"><span class="hc-i"><svg class="ico"><use href="#i-cal"/></svg></span><span class="hc-t">الكشف</span></div><span class="hc-v" id="hc-month">—</span><span class="hc-s">شهري وسنوي</span></div>
+      <div class="hicon hc" style="--i:7;--tint:#0d9488" onclick="heroGo('backup')"><div class="hc-h"><span class="hc-i"><svg class="ico"><use href="#i-db"/></svg></span><span class="hc-t">النسخ</span></div><span class="hc-v" id="hc-sync">—</span><span class="hc-s">حفظ واسترجاع</span></div>
+      <div class="hicon hc wide" id="heroMobIcon" style="--i:8;--tint:#4f46e5" onclick="heroMob()"><div class="hc-h"><span class="hc-i"><svg class="ico"><use href="#i-film"/></svg></span><span class="hc-t">TheMob</span></div><div class="hc-val"><span class="hc-v" id="hc-mob">—</span><span class="hc-s" id="hc-mob-s">العائد</span></div></div>
     </div>
   </div>
   <div class="hero-events" id="heroEvents"></div>
@@ -483,7 +555,7 @@
       <span style="display:flex;flex-direction:column;line-height:1.25">Ramallah Expo<small id="subBrand">المحاسبة ومتابعة المصاريف</small></span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;order:3">
-      <button id="homeBtn" class="btn btn-ghost btn-sm" onclick="openHero()" title="الرئيسية">🏠</button>
+      <button id="homeBtn" class="btn btn-ghost btn-sm" onclick="openHero()" title="الرئيسية" aria-label="الرئيسية"><svg class="ico"><use href="#i-home"/></svg></button>
       <span id="sync-status" class="badge" style="font-size:11px">⏳</span>
       <button id="logout-btn" class="btn btn-ghost btn-sm" style="display:none" onclick="authSignOut()">خروج</button>
     </div>
@@ -497,14 +569,14 @@
 <!-- ============ RAMALLAH EXPO ============ -->
 <div id="co-expo">
   <div class="tabs">
-    <div class="tab active" data-tab="dash" onclick="showTab('dash')">📊 لوحة التحكم</div>
-    <div class="tab" data-tab="kiosks" onclick="showTab('kiosks')">🏪 الأكشاك</div>
-    <div class="tab" data-tab="sponsors" onclick="showTab('sponsors')">🤝 الرعاية</div>
-    <div class="tab" data-tab="dome" onclick="showTab('dome')">🎪 Ramallah Expo</div>
-    <div class="tab" data-tab="expenses" onclick="showTab('expenses')">💸 المصاريف</div>
-    <div class="tab" data-tab="profit" onclick="showTab('profit')">👥 الأرباح</div>
-    <div class="tab" data-tab="stmt" onclick="showTab('stmt')">📅 كشف شهري</div>
-    <div class="tab" data-tab="backup" onclick="showTab('backup')">💾 النسخ</div>
+    <div class="tab active" data-tab="dash" onclick="showTab('dash')"><svg class="ico"><use href="#i-dash"/></svg><span>لوحة التحكم</span></div>
+    <div class="tab" data-tab="kiosks" onclick="showTab('kiosks')"><svg class="ico"><use href="#i-store"/></svg><span>الأكشاك</span></div>
+    <div class="tab" data-tab="sponsors" onclick="showTab('sponsors')"><svg class="ico"><use href="#i-hand"/></svg><span>الرعاية</span></div>
+    <div class="tab" data-tab="dome" onclick="showTab('dome')"><svg class="ico"><use href="#i-dome"/></svg><span>Ramallah Expo</span></div>
+    <div class="tab" data-tab="expenses" onclick="showTab('expenses')"><svg class="ico"><use href="#i-receipt"/></svg><span>المصاريف</span></div>
+    <div class="tab" data-tab="profit" onclick="showTab('profit')"><svg class="ico"><use href="#i-pie"/></svg><span>الأرباح</span></div>
+    <div class="tab" data-tab="stmt" onclick="showTab('stmt')"><svg class="ico"><use href="#i-cal"/></svg><span>كشف شهري</span></div>
+    <div class="tab" data-tab="backup" onclick="showTab('backup')"><svg class="ico"><use href="#i-db"/></svg><span>النسخ</span></div>
   </div>
 
   <div class="wrap">
@@ -612,20 +684,26 @@
         <div class="row">
           <div><label class="fld">البند</label>
             <select id="ex-cat">
-              <optgroup label="مأكولات ومشروبات">
-                <option>مشروبات</option><option>مأكولات</option><option>معجنات</option><option>أدوات مطبخ</option>
+              <optgroup label="أكل وضيافة">
+                <option>مشروبات</option><option>مأكولات</option><option>معجنات</option><option>سوبرماركت</option><option>أدوات مطبخ</option>
               </optgroup>
               <optgroup label="تنظيف">
                 <option>مواد تنظيف</option><option>تنظيف</option><option>شباب تنظيف</option>
               </optgroup>
               <optgroup label="عمال وموظفين">
-                <option>عمال</option><option>عمال فك</option><option>عمال تركيب</option><option>موظف مشرف</option><option>حراسة وأمن (أبو شاويش)</option>
+                <option>عمال</option><option>عمال فك</option><option>عمال تركيب</option><option>موظف مشرف</option><option>حراسة وأمن (أبو شاويش)</option><option>أبو وهيب</option>
+              </optgroup>
+              <optgroup label="تركيب ومعدات">
+                <option>تركيب إضاءة</option><option>تركيب صوت</option><option>تركيب شاشة</option><option>تركيب ترسات</option><option>معدات</option><option>مرابط</option>
               </optgroup>
               <optgroup label="صوت وإضاءة">
                 <option>إضاءة</option><option>صوت وشاشات</option><option>دي جي / صوت</option>
               </optgroup>
+              <optgroup label="مواصلات">
+                <option>بنزين سيارة</option>
+              </optgroup>
               <optgroup label="مرافق وخدمات">
-                <option>كهرباء</option><option>ماء</option><option>خدمات</option><option>ازمقنا</option><option>إنترنت</option><option>صيانة</option><option>المحاسب</option>
+                <option>كهرباء</option><option>ماء</option><option>إنترنت</option><option>خدمات</option><option>صيانة</option><option>ازمقنا</option><option>المحاسب</option>
               </optgroup>
               <optgroup label="ضرائب">
                 <option>ضريبة بلدية</option><option>ضريبة دخل</option><option>ضريبة المعارف</option><option>ضريبة القيمة المضافة</option>
@@ -748,15 +826,15 @@
 <!-- ============ THEMOB ============ -->
 <div id="co-themob" class="hidden">
   <div class="tabs">
-    <div class="tab active" data-mtab="dash" onclick="showTabMob('dash')">📊 لوحة التحكم</div>
-    <div class="tab" data-mtab="rentals" onclick="showTabMob('rentals')">🏠 العائد</div>
-    <div class="tab" data-mtab="checks" onclick="showTabMob('checks')">🧾 الشيكات</div>
-    <div class="tab" data-mtab="install" onclick="showTabMob('install')">🔧 التركيب</div>
-    <div class="tab" data-mtab="fixed" onclick="showTabMob('fixed')">💡 ثابتة</div>
-    <div class="tab" data-mtab="costs" onclick="showTabMob('costs')">💸 مصاريف</div>
-    <div class="tab" data-mtab="pocket" onclick="showTabMob('pocket')">👛 بوكيت موني</div>
-    <div class="tab" data-mtab="profit" onclick="showTabMob('profit')">👥 الأرباح</div>
-    <div class="tab" data-mtab="stmt" onclick="showTabMob('stmt')">📅 كشف شهري</div>
+    <div class="tab active" data-mtab="dash" onclick="showTabMob('dash')"><svg class="ico"><use href="#i-dash"/></svg><span>لوحة التحكم</span></div>
+    <div class="tab" data-mtab="rentals" onclick="showTabMob('rentals')"><svg class="ico"><use href="#i-trend"/></svg><span>العائد</span></div>
+    <div class="tab" data-mtab="checks" onclick="showTabMob('checks')"><svg class="ico"><use href="#i-cash"/></svg><span>الشيكات</span></div>
+    <div class="tab" data-mtab="install" onclick="showTabMob('install')"><svg class="ico"><use href="#i-wrench"/></svg><span>التركيب</span></div>
+    <div class="tab" data-mtab="fixed" onclick="showTabMob('fixed')"><svg class="ico"><use href="#i-bulb"/></svg><span>ثابتة</span></div>
+    <div class="tab" data-mtab="costs" onclick="showTabMob('costs')"><svg class="ico"><use href="#i-receipt"/></svg><span>مصاريف</span></div>
+    <div class="tab" data-mtab="pocket" onclick="showTabMob('pocket')"><svg class="ico"><use href="#i-wallet"/></svg><span>بوكيت موني</span></div>
+    <div class="tab" data-mtab="profit" onclick="showTabMob('profit')"><svg class="ico"><use href="#i-pie"/></svg><span>الأرباح</span></div>
+    <div class="tab" data-mtab="stmt" onclick="showTabMob('stmt')"><svg class="ico"><use href="#i-cal"/></svg><span>كشف شهري</span></div>
   </div>
   <div class="wrap">
 
@@ -820,7 +898,24 @@
       <div class="cards"><div class="stat full"><div class="l">إجمالي تكاليف التركيب</div><div class="v" id="install-total">—</div></div></div>
       <div class="section">
         <h3>➕ إضافة تكلفة تركيب</h3>
-        <div class="row"><div><label class="fld">النوع</label><select id="mi-cat"><option>أجور عمال</option><option>بنزين</option><option>لاصق ومرابط</option><option>عشاء عمال</option><option>أخرى</option></select></div></div>
+        <div class="row"><div><label class="fld">النوع</label><select id="mi-cat">
+          <optgroup label="عمال">
+            <option>أجور عمال</option><option>عشاء عمال</option><option>أبو وهيب</option>
+          </optgroup>
+          <optgroup label="تركيب">
+            <option>تركيب إضاءة</option><option>تركيب صوت</option><option>تركيب شاشة</option><option>تركيب ترسات</option>
+          </optgroup>
+          <optgroup label="معدات ومستلزمات">
+            <option>معدات</option><option>لاصق ومرابط</option>
+          </optgroup>
+          <optgroup label="مواصلات">
+            <option>بنزين</option>
+          </optgroup>
+          <optgroup label="مشتريات">
+            <option>سوبرماركت</option>
+          </optgroup>
+          <option>أخرى</option>
+        </select></div></div>
         <div class="row">
           <div><label class="fld">المبلغ</label><input id="mi-amount" type="number" inputmode="decimal" placeholder="0"></div>
           <div class="cur-sel"><label class="fld">عملة</label><select id="mi-cur"><option>₪</option><option>$</option></select></div>
@@ -1759,7 +1854,7 @@ function attachSnap(ref){
     if(cloudData && !dbIsEmpty(cloudData)){
       // السحابة فيها بيانات حقيقية → استخدمها
       if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak', JSON.stringify(db)); // نسخة أمان قبل الاستبدال
-      applyingRemote=true; db=ensureMob(cloudData); localStorage.setItem(DB_KEY,JSON.stringify(db)); renderCurrent(); applyingRemote=false;
+      applyingRemote=true; db=ensureMob(cloudData); localStorage.setItem(DB_KEY,JSON.stringify(db)); renderCurrent(); try{ renderHeroStats(); renderHeroEvents(); }catch(e){} applyingRemote=false;
       setSync(viewerMode?'👁️ اطلاع فقط':'☁️ متزامن', viewerMode?'#f5b942':'#22c55e');
     } else {
       // السحابة فاضية أو غير موجودة → لا تمسح المحلي أبداً؛ لو عندنا بيانات ارفعها
@@ -1961,6 +2056,18 @@ function renderHeroStats(){
     set('hx-sponsors', dual(c.inc.sponsors));
     set('hx-dome',     dual(c.inc.dome));
     set('hx-muni',     dual(c.silent));
+    // بطاقات صفحة المحاسبة: ₪ كبير و $ تحته
+    const two=(id,o,lbl)=>{ set(id, money(o.ils,'₪')); set(id+'-s', (lbl ? lbl+' · ' : '')+money(o.usd,'$')); };
+    two('hc-dash',     c.gross,        'إجمالي الدخل');
+    two('hc-kiosks',   c.inc.kiosks);
+    two('hc-sponsors', c.inc.sponsors);
+    two('hc-dome',     c.inc.dome);
+    two('hc-exp',      c.exp);
+    two('hc-net',      c.net,          'صافي الربح');
+    const MONTHS_AR=['كانون الثاني','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','تشرين الأول','تشرين الثاني','كانون الأول'];
+    set('hc-month', MONTHS_AR[new Date().getMonth()]);
+    set('hc-sync', (typeof userDocRef!=='undefined' && userDocRef) ? 'سحابي' : 'محلي');
+    try{ const m=computeMob(); two('hc-mob', m.income, 'العائد'); }catch(e){}
   }catch(e){}
 }
 function heroScrollDown(){ const h=document.getElementById('hero'); if(h) h.scrollTo({top:h.clientHeight,behavior:'smooth'}); }
@@ -2026,14 +2133,14 @@ function renderHeroEvents(){
     .sort((a,b)=>((a.dateFrom||a.date)||'').localeCompare((b.dateFrom||b.date)||''));
   const cur=evs.filter(d=>{ const f=d.dateFrom||d.date, to=d.dateTo||f; return t>=f && t<=to; });
   const up=evs.filter(d=>(d.dateFrom||d.date)>t).slice(0,6);
-  let h='<h2>🎬 تفاصيل المناسبات</h2>';
+  let h='<h2>تفاصيل المناسبات</h2>';
   if(cur.length){
-    h+=cur.map(d=>`<div class="hev today"><div class="tag">● الآن في Ramallah Expo</div><div class="nm">🎪 ${esc(d.renter)}</div><div class="dt">📅 ${(d.dateFrom||d.date)} ← ${d.dateTo||d.dateFrom||d.date} • ${num(d.days)} يوم × ${money(num(d.daily),d.cur)}</div></div>`).join('');
+    h+=cur.map(d=>`<div class="hev today"><div class="tag">الآن في Ramallah Expo</div><div class="nm">${esc(d.renter)}</div><div class="dt">${(d.dateFrom||d.date)} ← ${d.dateTo||d.dateFrom||d.date} • ${num(d.days)} يوم × ${money(num(d.daily),d.cur)}</div></div>`).join('');
   } else {
-    h+='<div class="hev"><div class="nm">لا يوجد مناسبة اليوم</div><div class="dt">القاعة متاحة للحجز ✨ اضغط على القبة لتشوف الأيام</div></div>';
+    h+='<div class="hev"><div class="nm">لا يوجد مناسبة اليوم</div><div class="dt">القاعة متاحة للحجز — اضغط «احجز القبة» لتشوف الأيام المتاحة</div></div>';
   }
   if(up.length){
-    h+='<h2>⏭️ المناسبات القادمة</h2>'+up.map(d=>`<div class="hev"><div class="nm">🎪 ${esc(d.renter)}</div><div class="dt">📅 ${(d.dateFrom||d.date)} ← ${d.dateTo||d.dateFrom||d.date} • ${num(d.days)} يوم</div></div>`).join('');
+    h+='<h2>المناسبات القادمة</h2>'+up.map(d=>`<div class="hev"><div class="nm">${esc(d.renter)}</div><div class="dt">${(d.dateFrom||d.date)} ← ${d.dateTo||d.dateFrom||d.date} • ${num(d.days)} يوم</div></div>`).join('');
   }
   el.innerHTML=h;
 }
