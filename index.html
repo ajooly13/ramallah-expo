@@ -406,6 +406,31 @@
   /* مبدّل الشركات: نفس لغة الكبسولات */
   .company-switch button{border-radius:999px !important;background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.12) !important;color:rgba(255,255,255,.72) !important;box-shadow:none !important}
   .company-switch button.active{background:#E9E9E9 !important;color:#0A0707 !important;border-color:#E9E9E9 !important}
+
+  /* ═══ UI v4: الأقسام من جوّا — شارات ملونة (B) بدل الإيموجي ═══ */
+  @media screen{
+    .section,.stat{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.11);box-shadow:0 10px 26px rgba(0,0,0,.28)}
+    .stat{position:relative;overflow:hidden}
+    .stat::after{content:'';position:absolute;left:-26px;bottom:-34px;width:86px;height:86px;border-radius:50%;background:var(--t,transparent);opacity:.16;pointer-events:none}
+    .stat .l{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.78)}
+    .chip{flex:0 0 auto;width:28px;height:28px;border-radius:9px;display:inline-grid;place-items:center;background:var(--t,#4f7dff);color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+    .chip .ico{width:15px;height:15px;stroke-width:2}
+    .section h3{justify-content:flex-start;gap:9px;color:#fff;font-weight:700}
+    .section h3::before{content:'';flex:0 0 auto;width:4px;align-self:stretch;min-height:16px;border-radius:4px;background:var(--t,#4f7dff)}
+    .section h3 .hint{margin-right:auto}
+    .lchip{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:8px;background:var(--t,#4f7dff);color:#fff;margin-left:8px;vertical-align:middle;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+    .lchip .ico{width:13px;height:13px;stroke-width:2.1}
+    .av{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--t,#6366f1);color:#fff;font-size:12px;font-weight:800;margin-left:8px;vertical-align:middle}
+    .av .ico{width:14px;height:14px;stroke-width:2}
+    .pbar{height:4px;border-radius:4px;background:rgba(255,255,255,.08);margin-top:7px;overflow:hidden}
+    .pbar i{display:block;height:100%;border-radius:4px;background:var(--t,#6366f1)}
+    .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--t,#4f7dff);margin-left:7px;vertical-align:middle;box-shadow:0 0 8px var(--t,#4f7dff)}
+    .wf .lbl{color:rgba(255,255,255,.84)}
+    .wf.total{border-top:0 !important;margin-top:8px !important;padding:11px 12px !important;border-radius:12px;background:rgba(34,197,94,.14)}
+    #sync-status{display:inline-flex;align-items:center}
+    #sync-status .dot{margin-left:5px;width:7px;height:7px}
+  }
+  @media print{ .chip,.lchip,.av,.dot,.pbar{display:none !important} }
 </style>
 </head>
 <body>
@@ -427,6 +452,11 @@
     <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
     <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M12 2l8 5H4z"/></symbol>
+    <symbol id="i-in" viewBox="0 0 24 24"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="m18 9-6-6-6 6"/><path d="M12 3v14"/><path d="M5 21h14"/></symbol>
+    <symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-print" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14" rx="1"/></symbol>
   </defs>
 </svg>
 
@@ -449,19 +479,19 @@
     <input id="auth-pass" type="password" placeholder="6 أحرف على الأقل" style="margin-bottom:16px">
     <div id="auth-error" style="color:#ff8a8a;font-size:13px;margin-bottom:10px;display:none"></div>
     <button class="auth-btn" onclick="authSignIn()">تسجيل الدخول</button>
-    <div style="text-align:center;margin-top:14px"><a href="#" class="auth-link" onclick="authForgot();return false">🔑 نسيت كلمة السر؟</a></div>
+    <div style="text-align:center;margin-top:14px"><a href="#" class="auth-link" onclick="authForgot();return false">نسيت كلمة السر؟</a></div>
     <p class="auth-fine">الحسابات الجديدة تُنشأ من الإدارة فقط</p>
-    <p class="auth-fine" style="margin-top:12px">🔒 بياناتك محفوظة بأمان في حسابك فقط</p>
+    <p class="auth-fine" style="margin-top:12px">بياناتك محفوظة بأمان في حسابك فقط</p>
   </div>
 </div>
 
 <!-- ============ قفل البصمة ============ -->
 <div id="bioLock" style="display:none;position:fixed;inset:0;z-index:990;background:linear-gradient(180deg,#03071a,#0a1236);flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;text-align:center">
-  <div style="font-size:54px">🔒</div>
+  <div style="width:74px;height:74px;border-radius:22px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16)"><svg class="ico" style="width:34px;height:34px"><use href="#i-lock"/></svg></div>
   <div style="font-size:19px;font-weight:900">Ramallah Expo مقفول</div>
   <div style="color:var(--muted);font-size:13px">أكّد هويتك ببصمة الوجه أو الإصبع للمتابعة</div>
   <div id="bio-err" style="display:none;color:var(--red);font-size:13px"></div>
-  <button class="btn btn-blue" style="font-size:16px;padding:13px 26px" onclick="bioUnlock()">👆 افتح بالبصمة</button>
+  <button class="btn btn-blue" style="font-size:16px;padding:13px 26px" onclick="bioUnlock()">افتح بالبصمة</button>
   <a href="#" onclick="bioUsePassword();return false" style="color:#8fa2e0;font-size:12.5px;text-decoration:underline">استخدم كلمة السر بدلاً منها</a>
 </div>
 
@@ -541,7 +571,7 @@
   <div id="domeCine">
     <div class="cine-beam"></div>
     <button class="cine-x" onclick="closeCine()">✕</button>
-    <div class="cine-title">🎪 RAMALLAH EXPO — الحجوزات</div>
+    <div class="cine-title">RAMALLAH EXPO — الحجوزات</div>
     <div class="cine-days" id="cineDays"></div>
     <div class="cine-name" id="cineName">—</div>
     <div class="cine-sub" id="cineSub"></div>
@@ -556,7 +586,7 @@
     </div>
     <div style="display:flex;align-items:center;gap:8px;order:3">
       <button id="homeBtn" class="btn btn-ghost btn-sm" onclick="openHero()" title="الرئيسية" aria-label="الرئيسية"><svg class="ico"><use href="#i-home"/></svg></button>
-      <span id="sync-status" class="badge" style="font-size:11px">⏳</span>
+      <span id="sync-status" class="badge" style="font-size:11px"><span class="dot" style="--t:#8aa0c4"></span>…</span>
       <button id="logout-btn" class="btn btn-ghost btn-sm" style="display:none" onclick="authSignOut()">خروج</button>
     </div>
     <div class="company-switch">
@@ -584,33 +614,33 @@
     <!-- DASHBOARD -->
     <div id="tab-dash" class="page active">
       <div class="cards">
-        <div class="stat"><div class="l">📥 إجمالي الدخل</div><div class="v" id="d-income">—</div></div>
-        <div class="stat v-hide"><div class="l">📤 إجمالي المصاريف</div><div class="v" id="d-expenses">—</div></div>
-        <div class="stat"><div class="l">🏛️ بلدية رام الله (10%)</div><div class="v" id="d-silent">—</div></div>
-        <div class="stat v-hide"><div class="l">💰 صافي الربح</div><div class="v" id="d-net">—</div></div>
+        <div class="stat" style="--t:#3b82f6"><div class="l"><span class="chip"><svg class="ico"><use href="#i-in"/></svg></span>إجمالي الدخل</div><div class="v" id="d-income">—</div></div>
+        <div class="stat v-hide" style="--t:#dc2626"><div class="l"><span class="chip"><svg class="ico"><use href="#i-out"/></svg></span>إجمالي المصاريف</div><div class="v" id="d-expenses">—</div></div>
+        <div class="stat" style="--t:#d97706"><div class="l"><span class="chip"><svg class="ico"><use href="#i-landmark"/></svg></span>بلدية رام الله (10%)</div><div class="v" id="d-silent">—</div></div>
+        <div class="stat v-hide" style="--t:#16a34a"><div class="l"><span class="chip"><svg class="ico"><use href="#i-coins"/></svg></span>صافي الربح</div><div class="v" id="d-net">—</div></div>
       </div>
 
       <div class="section v-hide">
-        <h3>🔻 من الدخل إلى صافي الربح <span class="hint">₪ و $ منفصلين</span></h3>
+        <h3 style="--t:#3b82f6">من الدخل إلى صافي الربح <span class="hint">₪ و $ منفصلين</span></h3>
         <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
         <div id="waterfall"></div>
       </div>
 
       <div class="section">
-        <h3>📊 مصادر الدخل</h3>
+        <h3 style="--t:#06b6d4">مصادر الدخل</h3>
         <div style="position:relative;max-width:240px;margin:0 auto"><canvas id="incomeChart" height="240"></canvas></div>
         <div id="incomeLegend" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px"></div>
       </div>
 
       <div class="section partners-sec v-hide">
-        <h3>👥 حصص الشركاء من صافي الربح</h3>
+        <h3 style="--t:#a855f7">حصص الشركاء من صافي الربح</h3>
         <div id="dash-partners"></div>
       </div>
     </div>
 
     <!-- KIOSKS -->
     <div id="tab-kiosks" class="page">
-      <div class="note">🏪 الأكشاك من <b>RA1</b> إلى <b>RA11</b>. اضغط على أي كشك لتعبئة اسم صاحبه، الإيجار الشهري، وأي دفعات أخرى. الإجمالي يدخل تلقائياً على دخل الشركة.</div>
+      <div class="note">الأكشاك من <b>RA1</b> إلى <b>RA11</b>. اضغط على أي كشك لتعبئة اسم صاحبه، الإيجار الشهري، وأي دفعات أخرى. الإجمالي يدخل تلقائياً على دخل الشركة.</div>
       <div class="cards">
         <div class="stat"><div class="l">عدد الأكشاك المؤجّرة</div><div class="v cyan" id="k-rented">0 / 11</div></div>
         <div class="stat"><div class="l">إجمالي دخل الأكشاك</div><div class="v" id="k-total">—</div></div>
@@ -620,13 +650,13 @@
 
     <!-- SPONSORS -->
     <div id="tab-sponsors" class="page">
-      <div class="note">🤝 أجنحة الرعاية والإعلان (10 أجنحة + إمكانية إضافة غيرهم). عبّي اسم الراعي وكم دفع — بيتحسب ضمن دخل الشركة.</div>
+      <div class="note">أجنحة الرعاية والإعلان (10 أجنحة + إمكانية إضافة غيرهم). عبّي اسم الراعي وكم دفع — بيتحسب ضمن دخل الشركة.</div>
       <div class="cards">
         <div class="stat"><div class="l">عدد الرعاة</div><div class="v cyan" id="sp-count">0</div></div>
         <div class="stat"><div class="l">إجمالي دخل الرعاية</div><div class="v" id="sp-total">—</div></div>
       </div>
       <div class="section">
-        <h3>🤝 الأجنحة</h3>
+        <h3 style="--t:#db2777">الأجنحة</h3>
         <div id="sponsors-list"></div>
         <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addSponsor()">＋ إضافة راعٍ (أخرى)</button>
       </div>
@@ -634,13 +664,13 @@
 
     <!-- DOME -->
     <div id="tab-dome" class="page">
-      <div class="note">🎪 Ramallah Expo — تأجير القاعة للإيفنتات. سجّل الجهة المستأجرة، المدة من–إلى، الإيجار اليومي، والإجمالي يتحسب تلقائياً.</div>
+      <div class="note">Ramallah Expo — تأجير القاعة للإيفنتات. سجّل الجهة المستأجرة، المدة من–إلى، الإيجار اليومي، والإجمالي يتحسب تلقائياً.</div>
       <div class="cards">
         <div class="stat"><div class="l">عدد الإيفنتات</div><div class="v cyan" id="dm-count">0</div></div>
         <div class="stat"><div class="l">إجمالي دخل Ramallah Expo</div><div class="v" id="dm-total">—</div></div>
       </div>
       <div class="section">
-        <h3>📆 أجندة حجوزات Ramallah Expo <span class="hint" id="dc-booked">—</span></h3>
+        <h3 style="--t:#9333ea">أجندة حجوزات Ramallah Expo <span class="hint" id="dc-booked">—</span></h3>
         <div style="display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:12px">
           <button class="btn btn-ghost" onclick="domeCalMonth(-1)">‹</button>
           <span id="domecal-label" style="font-weight:800;min-width:130px;text-align:center">—</span>
@@ -652,9 +682,9 @@
           <span><span style="display:inline-block;width:12px;height:12px;background:var(--panel2);border:1px solid var(--line);border-radius:3px;vertical-align:middle"></span> متاح</span>
         </div>
       </div>
-      <div class="section"><h3>📋 حجوزات سنة <span id="domecal-year-label"></span></h3><div id="domecal-year"></div></div>
+      <div class="section"><h3 style="--t:#64748b">حجوزات سنة <span id="domecal-year-label"></span></h3><div id="domecal-year"></div></div>
       <div class="section" id="dome-add-sec">
-        <h3>➕ تسجيل إيجار Ramallah Expo</h3>
+        <h3 style="--t:#16a34a">تسجيل إيجار Ramallah Expo</h3>
         <div class="row"><div><label class="fld">الجهة المستأجرة</label><input id="dm-renter" placeholder="اسم الجهة"></div></div>
         <div class="row">
           <div><label class="fld">المدة (أيام)</label><input id="dm-days" type="number" inputmode="decimal" placeholder="مثلاً 3" oninput="domePreview()"></div>
@@ -662,7 +692,7 @@
           <div class="cur-sel"><label class="fld">عملة</label><select id="dm-cur"><option>₪</option><option>$</option></select></div>
         </div>
         <div class="row">
-          <div><label class="fld">🔧 فك وتركيب (مبلغ إضافي)</label><input id="dm-setup" type="number" inputmode="decimal" placeholder="اختياري" oninput="domePreview()"></div>
+          <div><label class="fld">فك وتركيب (مبلغ إضافي)</label><input id="dm-setup" type="number" inputmode="decimal" placeholder="اختياري" oninput="domePreview()"></div>
         </div>
         <div class="row">
           <div><label class="fld">من تاريخ</label><input id="dm-from" type="date" onchange="domeDays()"></div>
@@ -671,16 +701,16 @@
         <div class="badge" id="dm-preview" style="margin-bottom:10px">الإجمالي: 0</div><br>
         <button class="btn btn-green" onclick="addDome()">إضافة الإيفنت</button>
       </div>
-      <div class="section"><h3>📋 سجل الإيفنتات</h3><div id="dome-list"></div></div>
+      <div class="section"><h3 style="--t:#64748b">سجل الإيفنتات</h3><div id="dome-list"></div></div>
     </div>
 
     <!-- EXPENSES -->
     <div id="tab-expenses" class="page">
       <div class="cards">
-        <div class="stat full"><div class="l">📤 إجمالي المصاريف</div><div class="v" id="ex-total">—</div></div>
+        <div class="stat full" style="--t:#dc2626"><div class="l"><span class="chip"><svg class="ico"><use href="#i-out"/></svg></span>إجمالي المصاريف</div><div class="v" id="ex-total">—</div></div>
       </div>
       <div class="section">
-        <h3>➕ إضافة مصروف</h3>
+        <h3 style="--t:#16a34a">إضافة مصروف</h3>
         <div class="row">
           <div><label class="fld">البند</label>
             <select id="ex-cat">
@@ -720,25 +750,25 @@
         <div class="row"><div><label class="fld">ملاحظة (اختياري)</label><input id="ex-note" placeholder="تفاصيل"></div></div>
         <button class="btn btn-amber" onclick="addExpense()">إضافة مصروف</button>
       </div>
-      <div class="section"><h3>🗂️ حسب البند</h3><div id="ex-bycat"></div></div>
-      <div class="section"><h3>📋 كل المصاريف</h3><div id="ex-list"></div></div>
+      <div class="section"><h3 style="--t:#0d9488">حسب البند</h3><div id="ex-bycat"></div></div>
+      <div class="section"><h3 style="--t:#64748b">كل المصاريف</h3><div id="ex-list"></div></div>
     </div>
 
     <!-- PROFIT -->
     <div id="tab-profit" class="page">
-      <div class="note v-hide">👥 توزيع صافي الربح = الدخل − بلدية رام الله 10% − المصاريف، ثم يتوزع على الشركاء. كل عملة تتوزع لحالها.</div>
-      <div class="note" style="display:none" id="viewer-profit-note">🏛️ مستحقات بلدية رام الله = 10% من إجمالي دخل الشركة (قبل خصم أي مصاريف).</div>
+      <div class="note v-hide">توزيع صافي الربح = الدخل − بلدية رام الله 10% − المصاريف، ثم يتوزع على الشركاء. كل عملة تتوزع لحالها.</div>
+      <div class="note" style="display:none" id="viewer-profit-note">مستحقات بلدية رام الله = 10% من إجمالي دخل الشركة (قبل خصم أي مصاريف).</div>
       <div class="section">
-        <h3>🏛️ بلدية رام الله (10% من الدخل)</h3>
+        <h3 style="--t:#d97706">بلدية رام الله (10% من الدخل)</h3>
         <div id="profit-silent"></div>
       </div>
       <div class="section v-hide">
-        <h3>👥 الشركاء الثلاثة</h3>
+        <h3 style="--t:#a855f7">الشركاء الثلاثة</h3>
         <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
         <div id="profit-partners"></div>
       </div>
       <div class="section v-hide">
-        <h3>⚙️ تعديل النسب <span class="hint">المجموع لازم 100%</span></h3>
+        <h3 style="--t:#64748b">تعديل النسب <span class="hint">المجموع لازم 100%</span></h3>
         <div id="partners-edit"></div>
         <div class="row" style="margin-top:8px">
           <div><label class="fld">نسبة بلدية رام الله %</label><input id="silent-pct" type="number" inputmode="decimal" onchange="setSilent(this.value)"></div>
@@ -748,11 +778,11 @@
 
     <!-- MONTHLY STATEMENT -->
     <div id="tab-stmt" class="page">
-      <div class="note">📅 كشف شهري وسنوي — بدّل بين "شهري" و"سنوي"، وتنقّل بالأسهم. بيعرض الدخل والمصاريف والصافي وحصص الشركاء حسب التاريخ.</div>
+      <div class="note">كشف شهري وسنوي — بدّل بين "شهري" و"سنوي"، وتنقّل بالأسهم. بيعرض الدخل والمصاريف والصافي وحصص الشركاء حسب التاريخ.</div>
       <div class="section" style="text-align:center;padding:12px">
         <div style="display:flex;justify-content:center;gap:8px;margin-bottom:10px">
-          <button id="stmt-mode-month" class="btn btn-sm btn-blue" onclick="setStmtMode('month')">📅 شهري</button>
-          <button id="stmt-mode-year" class="btn btn-sm btn-ghost" onclick="setStmtMode('year')">📆 سنوي</button>
+          <button id="stmt-mode-month" class="btn btn-sm btn-blue" onclick="setStmtMode('month')">شهري</button>
+          <button id="stmt-mode-year" class="btn btn-sm btn-ghost" onclick="setStmtMode('year')">سنوي</button>
         </div>
         <div style="display:flex;justify-content:center;align-items:center;gap:14px">
           <button class="btn btn-ghost" onclick="changeStmt(-1)">‹</button>
@@ -762,60 +792,60 @@
       </div>
       <div class="stmt-actions" style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">
         <button class="btn btn-green btn-sm" onclick="stmtToExcel('expo')">⬇️ تصدير Excel</button>
-        <button class="btn btn-ghost btn-sm" onclick="stmtPrint()">🖨️ طباعة</button>
+        <button class="btn btn-ghost btn-sm" onclick="stmtPrint()"><svg class="ico" style="width:15px;height:15px;margin-left:6px;display:inline-block"><use href="#i-print"/></svg>طباعة</button>
       </div>
       <div class="cards">
-        <div class="stat"><div class="l">📥 الدخل</div><div class="v" id="stmt-income">—</div></div>
-        <div class="stat"><div class="l">📤 المصاريف</div><div class="v" id="stmt-expense">—</div></div>
-        <div class="stat full"><div class="l">💰 صافي الربح</div><div class="v" id="stmt-net">—</div></div>
+        <div class="stat" style="--t:#3b82f6"><div class="l"><span class="chip"><svg class="ico"><use href="#i-in"/></svg></span>الدخل</div><div class="v" id="stmt-income">—</div></div>
+        <div class="stat" style="--t:#dc2626"><div class="l"><span class="chip"><svg class="ico"><use href="#i-out"/></svg></span>المصاريف</div><div class="v" id="stmt-expense">—</div></div>
+        <div class="stat full" style="--t:#16a34a"><div class="l"><span class="chip"><svg class="ico"><use href="#i-coins"/></svg></span>صافي الربح</div><div class="v" id="stmt-net">—</div></div>
       </div>
-      <div class="section" id="stmt-breakdown-sec" style="display:none"><h3>📊 تفصيل شهور السنة (صافي كل شهر)</h3><div id="stmt-breakdown"></div></div>
-      <div class="section partners-sec"><h3>👥 حصص الشركاء</h3><div id="stmt-partners"></div></div>
-      <div class="section"><h3>📋 حركات الشهر</h3><div id="stmt-rows"></div></div>
+      <div class="section" id="stmt-breakdown-sec" style="display:none"><h3 style="--t:#06b6d4">تفصيل شهور السنة (صافي كل شهر)</h3><div id="stmt-breakdown"></div></div>
+      <div class="section partners-sec"><h3 style="--t:#a855f7">حصص الشركاء</h3><div id="stmt-partners"></div></div>
+      <div class="section"><h3 style="--t:#64748b">حركات الشهر</h3><div id="stmt-rows"></div></div>
     </div>
 
     <!-- BACKUP -->
     <div id="tab-backup" class="page">
-      <div class="note warn">⚠️ الداتا محفوظة على هذا الجهاز فقط. <b>اعمل نسخة احتياطية بشكل دوري</b> وارفعها على Google Drive أو واتساب — لو خرب الجهاز ترجّعها بضغطة.</div>
+      <div class="note warn">الداتا محفوظة على هذا الجهاز فقط. <b>اعمل نسخة احتياطية بشكل دوري</b> وارفعها على Google Drive أو واتساب — لو خرب الجهاز ترجّعها بضغطة.</div>
       <div class="section">
-        <h3>💾 نسخة احتياطية</h3>
+        <h3 style="--t:#0d9488">نسخة احتياطية</h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:6px">آخر نسخة: <span id="last-backup" class="badge">لا يوجد</span></p>
         <button class="btn btn-blue" onclick="exportBackup()">⬇️ تنزيل نسخة احتياطية (ملف)</button>
       </div>
       <div class="section">
-        <h3>♻️ استرجاع نسخة</h3>
+        <h3 style="--t:#0d9488">استرجاع نسخة</h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:8px">اختر ملف النسخة الاحتياطية لإرجاع كل البيانات.</p>
         <input type="file" id="import-file" accept="application/json" onchange="importBackup(event)">
       </div>
       <div class="section">
-        <h3>💱 سعر الصرف</h3>
+        <h3 style="--t:#06b6d4">سعر الصرف</h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:8px">يُستخدم فقط لعرض مجموع تقريبي موحّد بالشيكل في لوحة التحكم.</p>
         <div class="row">
           <div><label class="fld">1 دولار = كم شيكل؟</label><input id="rate" type="number" inputmode="decimal" onchange="setRate(this.value)"></div>
         </div>
       </div>
       <div class="section">
-        <h3>🔐 قفل البصمة <span class="hint">لهذا الجهاز</span></h3>
+        <h3 style="--t:#6366f1">قفل البصمة <span class="hint">لهذا الجهاز</span></h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:8px">لما يكون مفعّل: كل ما تفتح التطبيق بيطلب بصمة الوجه أو الإصبع قبل ما يبيّن أي شي — حتى لو الدخول تلقائي.</p>
         <p id="bio-status" style="font-size:13px;margin-bottom:10px;color:var(--text)">—</p>
         <div id="bio-msg" style="font-size:13px;margin-bottom:8px;display:none"></div>
-        <button id="bio-on" class="btn btn-green" onclick="bioEnable()">👆 فعّل قفل البصمة</button>
+        <button id="bio-on" class="btn btn-green" onclick="bioEnable()">فعّل قفل البصمة</button>
         <button id="bio-off" class="btn btn-ghost" style="display:none" onclick="bioDisable()">إلغاء قفل البصمة</button>
       </div>
 
       <div class="section" id="admin-users-sec">
-        <h3>👤 إدارة الحسابات <span class="hint">للأدمن فقط — علي وجواد</span></h3>
+        <h3 style="--t:#6366f1">إدارة الحسابات <span class="hint">للأدمن فقط — علي وجواد</span></h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:8px">إنشاء حساب جديد للتطبيق. الحساب الجديد بيشوف بياناته الخاصة فقط إلا إذا أضفنا صلاحيات إله.</p>
         <div class="row">
           <div><label class="fld">الإيميل</label><input id="au-email" type="email" placeholder="user@example.com"></div>
           <div><label class="fld">كلمة السر (6 أحرف+)</label><input id="au-pass" type="text" placeholder="******"></div>
         </div>
         <div id="au-msg" style="font-size:13px;margin-bottom:8px;display:none"></div>
-        <button class="btn btn-blue" onclick="adminCreateUser()">➕ إنشاء الحساب</button>
+        <button class="btn btn-blue" onclick="adminCreateUser()">إنشاء الحساب</button>
       </div>
 
       <div class="section">
-        <h3>🗑️ تصفير</h3>
+        <h3 style="--t:#dc2626">تصفير</h3>
         <button class="btn btn-ghost btn-sm" onclick="wipeAll()">حذف كل بيانات Ramallah Expo</button>
       </div>
     </div>
@@ -841,36 +871,36 @@
     <!-- DASH -->
     <div id="mtab-dash" class="page active">
       <div class="cards">
-        <div class="stat"><div class="l">🏠 إجمالي العائد</div><div class="v" id="m-income">—</div></div>
-        <div class="stat"><div class="l">💸 إجمالي التكاليف</div><div class="v" id="m-costs">—</div></div>
-        <div class="stat"><div class="l">💰 صافي الربح</div><div class="v" id="m-net">—</div></div>
-        <div class="stat"><div class="l">🧾 شيكات معلّقة</div><div class="v" id="m-checks">—</div></div>
+        <div class="stat" style="--t:#3b82f6"><div class="l"><span class="chip"><svg class="ico"><use href="#i-trend"/></svg></span>إجمالي العائد</div><div class="v" id="m-income">—</div></div>
+        <div class="stat" style="--t:#dc2626"><div class="l"><span class="chip"><svg class="ico"><use href="#i-receipt"/></svg></span>إجمالي التكاليف</div><div class="v" id="m-costs">—</div></div>
+        <div class="stat" style="--t:#16a34a"><div class="l"><span class="chip"><svg class="ico"><use href="#i-coins"/></svg></span>صافي الربح</div><div class="v" id="m-net">—</div></div>
+        <div class="stat" style="--t:#d97706"><div class="l"><span class="chip"><svg class="ico"><use href="#i-cash"/></svg></span>شيكات معلّقة</div><div class="v" id="m-checks">—</div></div>
       </div>
       <div class="section">
-        <h3>🔻 من العائد إلى صافي الربح</h3>
+        <h3 style="--t:#3b82f6">من العائد إلى صافي الربح</h3>
         <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
         <div id="m-waterfall"></div>
       </div>
-      <div class="section"><h3>👥 حصص الشركاء</h3><div id="m-partners-dash"></div></div>
-      <div class="section"><h3>🧾 شيكات قادمة الاستحقاق</h3><div id="m-checks-soon"></div></div>
-      <div class="section"><h3>👛 بوكيت موني (مسحوب)</h3><div class="stat" style="border:none;padding:0"><div class="v" id="m-pocket-dash">—</div></div></div>
+      <div class="section"><h3 style="--t:#a855f7">حصص الشركاء</h3><div id="m-partners-dash"></div></div>
+      <div class="section"><h3 style="--t:#d97706">شيكات قادمة الاستحقاق</h3><div id="m-checks-soon"></div></div>
+      <div class="section"><h3 style="--t:#db2777">بوكيت موني (مسحوب)</h3><div class="stat" style="border:none;padding:0"><div class="v" id="m-pocket-dash">—</div></div></div>
     </div>
 
     <!-- RENTALS -->
     <div id="mtab-rentals" class="page">
-      <div class="note">🏠 العائد من تأجير المعدات. سجّل كل تأجير: العميل، المبلغ، وطريقة الاستلام (كاش أو شيك). لو شيك بتعبّي رقمه وموعد استحقاقه.</div>
+      <div class="note">العائد من تأجير المعدات. سجّل كل تأجير: العميل، المبلغ، وطريقة الاستلام (كاش أو شيك). لو شيك بتعبّي رقمه وموعد استحقاقه.</div>
       <div class="cards">
         <div class="stat"><div class="l">عدد التأجيرات</div><div class="v cyan" id="r-count">0</div></div>
         <div class="stat"><div class="l">إجمالي العائد</div><div class="v" id="r-total">—</div></div>
       </div>
       <div class="section">
-        <h3>➕ تسجيل تأجير</h3>
+        <h3 style="--t:#16a34a">تسجيل تأجير</h3>
         <div class="row"><div><label class="fld">العميل / الجهة</label><input id="mr-client" placeholder="الاسم"></div>
           <div><label class="fld">الإيفنت / الوصف</label><input id="mr-event" placeholder="اختياري"></div></div>
         <div class="row">
           <div><label class="fld">مبلغ الإيجار</label><input id="mr-amount" type="number" inputmode="decimal" placeholder="0"></div>
           <div class="cur-sel"><label class="fld">عملة</label><select id="mr-cur"><option>₪</option><option>$</option></select></div>
-          <div><label class="fld">طريقة الاستلام</label><select id="mr-pay" onchange="mobPayToggle()"><option value="cash">💵 كاش</option><option value="check">🧾 شيك</option></select></div>
+          <div><label class="fld">طريقة الاستلام</label><select id="mr-pay" onchange="mobPayToggle()"><option value="cash">كاش</option><option value="check">شيك</option></select></div>
         </div>
         <div id="mr-check-fields" style="display:none">
           <div class="row">
@@ -882,22 +912,22 @@
         <div class="row"><div><label class="fld">التاريخ</label><input id="mr-date" type="date"></div></div>
         <button class="btn btn-green" onclick="addRental()">إضافة التأجير</button>
       </div>
-      <div class="section"><h3>📋 سجل التأجيرات</h3><div id="rentals-list"></div></div>
+      <div class="section"><h3 style="--t:#64748b">سجل التأجيرات</h3><div id="rentals-list"></div></div>
     </div>
 
     <!-- CHECKS -->
     <div id="mtab-checks" class="page">
-      <div class="note">🧾 متابعة الشيكات حسب موعد الاستحقاق. 🔴 متأخر • 🟡 معلّق • 🟢 تم صرفه. اضغط "سجّل صرفه" لما تقبض الشيك.</div>
+      <div class="note">متابعة الشيكات حسب موعد الاستحقاق. <span class="dot" style="--t:var(--red)"></span>متأخر • <span class="dot" style="--t:var(--amber)"></span>معلّق • <span class="dot" style="--t:var(--green)"></span>تم صرفه. اضغط "سجّل صرفه" لما تقبض الشيك.</div>
       <div class="cards"><div class="stat full"><div class="l">إجمالي الشيكات المعلّقة</div><div class="v" id="checks-pending-total">—</div></div></div>
-      <div class="section"><h3>📋 كل الشيكات (الأقرب استحقاقاً أولاً)</h3><div id="checks-list"></div></div>
+      <div class="section"><h3 style="--t:#64748b">كل الشيكات (الأقرب استحقاقاً أولاً)</h3><div id="checks-list"></div></div>
     </div>
 
     <!-- INSTALL -->
     <div id="mtab-install" class="page">
-      <div class="note">🔧 تكاليف التركيب لكل إيفنت: أجور العمال، بنزين، لاصق ومرابط، عشاء العمال.</div>
+      <div class="note">تكاليف التركيب لكل إيفنت: أجور العمال، بنزين، لاصق ومرابط، عشاء العمال.</div>
       <div class="cards"><div class="stat full"><div class="l">إجمالي تكاليف التركيب</div><div class="v" id="install-total">—</div></div></div>
       <div class="section">
-        <h3>➕ إضافة تكلفة تركيب</h3>
+        <h3 style="--t:#16a34a">إضافة تكلفة تركيب</h3>
         <div class="row"><div><label class="fld">النوع</label><select id="mi-cat">
           <optgroup label="عمال">
             <option>أجور عمال</option><option>عشاء عمال</option><option>أبو وهيب</option>
@@ -924,15 +954,15 @@
         <div class="row"><div><label class="fld">ملاحظة</label><input id="mi-note" placeholder="اختياري"></div></div>
         <button class="btn btn-amber" onclick="addMobCost('install')">إضافة</button>
       </div>
-      <div class="section"><h3>📋 السجل</h3><div id="install-list"></div></div>
+      <div class="section"><h3 style="--t:#64748b">السجل</h3><div id="install-list"></div></div>
     </div>
 
     <!-- FIXED -->
     <div id="mtab-fixed" class="page">
-      <div class="note">💡 التكاليف الثابتة للمعدات: الإضاءة، الصوت، الشاشة.</div>
+      <div class="note">التكاليف الثابتة للمعدات: الإضاءة، الصوت، الشاشة.</div>
       <div class="cards"><div class="stat full"><div class="l">إجمالي التكاليف الثابتة</div><div class="v" id="fixed-total">—</div></div></div>
       <div class="section">
-        <h3>➕ إضافة تكلفة ثابتة</h3>
+        <h3 style="--t:#16a34a">إضافة تكلفة ثابتة</h3>
         <div class="row"><div><label class="fld">النوع</label><select id="mf-cat"><option>إضاءة</option><option>صوت</option><option>شاشة</option><option>أخرى</option></select></div></div>
         <div class="row">
           <div><label class="fld">المبلغ</label><input id="mf-amount" type="number" inputmode="decimal" placeholder="0"></div>
@@ -942,15 +972,15 @@
         <div class="row"><div><label class="fld">ملاحظة</label><input id="mf-note" placeholder="اختياري"></div></div>
         <button class="btn btn-amber" onclick="addMobCost('fixed')">إضافة</button>
       </div>
-      <div class="section"><h3>📋 السجل</h3><div id="fixed-list"></div></div>
+      <div class="section"><h3 style="--t:#64748b">السجل</h3><div id="fixed-list"></div></div>
     </div>
 
     <!-- COSTS -->
     <div id="mtab-costs" class="page">
-      <div class="note">💸 الدعاية والإعلان، الصيانة، والمصاريف الأخرى.</div>
+      <div class="note">الدعاية والإعلان، الصيانة، والمصاريف الأخرى.</div>
       <div class="cards"><div class="stat full"><div class="l">إجمالي المصاريف</div><div class="v" id="mcosts-total">—</div></div></div>
       <div class="section">
-        <h3>➕ إضافة مصروف</h3>
+        <h3 style="--t:#16a34a">إضافة مصروف</h3>
         <div class="row"><div><label class="fld">البند</label><select id="mc-cat"><option>دعاية وإعلان</option><option>صيانة</option><option>مصاريف أخرى</option></select></div></div>
         <div class="row">
           <div><label class="fld">المبلغ</label><input id="mc-amount" type="number" inputmode="decimal" placeholder="0"></div>
@@ -960,15 +990,15 @@
         <div class="row"><div><label class="fld">ملاحظة</label><input id="mc-note" placeholder="اختياري"></div></div>
         <button class="btn btn-amber" onclick="addMobCost('expenses')">إضافة</button>
       </div>
-      <div class="section"><h3>📋 السجل</h3><div id="mcosts-list"></div></div>
+      <div class="section"><h3 style="--t:#64748b">السجل</h3><div id="mcosts-list"></div></div>
     </div>
 
     <!-- POCKET -->
     <div id="mtab-pocket" class="page">
-      <div class="note">👛 بوكيت موني — المبالغ المسحوبة للمصروف اليومي. تظهر منفصلة عن توزيع الأرباح.</div>
+      <div class="note">بوكيت موني — المبالغ المسحوبة للمصروف اليومي. تظهر منفصلة عن توزيع الأرباح.</div>
       <div class="cards"><div class="stat full"><div class="l">إجمالي البوكيت موني</div><div class="v" id="pocket-total">—</div></div></div>
       <div class="section">
-        <h3>➕ إضافة سحب</h3>
+        <h3 style="--t:#16a34a">إضافة سحب</h3>
         <div class="row"><div><label class="fld">الوصف</label><input id="mp-desc" placeholder="مثلاً: مصروف يومي"></div></div>
         <div class="row">
           <div><label class="fld">المبلغ</label><input id="mp-amount" type="number" inputmode="decimal" placeholder="0"></div>
@@ -977,27 +1007,27 @@
         </div>
         <button class="btn btn-blue" onclick="addPocket()">إضافة</button>
       </div>
-      <div class="section"><h3>📋 السجل</h3><div id="pocket-list"></div></div>
+      <div class="section"><h3 style="--t:#64748b">السجل</h3><div id="pocket-list"></div></div>
     </div>
 
     <!-- PROFIT -->
     <div id="mtab-profit" class="page">
-      <div class="note">👥 توزيع صافي الربح: جواد 45% • عقبة 45% • TheMob 10%. كل عملة تتوزع لحالها.</div>
+      <div class="note">توزيع صافي الربح: جواد 45% • عقبة 45% • TheMob 10%. كل عملة تتوزع لحالها.</div>
       <div class="section">
-        <h3>👥 حصص الشركاء</h3>
+        <h3 style="--t:#a855f7">حصص الشركاء</h3>
         <div class="twocol"><div><b style="color:var(--cyan)">شيكل ₪</b></div><div><b style="color:var(--green)">دولار $</b></div></div>
         <div id="mprofit-partners"></div>
       </div>
-      <div class="section"><h3>⚙️ تعديل النسب <span class="hint">المجموع لازم 100%</span></h3><div id="mpartners-edit"></div></div>
+      <div class="section"><h3 style="--t:#64748b">تعديل النسب <span class="hint">المجموع لازم 100%</span></h3><div id="mpartners-edit"></div></div>
     </div>
 
     <!-- MONTHLY STATEMENT -->
     <div id="mtab-stmt" class="page">
-      <div class="note">📅 كشف شهري وسنوي — بدّل بين "شهري" و"سنوي"، وتنقّل بالأسهم (تأجير، تكاليف، بوكيت موني).</div>
+      <div class="note">كشف شهري وسنوي — بدّل بين "شهري" و"سنوي"، وتنقّل بالأسهم (تأجير، تكاليف، بوكيت موني).</div>
       <div class="section" style="text-align:center;padding:12px">
         <div style="display:flex;justify-content:center;gap:8px;margin-bottom:10px">
-          <button id="mstmt-mode-month" class="btn btn-sm btn-blue" onclick="setStmtMode('month')">📅 شهري</button>
-          <button id="mstmt-mode-year" class="btn btn-sm btn-ghost" onclick="setStmtMode('year')">📆 سنوي</button>
+          <button id="mstmt-mode-month" class="btn btn-sm btn-blue" onclick="setStmtMode('month')">شهري</button>
+          <button id="mstmt-mode-year" class="btn btn-sm btn-ghost" onclick="setStmtMode('year')">سنوي</button>
         </div>
         <div style="display:flex;justify-content:center;align-items:center;gap:14px">
           <button class="btn btn-ghost" onclick="changeStmt(-1)">‹</button>
@@ -1007,16 +1037,16 @@
       </div>
       <div class="stmt-actions" style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">
         <button class="btn btn-green btn-sm" onclick="stmtToExcel('themob')">⬇️ تصدير Excel</button>
-        <button class="btn btn-ghost btn-sm" onclick="stmtPrint()">🖨️ طباعة</button>
+        <button class="btn btn-ghost btn-sm" onclick="stmtPrint()"><svg class="ico" style="width:15px;height:15px;margin-left:6px;display:inline-block"><use href="#i-print"/></svg>طباعة</button>
       </div>
       <div class="cards">
-        <div class="stat"><div class="l">📥 الدخل</div><div class="v" id="mstmt-income">—</div></div>
-        <div class="stat"><div class="l">📤 المصاريف</div><div class="v" id="mstmt-expense">—</div></div>
-        <div class="stat full"><div class="l">💰 صافي الربح</div><div class="v" id="mstmt-net">—</div></div>
+        <div class="stat" style="--t:#3b82f6"><div class="l"><span class="chip"><svg class="ico"><use href="#i-in"/></svg></span>الدخل</div><div class="v" id="mstmt-income">—</div></div>
+        <div class="stat" style="--t:#dc2626"><div class="l"><span class="chip"><svg class="ico"><use href="#i-out"/></svg></span>المصاريف</div><div class="v" id="mstmt-expense">—</div></div>
+        <div class="stat full" style="--t:#16a34a"><div class="l"><span class="chip"><svg class="ico"><use href="#i-coins"/></svg></span>صافي الربح</div><div class="v" id="mstmt-net">—</div></div>
       </div>
-      <div class="section" id="mstmt-breakdown-sec" style="display:none"><h3>📊 تفصيل شهور السنة (صافي كل شهر)</h3><div id="mstmt-breakdown"></div></div>
-      <div class="section"><h3>👥 حصص الشركاء</h3><div id="mstmt-partners"></div></div>
-      <div class="section"><h3>📋 حركات الشهر</h3><div id="mstmt-rows"></div></div>
+      <div class="section" id="mstmt-breakdown-sec" style="display:none"><h3 style="--t:#06b6d4">تفصيل شهور السنة (صافي كل شهر)</h3><div id="mstmt-breakdown"></div></div>
+      <div class="section"><h3 style="--t:#a855f7">حصص الشركاء</h3><div id="mstmt-partners"></div></div>
+      <div class="section"><h3 style="--t:#64748b">حركات الشهر</h3><div id="mstmt-rows"></div></div>
     </div>
 
   </div>
@@ -1069,6 +1099,13 @@ function commit(){ localStorage.setItem(DB_KEY, JSON.stringify(db)); if(currentC
    HELPERS
    ============================================================ */
 function num(v){ const n = parseFloat(v); return isNaN(n)?0:n; }
+/* UI v4: مساعدات العرض — شارات ملونة بدل الإيموجي (الإيموجي بيضل جوّا بيانات الكشف لأن rowGrp بيعتمد عليه) */
+function noEmo(s){ return String(s==null?'':s).replace(/^(?:[\uD800-\uDBFF][\uDC00-\uDFFF]|[⌀-⏿]|[☀-➿])️?\s*/,''); }
+function ic(n,c){ return '<span class="lchip" style="--t:'+c+'"><svg class="ico"><use href="#i-'+n+'"/></svg></span>'; }
+function pcol(name){ const s=String(name||'').trim(); const F={'جواد':'#6366f1','عقبة':'#0d9488','محمود':'#db2777','TheMob':'#ea580c'}; if(F[s]) return F[s]; const P=['#6366f1','#0d9488','#db2777','#ea580c','#16a34a','#0ea5e9','#a855f7','#ca8a04']; let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return P[h%P.length]; }
+function pav(name){ const s=String(name||'').trim(); const ch=s ? s.charAt(0).replace(/[&<>"']/g,'') : ''; return '<span class="av" style="--t:'+pcol(s)+'">'+(ch||'?')+'</span>'; }
+function pbar(name,pct){ const w=Math.max(0,Math.min(100,num(pct))); return '<div class="pbar"><i style="width:'+w+'%;--t:'+pcol(name)+'"></i></div>'; }
+function grpChip(t){ const m={'الأكشاك':['store','#f59e0b'],'الرعاية والإعلان':['hand','#db2777'],'Ramallah Expo':['dome','#ca8a04'],'التأجير':['trend','#3b82f6'],'التركيب':['wrench','#ea580c'],'التكاليف الثابتة':['bulb','#ca8a04'],'بوكيت موني':['wallet','#db2777'],'المصاريف':['receipt','#dc2626']}; const x=m[rowGrp(t)]; return x?ic(x[0],x[1]):''; }
 function money(n,cur){ return Math.round(n).toLocaleString('en-US') + ' ' + cur; }
 function dual(o){ // {ils,usd} -> "X ₪ • Y $"
   return `<span class="ils" style="color:var(--cyan)">${money(o.ils,'₪')}</span> &nbsp;•&nbsp; <span class="usd" style="color:var(--green)">${money(o.usd,'$')}</span>`;
@@ -1123,12 +1160,12 @@ function renderDash(){
 
   // waterfall
   const wf = [
-    ['📥 إجمالي الدخل', c.gross, 'var(--cyan)'],
-    ['🏛️ − بلدية رام الله', neg(c.silent), 'var(--red)'],
-    ['💸 − المصاريف', neg(c.exp), 'var(--red)'],
+    ['<span class="dot" style="--t:#3b82f6"></span>إجمالي الدخل', c.gross, 'var(--cyan)'],
+    ['<span class="dot" style="--t:#d97706"></span>− بلدية رام الله', neg(c.silent), 'var(--red)'],
+    ['<span class="dot" style="--t:#dc2626"></span>− المصاريف', neg(c.exp), 'var(--red)'],
   ];
   let html = wf.map(([l,o,col])=>`<div class="wf"><span class="lbl">${l}</span><span class="val">${dual(o)}</span></div>`).join('');
-  html += `<div class="wf total"><span class="lbl">💰 صافي الربح</span><span class="val">${dual(c.net)}</span></div>`;
+  html += `<div class="wf total"><span class="lbl">صافي الربح</span><span class="val">${dual(c.net)}</span></div>`;
   // combined approx
   const rate = num(db.meta.usdToIls)||0;
   const approx = c.net.ils + c.net.usd*rate;
@@ -1137,7 +1174,7 @@ function renderDash(){
 
   // partners summary
   document.getElementById('dash-partners').innerHTML = c.partners.map(p=>`
-    <div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}% من الصافي</div></div>
+    <div class="item"><div class="info"><div class="t">${pav(p.name)}${p.name}${pbar(p.name,p.pct)}</div><div class="s">${p.pct}% من الصافي</div></div>
     <div class="amt">${dual(p)}</div></div>`).join('');
 
   // chart (income sources, ils-equivalent for shape)
@@ -1197,7 +1234,7 @@ function renderKiosks(){
           <div class="cur-sel"><label class="fld">عملة</label>
             <select onchange="setKiosk('${id}','rentCur',this.value)">${curOpts(k.rentCur)}</select></div>
         </div>
-        <button class="btn btn-green btn-sm" onclick="logKioskRent('${id}')">➕ سجّل إيجار هذا الشهر (${money(num(k.rent),k.rentCur)})</button>
+        <button class="btn btn-green btn-sm" onclick="logKioskRent('${id}')">سجّل إيجار هذا الشهر (${money(num(k.rent),k.rentCur)})</button>
         <div class="mini" style="margin-top:12px">الإيجارات والدفعات المسجّلة</div>
         ${othersHtml}
         <div class="row" style="margin-top:8px">
@@ -1249,7 +1286,7 @@ function renderSponsors(){
     addCur(tot,num(s.amount),s.cur);
     return `<div class="item" style="flex-wrap:wrap">
       <div class="info" style="flex:1 1 100%;margin-bottom:6px">
-        <div class="t">🤝 ${s.label} ${s.fixed?'':'<span class="badge">أخرى</span>'}</div></div>
+        <div class="t">${ic('hand','#db2777')}${s.label} ${s.fixed?'':'<span class="badge">أخرى</span>'}</div></div>
       <div style="flex:2 1 100%;margin-bottom:6px"><input value="${esc(s.sponsor)}" placeholder="اسم الراعي" onchange="setSponsor('${s.id}','sponsor',this.value)"></div>
       <div style="flex:1"><input type="number" inputmode="decimal" value="${esc(s.amount)}" placeholder="المبلغ" onchange="setSponsor('${s.id}','amount',this.value)"></div>
       <div class="cur-sel"><select onchange="setSponsor('${s.id}','cur',this.value)">${curOpts(s.cur)}</select></div>
@@ -1303,8 +1340,8 @@ function renderDome(){
   document.getElementById('dm-total').innerHTML=dual(tot);
   const el=document.getElementById('dome-list');
   el.innerHTML = E.dome.length ? E.dome.slice().reverse().map(d=>`
-    <div class="item"><div class="info"><div class="t">🎪 ${d.renter}</div>
-      <div class="s">${num(d.days)} يوم × ${money(num(d.daily),d.cur)}${num(d.setup)>0?' + فك وتركيب '+money(num(d.setup),d.cur):''}<br>📅 ${d.dateFrom?('من '+d.dateFrom+' إلى '+(d.dateTo||'—')):(d.date||'')}</div></div>
+    <div class="item"><div class="info"><div class="t">${ic('dome','#ca8a04')}${d.renter}</div>
+      <div class="s">${num(d.days)} يوم × ${money(num(d.daily),d.cur)}${num(d.setup)>0?' + فك وتركيب '+money(num(d.setup),d.cur):''}<br>${d.dateFrom?('من '+d.dateFrom+' إلى '+(d.dateTo||'—')):(d.date||'')}</div></div>
     <div class="amt cyan">${money(num(d.total),d.cur)}</div>
     <button class="btn-x btn" onclick="delDome('${d.id}')">✕</button></div>`).join('')
     : '<div class="empty">لا يوجد إيفنتات بعد</div>';
@@ -1360,8 +1397,8 @@ function renderDomeCal(){
   const yb=db.expo.dome.filter(d=>{ const f=d.dateFrom||d.date; return f && new Date(f).getFullYear()===y; })
     .sort((a,b)=>((a.dateFrom||a.date)||'').localeCompare((b.dateFrom||b.date)||''));
   document.getElementById('domecal-year').innerHTML = yb.length ? yb.map(d=>`
-    <div class="item"><div class="info"><div class="t">🎪 ${esc(d.renter)}</div>
-      <div class="s">📅 ${(d.dateFrom||d.date)||'—'} ← ${d.dateTo||'—'} • ${num(d.days)} يوم</div></div>
+    <div class="item"><div class="info"><div class="t">${ic('dome','#ca8a04')}${esc(d.renter)}</div>
+      <div class="s">${(d.dateFrom||d.date)||'—'} ← ${d.dateTo||'—'} • ${num(d.days)} يوم</div></div>
     <div class="amt cyan">${money(num(d.total),d.cur)}</div></div>`).join('')
     : '<div class="empty">لا يوجد حجوزات هذه السنة</div>';
 }
@@ -1406,11 +1443,11 @@ function renderExpenses(){
 function renderProfit(){
   const c=compute(); const E=db.expo;
   document.getElementById('profit-silent').innerHTML=`
-    <div class="item"><div class="info"><div class="t">🏛️ بلدية رام الله</div>
+    <div class="item"><div class="info"><div class="t"><span class="av" style="--t:#d97706"><svg class="ico"><use href="#i-landmark"/></svg></span>بلدية رام الله</div>
       <div class="s">${E.silentPct}% من إجمالي الدخل (قبل المصاريف)</div></div>
     <div class="amt">${dual(c.silent)}</div></div>`;
   document.getElementById('profit-partners').innerHTML=c.partners.map(p=>`
-    <div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}% من الصافي</div></div>
+    <div class="item"><div class="info"><div class="t">${pav(p.name)}${p.name}${pbar(p.name,p.pct)}</div><div class="s">${p.pct}% من الصافي</div></div>
     <div class="amt">${dual(p)}</div></div>`).join('');
   // edit
   const totalPct=E.partners.reduce((s,p)=>s+num(p.pct),0);
@@ -1421,7 +1458,7 @@ function renderProfit(){
       <button class="btn btn-x" onclick="delPartner(${i})">✕</button>
     </div>`).join('')
     + `<div class="badge ${totalPct==100?'':'warn'}" style="margin-top:6px;${totalPct==100?'':'background:#3a2a0c;border-color:#a16207;color:#fde68a'}">مجموع النسب: ${totalPct}%</div>`
-    + `<div><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addPartner()">➕ إضافة شريك</button></div>`;
+    + `<div><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addPartner()">إضافة شريك</button></div>`;
   document.getElementById('silent-pct').value=E.silentPct;
 }
 function setPartner(i,field,val){ db.expo.partners[i][field]= field==='pct'?num(val):val; commit(); }
@@ -1529,16 +1566,16 @@ function renderMobDash(){
   document.getElementById('m-costs').innerHTML=dual(c.costs);
   document.getElementById('m-net').innerHTML=dual(c.net);
   document.getElementById('m-checks').innerHTML=dual(c.checksPending);
-  const wf=[['🏠 العائد',c.income],['🔧 − التركيب',neg(c.install)],['💡 − الثابتة',neg(c.fixed)],['💸 − مصاريف',neg(c.exp)]];
+  const wf=[['<span class="dot" style="--t:#3b82f6"></span>العائد',c.income],['<span class="dot" style="--t:#ea580c"></span>− التركيب',neg(c.install)],['<span class="dot" style="--t:#ca8a04"></span>− الثابتة',neg(c.fixed)],['<span class="dot" style="--t:#dc2626"></span>− مصاريف',neg(c.exp)]];
   let html=wf.map(([l,o])=>`<div class="wf"><span class="lbl">${l}</span><span class="val">${dual(o)}</span></div>`).join('');
-  html+=`<div class="wf total"><span class="lbl">💰 صافي الربح</span><span class="val">${dual(c.net)}</span></div>`;
+  html+=`<div class="wf total"><span class="lbl">صافي الربح</span><span class="val">${dual(c.net)}</span></div>`;
   document.getElementById('m-waterfall').innerHTML=html;
-  document.getElementById('m-partners-dash').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}%</div></div><div class="amt">${dual(p)}</div></div>`).join('');
+  document.getElementById('m-partners-dash').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">${pav(p.name)}${p.name}${pbar(p.name,p.pct)}</div><div class="s">${p.pct}%</div></div><div class="amt">${dual(p)}</div></div>`).join('');
   document.getElementById('m-pocket-dash').innerHTML=dual(c.pocket);
   const t=today(); const soon=c.pendingChecks.slice().sort((a,b)=>(a.checkdue||'').localeCompare(b.checkdue||''));
   document.getElementById('m-checks-soon').innerHTML = soon.length ? soon.map(c2=>{
     const overdue=c2.checkdue && c2.checkdue<t;
-    return `<div class="item"><div class="info"><div class="t">🧾 ${esc(c2.client)}</div><div class="s" style="color:${overdue?'var(--red)':'var(--amber)'}">استحقاق ${c2.checkdue||'—'} ${overdue?'(متأخر)':''}</div></div><div class="amt cyan">${money(num(c2.amount),c2.cur)}</div></div>`;
+    return `<div class="item"><div class="info"><div class="t">${ic('cash','#d97706')}${esc(c2.client)}</div><div class="s" style="color:${overdue?'var(--red)':'var(--amber)'}">استحقاق ${c2.checkdue||'—'} ${overdue?'(متأخر)':''}</div></div><div class="amt cyan">${money(num(c2.amount),c2.cur)}</div></div>`;
   }).join('') : '<div class="empty">لا يوجد شيكات معلّقة</div>';
 }
 
@@ -1559,10 +1596,10 @@ function renderRentals(){
   document.getElementById('r-total').innerHTML=dual(tot);
   document.getElementById('rentals-list').innerHTML = M.rentals.length ? M.rentals.slice().reverse().map(r=>{
     const payBadge = r.pay==='check'
-      ? `<span class="badge" style="color:var(--amber);border-color:var(--amber)">🧾 شيك ${r.cashed?'(مصروف)':'• '+(r.checkdue||'')}</span>`
-      : `<span class="badge" style="color:var(--green);border-color:var(--green)">💵 كاش</span>`;
+      ? `<span class="badge" style="color:var(--amber);border-color:var(--amber)">شيك ${r.cashed?'(مصروف)':'• '+(r.checkdue||'')}</span>`
+      : `<span class="badge" style="color:var(--green);border-color:var(--green)">كاش</span>`;
     return `<div class="item" style="flex-wrap:wrap">
-      <div class="info" style="flex:1 1 100%"><div class="t">🏠 ${esc(r.client)}${r.event?' — '+esc(r.event):''}</div><div class="s">${r.date} ${payBadge}</div></div>
+      <div class="info" style="flex:1 1 100%"><div class="t">${ic('trend','#3b82f6')}${esc(r.client)}${r.event?' — '+esc(r.event):''}</div><div class="s">${r.date} ${payBadge}</div></div>
       <div class="amt pos" style="flex:1">+${money(num(r.amount),r.cur)}</div>
       <button class="btn btn-x" onclick="delRental('${r.id}')">✕</button></div>`;
   }).join('') : '<div class="empty">لا يوجد عائد مسجّل</div>';
@@ -1577,14 +1614,14 @@ function renderChecks(){
   const t=today();
   document.getElementById('checks-list').innerHTML = checks.length ? checks.map(c=>{
     let status,col;
-    if(c.cashed){ status='✅ تم الصرف'; col='var(--green)'; }
-    else if(c.checkdue && c.checkdue<t){ status='⚠️ متأخر'; col='var(--red)'; }
-    else { status='⏳ معلّق'; col='var(--amber)'; }
+    if(c.cashed){ status='تم الصرف'; col='var(--green)'; }
+    else if(c.checkdue && c.checkdue<t){ status='متأخر'; col='var(--red)'; }
+    else { status='معلّق'; col='var(--amber)'; }
     return `<div class="item" style="flex-wrap:wrap">
-      <div class="info" style="flex:1 1 100%"><div class="t">🧾 ${esc(c.client)} ${c.checkno?'<span class="badge">#'+esc(c.checkno)+'</span>':''}</div>
+      <div class="info" style="flex:1 1 100%"><div class="t">${ic('cash','#d97706')}${esc(c.client)} ${c.checkno?'<span class="badge">#'+esc(c.checkno)+'</span>':''}</div>
         <div class="s">استحقاق: ${c.checkdue||'—'}${c.checkdetails?' • '+esc(c.checkdetails):''}</div></div>
       <div class="amt cyan" style="flex:1">${money(num(c.amount),c.cur)}</div>
-      <span class="badge" style="color:${col};border-color:${col}">${status}</span>
+      <span class="badge" style="color:${col};border-color:${col}"><span class="dot" style="--t:${col}"></span>${status}</span>
       <button class="btn btn-sm ${c.cashed?'btn-ghost':'btn-green'}" onclick="toggleCheck('${c.id}')">${c.cashed?'تراجع':'سجّل صرفه'}</button></div>`;
   }).join('') : '<div class="empty">لا يوجد شيكات</div>';
 }
@@ -1614,21 +1651,21 @@ function renderPocket(){
   const arr=db.themob.pocket; const tot=curBucket(); arr.forEach(x=>addCur(tot,num(x.amount),x.cur));
   document.getElementById('pocket-total').innerHTML=dual(tot);
   document.getElementById('pocket-list').innerHTML = arr.length ? arr.slice().reverse().map(x=>`
-    <div class="item"><div class="info"><div class="t">👛 ${esc(x.desc)}</div><div class="s">${x.date}</div></div>
+    <div class="item"><div class="info"><div class="t">${ic('wallet','#db2777')}${esc(x.desc)}</div><div class="s">${x.date}</div></div>
     <div class="amt neg">-${money(num(x.amount),x.cur)}</div>
     <button class="btn btn-x" onclick="delPocket('${x.id}')">✕</button></div>`).join('') : '<div class="empty">لا يوجد</div>';
 }
 
 function renderMobProfit(){
   const c=computeMob(); const M=db.themob;
-  document.getElementById('mprofit-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}% من الصافي</div></div><div class="amt">${dual(p)}</div></div>`).join('');
+  document.getElementById('mprofit-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">${pav(p.name)}${p.name}${pbar(p.name,p.pct)}</div><div class="s">${p.pct}% من الصافي</div></div><div class="amt">${dual(p)}</div></div>`).join('');
   const totalPct=M.partners.reduce((s,p)=>s+num(p.pct),0);
   document.getElementById('mpartners-edit').innerHTML=M.partners.map((p,i)=>`
     <div class="row" style="align-items:flex-end"><div><label class="fld">الشريك</label><input value="${esc(p.name)}" onchange="setMobPartner(${i},'name',this.value)"></div>
     <div class="cur-sel" style="flex:0 0 80px"><label class="fld">النسبة %</label><input type="number" inputmode="decimal" value="${esc(p.pct)}" onchange="setMobPartner(${i},'pct',this.value)"></div>
     <button class="btn btn-x" onclick="delMobPartner(${i})">✕</button></div>`).join('')
     + `<div class="badge" style="margin-top:6px;${totalPct==100?'':'background:#3a2a0c;border-color:#a16207;color:#fde68a'}">مجموع النسب: ${totalPct}%</div>`
-    + `<div><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addMobPartner()">➕ إضافة شريك</button></div>`;
+    + `<div><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addMobPartner()">إضافة شريك</button></div>`;
 }
 function setMobPartner(i,f,v){ db.themob.partners[i][f]= f==='pct'?num(v):v; commit(); }
 function addMobPartner(){ db.themob.partners.push({name:'شريك جديد',pct:0}); commit(); }
@@ -1700,7 +1737,7 @@ function stmtDetailHtml(c){
   c.rows.forEach(r=>{ const g=rowGrp(r.t); const key=r.kind+'|'+g; if(!groups[key]) groups[key]={kind:r.kind,grp:g,items:[],sub:curBucket()}; groups[key].items.push(r); addCur(groups[key].sub,num(r.amount),r.cur); });
   const list=Object.values(groups); const inG=list.filter(g=>g.kind==='in'), outG=list.filter(g=>g.kind==='out');
   const grpHtml=g=>`<div style="margin:12px 0 4px;padding:6px 10px;background:var(--panel2);border-radius:8px;display:flex;justify-content:space-between;font-weight:700;font-size:13px"><span>${g.grp}</span><span style="color:${g.kind==='in'?'var(--green)':'var(--red)'}">${g.kind==='in'?'+':'-'}${dualPlain(g.sub)}</span></div>`
-    + g.items.map(r=>`<div class="item" style="padding:7px 12px"><div class="info"><div class="t" style="font-size:13px">${r.t}</div>${r.date?`<div class="s">${r.date}</div>`:''}</div><div class="amt ${r.kind==='in'?'pos':'neg'}" style="font-size:13px">${r.kind==='in'?'+':'-'}${money(num(r.amount),r.cur)}</div></div>`).join('');
+    + g.items.map(r=>`<div class="item" style="padding:7px 12px"><div class="info"><div class="t" style="font-size:13px">${grpChip(r.t)}${noEmo(r.t)}</div>${r.date?`<div class="s">${r.date}</div>`:''}</div><div class="amt ${r.kind==='in'?'pos':'neg'}" style="font-size:13px">${r.kind==='in'?'+':'-'}${money(num(r.amount),r.cur)}</div></div>`).join('');
   let h='';
   if(inG.length){ h+='<div style="color:var(--green);font-weight:800">▲ الدخل</div>'; inG.forEach(g=>h+=grpHtml(g)); }
   if(outG.length){ h+='<div style="color:var(--red);font-weight:800;margin-top:10px">▼ المصاريف</div>'; outG.forEach(g=>h+=grpHtml(g)); }
@@ -1711,7 +1748,7 @@ function stmtToExcel(company){
   const title=(company==='expo'?'Ramallah Expo':'TheMob')+' — '+stmtLabelText();
   const exp = c.expense || c.costs;
   let body='';
-  c.rows.forEach(r=>{ body+=`<tr><td>${rowGrp(r.t)}</td><td>${(r.t||'').replace(/<[^>]*>/g,'')}</td><td>${r.date||''}</td><td>${r.kind==='in'?Math.round(num(r.amount)):''}</td><td>${r.kind==='out'?Math.round(num(r.amount)):''}</td><td>${r.cur}</td></tr>`; });
+  c.rows.forEach(r=>{ body+=`<tr><td>${rowGrp(r.t)}</td><td>${noEmo(r.t||'').replace(/<[^>]*>/g,'')}</td><td>${r.date||''}</td><td>${r.kind==='in'?Math.round(num(r.amount)):''}</td><td>${r.kind==='out'?Math.round(num(r.amount)):''}</td><td>${r.cur}</td></tr>`; });
   if(c.silent && (c.silent.ils||c.silent.usd)){ if(c.silent.ils) body+=`<tr><td>اقتطاعات</td><td>بلدية رام الله 10%</td><td></td><td></td><td>${Math.round(c.silent.ils)}</td><td>₪</td></tr>`; if(c.silent.usd) body+=`<tr><td>اقتطاعات</td><td>بلدية رام الله 10%</td><td></td><td></td><td>${Math.round(c.silent.usd)}</td><td>$</td></tr>`; }
   let ptr='';
   if(!viewerMode){ c.partners.forEach(p=>{ ptr+=`<tr><td>حصص الشركاء</td><td>${p.name} (${p.pct}%)</td><td></td><td colspan="3">${Math.round(p.ils)} ₪ / ${Math.round(p.usd)} $</td></tr>`; }); }
@@ -1753,7 +1790,7 @@ function renderStmt(){
   document.getElementById('stmt-income').innerHTML=dual(c.income);
   document.getElementById('stmt-expense').innerHTML=dual(c.expense);
   document.getElementById('stmt-net').innerHTML=dual(c.net);
-  document.getElementById('stmt-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}%</div></div><div class="amt">${dual(p)}</div></div>`).join('');
+  document.getElementById('stmt-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">${pav(p.name)}${p.name}${pbar(p.name,p.pct)}</div><div class="s">${p.pct}%</div></div><div class="amt">${dual(p)}</div></div>`).join('');
   const sec=document.getElementById('stmt-breakdown-sec');
   if(stmtMode==='year'){
     sec.style.display=''; const y=stmtMonth.slice(0,4); let bd='';
@@ -1761,7 +1798,7 @@ function renderStmt(){
     document.getElementById('stmt-breakdown').innerHTML=bd||'<div class="empty">لا يوجد حركات في هذه السنة</div>';
   } else sec.style.display='none';
   let html=stmtDetailHtml(c);
-  if(c.silent.ils||c.silent.usd) html+=`<div style="color:var(--red);font-weight:800;margin-top:10px">▼ اقتطاعات</div><div class="item" style="padding:7px 12px"><div class="info"><div class="t" style="font-size:13px">🏛️ بلدية رام الله (10% من الدخل)</div></div><div class="amt neg" style="font-size:13px">−${dualPlain(c.silent)}</div></div>`;
+  if(c.silent.ils||c.silent.usd) html+=`<div style="color:var(--red);font-weight:800;margin-top:10px">▼ اقتطاعات</div><div class="item" style="padding:7px 12px"><div class="info"><div class="t" style="font-size:13px">${ic('landmark','#d97706')}بلدية رام الله (10% من الدخل)</div></div><div class="amt neg" style="font-size:13px">−${dualPlain(c.silent)}</div></div>`;
   document.getElementById('stmt-rows').innerHTML = html || '<div class="empty">لا يوجد حركات</div>';
 }
 
@@ -1784,7 +1821,7 @@ function renderMobStmt(){
   document.getElementById('mstmt-income').innerHTML=dual(c.income);
   document.getElementById('mstmt-expense').innerHTML=dual(c.costs);
   document.getElementById('mstmt-net').innerHTML=dual(c.net);
-  document.getElementById('mstmt-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">👤 ${p.name}</div><div class="s">${p.pct}%</div></div><div class="amt">${dual(p)}</div></div>`).join('');
+  document.getElementById('mstmt-partners').innerHTML=c.partners.map(p=>`<div class="item"><div class="info"><div class="t">${pav(p.name)}${p.name}${pbar(p.name,p.pct)}</div><div class="s">${p.pct}%</div></div><div class="amt">${dual(p)}</div></div>`).join('');
   const sec=document.getElementById('mstmt-breakdown-sec');
   if(stmtMode==='year'){
     sec.style.display=''; const y=stmtMonth.slice(0,4); let bd='';
@@ -1819,7 +1856,7 @@ const WS_OWNER=['jmaher2023@icloud.com'];                              // دفت
 const WS_VIEWERS=['ramallahmunicipalit@expo.com','ramallahmunicipalit@gmail.com','ramallahmunicipality@gmail.com'];   // اطلاع فقط: كل اكسبو ما عدا الشركاء
 const MOB_ALLOWED=['ali8ittqanlaw@gmail.com','jmaher2023@icloud.com']; // TheMob يبين بس لعلي وجواد
 let mobAllowed=false;
-function setSync(txt,color){ const e=document.getElementById('sync-status'); if(e){ e.textContent=txt; if(color){e.style.color=color; e.style.borderColor=color;} } }
+function setSync(txt,color){ const e=document.getElementById('sync-status'); if(e){ e.textContent=''; const d=document.createElement('span'); d.className='dot'; d.style.setProperty('--t', color||'#8aa0c4'); e.appendChild(d); e.appendChild(document.createTextNode(noEmo(txt)||'…')); if(color){e.style.color=color; e.style.borderColor=color;} } }
 function renderCurrent(){ if(currentCompany==='expo') renderActive(); else renderActiveMob(); }
 function dbIsEmpty(d){
   try{
@@ -1994,9 +2031,9 @@ function bioUsePassword(){ sessionStorage.removeItem('bio-ok'); document.getElem
 function renderBioSec(){
   const st=document.getElementById('bio-status'); if(!st) return;
   const on=document.getElementById('bio-on'), off=document.getElementById('bio-off');
-  if(!bioSupported()){ st.textContent='⚠️ هذا الجهاز/المتصفح ما بيدعم قفل البصمة'; if(on) on.style.display='none'; if(off) off.style.display='none'; return; }
+  if(!bioSupported()){ st.textContent='هذا الجهاز/المتصفح ما بيدعم قفل البصمة'; if(on) on.style.display='none'; if(off) off.style.display='none'; return; }
   const en=bioEnabled();
-  st.textContent= en ? '✅ مفعّل — كل ما تفتح التطبيق بيطلب البصمة' : 'غير مفعّل على هذا الجهاز';
+  st.textContent= en ? 'مفعّل — كل ما تفتح التطبيق بيطلب البصمة' : 'غير مفعّل على هذا الجهاز';
   if(on) on.style.display= en?'none':'inline-block';
   if(off) off.style.display= en?'inline-block':'none';
 }
@@ -2119,10 +2156,10 @@ function renderCine(){
     return `<div class="cday ${b?'booked':'free'} ${ds===cineSel?'sel':''}" onclick="cinePick('${ds}')"><div>${DAYS_AR[d.getDay()]}</div><div class="d1">${d.getDate()}/${d.getMonth()+1}</div><div>${b?'محجوز':'متاح'}</div></div>`;
   }).join('');
   const b=bookingFor(cineSel);
-  document.getElementById('cineName').textContent = b ? b.renter : '✨ متاح للحجز';
+  document.getElementById('cineName').textContent = b ? b.renter : 'متاح للحجز';
   document.getElementById('cineSub').textContent = b
-    ? ('📅 من '+(b.dateFrom||b.date)+' إلى '+(b.dateTo||b.dateFrom||b.date)+' • '+num(b.days)+' يوم')
-    : ('يوم '+cineSel+' فاضي — جاهز لمناسبتك 🎉');
+    ? ('من '+(b.dateFrom||b.date)+' إلى '+(b.dateTo||b.dateFrom||b.date)+' • '+num(b.days)+' يوم')
+    : ('يوم '+cineSel+' فاضي — جاهز لمناسبتك');
 }
 
 /* تفاصيل المناسبات (سكرول تحت) */
