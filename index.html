@@ -1093,7 +1093,7 @@ function loadDB(){
 }
 let db = loadDB();
 let currentCompany='expo';
-function commit(){ localStorage.setItem(DB_KEY, JSON.stringify(db)); if(currentCompany==='expo'){ renderActive(); } else { renderActiveMob(); } }
+function commit(){ try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){ try{ pruneBackups(); localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e2){} } if(currentCompany==='expo'){ renderActive(); } else { renderActiveMob(); } }
 
 /* ============================================================
    HELPERS
@@ -1883,22 +1883,153 @@ try {
   setSync('💾 محلي فقط','#f59e0b');
 }
 
-function attachSnap(ref){
-  if(snapUnsub){ snapUnsub(); snapUnsub=null; }
-  snapUnsub = ref.onSnapshot(snap=>{
-    if(snap.metadata.hasPendingWrites) return;        // تجاهل صدى كتابتنا
-    const cloudData = snap.exists ? ((snap.data()||{}).data) : null;
-    if(cloudData && !dbIsEmpty(cloudData)){
-      // السحابة فيها بيانات حقيقية → استخدمها
-      if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak', JSON.stringify(db)); // نسخة أمان قبل الاستبدال
-      applyingRemote=true; db=ensureMob(cloudData); localStorage.setItem(DB_KEY,JSON.stringify(db)); if(currentUid){ setCacheOwner(currentUid); cacheVerified=true; } renderCurrent(); try{ renderHeroStats(); renderHeroEvents(); }catch(e){} applyingRemote=false;
-      setSync(viewerMode?'👁️ اطلاع فقط':'☁️ متزامن', viewerMode?'#f5b942':'#22c55e');
-    } else {
-      // السحابة فاضية أو غير موجودة → لا تمسح المحلي أبداً؛ لو عندنا بيانات ارفعها
-      if(!viewerMode && !dbIsEmpty(db) && confirmLegacyCache(currentUid)){ pushCloud(true); } else { setSync(viewerMode?'👁️ اطلاع فقط':'☁️ متزامن', viewerMode?'#f5b942':'#22c55e'); }
-    }
-  }, ()=> setSync('⚠️ خطأ','#ef4444'));
+/* ══════════ المزامنة v2 — بدون ضياع تعديلات + إعادة اتصال تلقائية + دمج بين الأجهزة ══════════ */
+var DB_BASE_KEY='rexpo_db_base';
+var dirty=false, editSeq=0, baseObj=null, lastPushedCanon='', snapRef=null, pendingRender=false;
+var pushRetryTimer=null, pushRetryN=0, pushWatch=null, pushInFlight=0, hiddenAt=0, lastKick=0, openRetryTimer=null;
+
+/* مقارنة ما بتتأثر بترتيب المفاتيح (Firestore بيرجّع المفاتيح بترتيب مختلف) */
+function canon(x){
+  if(Array.isArray(x)) return '['+x.map(canon).join(',')+']';
+  if(x && typeof x==='object'){ return '{'+Object.keys(x).filter(function(k){ return x[k]!==undefined; }).sort().map(function(k){ return JSON.stringify(k)+':'+canon(x[k]); }).join(',')+'}'; }
+  return JSON.stringify(x===undefined ? null : x);
 }
+function cloneDb(x){ return JSON.parse(JSON.stringify(x)); }
+function sameVal(a,b){ return canon(a)===canon(b); }
+function isPlainObj(x){ return !!x && typeof x==='object' && !Array.isArray(x); }
+function isIdArr(a){ return Array.isArray(a) && a.every(function(x){ return isPlainObj(x) && x.id!=null; }); }
+
+/* دمج ثلاثي: base = آخر نسخة كنا متزامنين عليها، remote = السحابة، local = عنا.
+   القاعدة: اللي ما لمسناه بناخذه من السحابة، واللي عدّلناه بنحتفظ فيه، وما بنخسر ولا بند. */
+function merge3(base, remote, local){
+  if(sameVal(local, base)) return remote;
+  if(sameVal(remote, base) || sameVal(remote, local)) return local;
+  if(isPlainObj(remote) && isPlainObj(local)){
+    var b=isPlainObj(base)?base:{}, out={}, done={};
+    Object.keys(remote).concat(Object.keys(local)).forEach(function(k){
+      if(done[k]) return; done[k]=1;
+      var v=merge3(b[k], remote[k], local[k]); if(v!==undefined) out[k]=v;
+    });
+    return out;
+  }
+  if(isIdArr(remote) && isIdArr(local)){
+    var bi={}, li={}, res=[], seen={};
+    (isIdArr(base)?base:[]).forEach(function(x){ bi[x.id]=x; });
+    local.forEach(function(x){ li[x.id]=x; });
+    remote.forEach(function(r){
+      seen[r.id]=1; var l=li[r.id], bb=bi[r.id];
+      if(l!==undefined) res.push(merge3(bb, r, l));
+      else if(bb===undefined || !sameVal(r,bb)) res.push(r);      // بند جديد من الجهاز الثاني، أو حذفناه بس هم عدّلوه → بنحتفظ فيه
+    });
+    local.forEach(function(l){
+      if(seen[l.id]) return; var bb=bi[l.id];
+      if(bb===undefined || !sameVal(l,bb)) res.push(l);           // بند جديد عنا، أو هم حذفوه بس إحنا عدّلناه → بنحتفظ فيه
+    });
+    return res;
+  }
+  return local;
+}
+
+/* آخر نقطة تزامن — محفوظة عالجهاز عشان نعرف شو تعدّل بدون نت حتى لو انسكّر التطبيق */
+function loadBase(){ try{ var s=localStorage.getItem(DB_BASE_KEY); baseObj = s ? JSON.parse(s) : null; }catch(e){ baseObj=null; } }
+function saveBase(obj){ baseObj=obj; try{ localStorage.setItem(DB_BASE_KEY, JSON.stringify(obj)); }catch(e){ pruneBackups(); } }
+function clearBase(){ baseObj=null; try{ localStorage.removeItem(DB_BASE_KEY); }catch(e){} }
+function pruneBackups(){
+  try{
+    var ks=[]; for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k && k.indexOf(DB_KEY+'__bak_')===0) ks.push(k); }
+    ks.sort(function(a,b){ return (parseInt(b.split('_').pop(),10)||0)-(parseInt(a.split('_').pop(),10)||0); });
+    ks.slice(3).forEach(function(k){ localStorage.removeItem(k); });
+  }catch(e){}
+}
+function safeSetLocal(){ try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){ pruneBackups(); try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e2){} } }
+
+/* ما نعيد رسم الشاشة والمستخدم عم يكتب بخانة — بنأجّلها لحد ما يطلع منها */
+function safeRender(){
+  var a=document.activeElement;
+  var typing = a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && !(a.closest && a.closest('#auth-overlay'));
+  if(typing){ pendingRender=true; return; }
+  pendingRender=false;
+  try{ renderCurrent(); renderHeroStats(); renderHeroEvents(); }catch(e){}
+}
+document.addEventListener('focusout', function(){ if(pendingRender) setTimeout(function(){ if(pendingRender) safeRender(); }, 80); });
+
+function applyIncoming(incoming){
+  try{ if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak', JSON.stringify(db)); }catch(e){}   // نسخة أمان قبل الاستبدال
+  applyingRemote=true;
+  db=incoming; safeSetLocal();
+  if(currentUid){ setCacheOwner(currentUid); cacheVerified=true; }
+  applyingRemote=false;
+  safeRender();
+}
+function syncedBadge(md){
+  var cached = !!(md && md.fromCache);
+  if(viewerMode){ setSync(cached ? '📴 اطلاع فقط (بدون اتصال)' : '👁️ اطلاع فقط', '#f5b942'); return; }
+  if(cached){ setSync(navigator.onLine===false ? '📴 بدون اتصال' : '⏳ يتصل…', '#f59e0b'); return; }
+  setSync('☁️ متزامن','#22c55e');
+}
+
+function attachSnap(ref, attempt){
+  if(snapUnsub){ try{ snapUnsub(); }catch(e){} snapUnsub=null; }
+  snapRef=ref;
+  snapUnsub = ref.onSnapshot({includeMetadataChanges:true}, function(snap){
+    try{ onCloudSnap(ref, snap); }catch(e){ try{ console.error('sync', e); }catch(_){} }
+  }, function(err){
+    if(snapRef!==ref) return;
+    if(err && err.code==='permission-denied'){ setSync(viewerMode ? '⚠️ الصلاحيات لسا ما تفعّلت' : '⚠️ ما في صلاحية على السحابة','#ef4444'); return; }
+    var n=(attempt||0)+1;                                   // أي خطأ ثاني (نت) → المستمع بيموت، فبنرجّع نشغّله لحالنا
+    setSync('⏳ إعادة اتصال…','#f59e0b');
+    setTimeout(function(){ if(snapRef===ref && currentUid) attachSnap(ref, n); }, Math.min(30000, 1500*Math.pow(2, n-1)));
+  });
+}
+function onCloudSnap(ref, snap){
+  if(snapRef!==ref) return;
+  var md=snap.metadata||{};
+  if(md.hasPendingWrites) return;                          // صدى كتابتنا المحلية — مش خبر من السيرفر
+  var cloudData = snap.exists ? ((snap.data()||{}).data) : null;
+  if(!(cloudData && !dbIsEmpty(cloudData))){
+    // السحابة فاضية أو غير موجودة → لا تمسح المحلي أبداً
+    if(viewerMode){ setSync(snap.exists ? '👁️ اطلاع فقط' : '⏳ بانتظار حساب جواد يفتح أول مرة','#f5b942'); return; }
+    if(md.fromCache){ syncedBadge(md); return; }           // ما نقرر "السحابة فاضية" من ذاكرة الجهاز
+    if(!dbIsEmpty(db) && confirmLegacyCache(currentUid)){ dirty=true; pushCloud(true); } else { syncedBadge(md); }
+    return;
+  }
+  var incoming=ensureMob(cloudData), ij=canon(incoming), lj=canon(db);
+  if(viewerMode){ if(ij!==lj) applyIncoming(incoming); syncedBadge(md); return; }
+  if(ij===lj){                                             // نفس اللي عنا → متزامنين، ما في داعي نعيد رسم إشي
+    dirty=false; pushRetryN=0; saveBase(cloneDb(db)); syncedBadge(md); return;
+  }
+  if(!dirty){                                              // ما عنا تعديلات معلّقة → خذ نسخة السحابة
+    applyIncoming(incoming); saveBase(cloneDb(incoming)); syncedBadge(md); return;
+  }
+  // ── عنا تعديلات لسا ما انرفعت: ممنوع نستبدلها ──
+  if(ij===lastPushedCanon) return;                         // صدى رفعنا
+  if(baseObj && ij===canon(baseObj)){                      // ما في جديد من برا → ارفع اللي عنا
+    if(!md.fromCache && !pushTimer && !pushInFlight) pushCloud(true);
+    return;
+  }
+  if(md.fromCache) return;                                 // الدمج بس مع نسخة مؤكدة من السيرفر
+  // تعديل حقيقي من جهاز ثاني + تعديلاتنا → دمج بدون خسارة، وبعدين ارفع النتيجة
+  var merged=ensureMob(merge3(baseObj||{}, incoming, db));
+  try{ if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak', JSON.stringify(db)); }catch(e){}
+  db=merged; safeSetLocal(); saveBase(cloneDb(incoming));
+  safeRender();
+  pushCloud(true);
+}
+
+/* رجوع النت أو رجوع التطبيق من الخلفية → جدّد الاتصال فوراً بدل ما نستنى مهلة Firestore الطويلة */
+function kickSync(force){
+  if(!fbReady || !fbDb || !currentUid) return;
+  var now=Date.now(); if(!force && now-lastKick<10000) return; lastKick=now;
+  var p; try{ p=fbDb.disableNetwork().then(function(){ return fbDb.enableNetwork(); }); }catch(e){ p=Promise.resolve(); }
+  p.catch(function(){}).then(function(){ if(dirty && userDocRef && !pushInFlight) pushCloud(true); });
+}
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden){ hiddenAt=Date.now(); if(pushTimer) pushCloud(true); }   // طالع من التطبيق وفي تعديل بالمهلة → ارفعه هلأ
+  else if(hiddenAt && Date.now()-hiddenAt>20000){ kickSync(false); }
+});
+window.addEventListener('pageshow', function(e){ if(e && e.persisted) kickSync(true); });
+window.addEventListener('online',  function(){ kickSync(true); });
+window.addEventListener('offline', function(){ if(currentUid && !viewerMode) setSync('📴 بدون اتصال','#f59e0b'); });
 
 function enterViewerMode(){
   viewerMode=true;
@@ -1915,18 +2046,22 @@ function cacheOwner(){ try{ return localStorage.getItem(DB_OWNER_KEY)||''; }catc
 function setCacheOwner(uid){ try{ if(uid) localStorage.setItem(DB_OWNER_KEY, uid); }catch(e){} }
 function resetCacheFor(uid, why){
   try{ if(!dbIsEmpty(db)) localStorage.setItem(DB_KEY+'__bak_'+(why||'other')+'_'+Date.now(), JSON.stringify(db)); }catch(e){}
+  pruneBackups();                                          // خلّي آخر 3 نسخ بس — عشان ذاكرة المتصفح ما تتعبّى
   db=defaultDB();
   try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
+  clearBase(); dirty=false;
   setCacheOwner(uid); cacheVerified=true;
   try{ renderCurrent(); renderHeroStats(); renderHeroEvents(); }catch(e){}
 }
 function bindCacheTo(uid, isViewer){
-  currentUid=uid;
+  currentUid=uid; dirty=false; baseObj=null; lastPushedCanon='';
   const tag=cacheOwner();
   if(tag && tag!==uid){ resetCacheFor(uid,'acct'); return; }           // بيانات حساب ثاني → نسخة احتياطية + بداية نظيفة
   cacheVerified = (tag===uid) || dbIsEmpty(db);
   if(!cacheVerified && isViewer){ resetCacheFor(uid,'viewer'); return; } // البلدية ما بتشوف أي بيانات قديمة بالمتصفح
   if(cacheVerified) setCacheOwner(uid);
+  if(tag===uid && !isViewer){ loadBase(); dirty = !!baseObj && !sameVal(db, baseObj); }   // تعديلات انعملت بدون نت وما انرفعت قبل ما ينسكّر التطبيق
+  else { clearBase(); }
 }
 function confirmLegacyCache(uid){
   if(cacheVerified) return true;
@@ -1944,12 +2079,23 @@ function pickOwnerSeed(user){
     return null;
   }).catch(()=> null);
 }
-function ownerOpenWorkspace(user, ws){
+function ownerOpenFailed(user, ws, attempt, err){
+  if(currentUid!==user.uid) return;                                     // طلع من الحساب بهالأثناء
+  if(err && err.code==='permission-denied'){ fallbackPrivate(user); return; }   // القواعد مش منشورة (وضع قديم) — الحالة الوحيدة للتحويل
+  // مشكلة نت: ممنوع نحوّل بصمت على الدفتر الخاص. بنضل نحاول، والشغل بينحفظ عالجهاز وبينرفع أول ما يتصل
+  setSync('⏳ بانتظار الاتصال…','#f59e0b');
+  if(!attempt) openHero();
+  clearTimeout(openRetryTimer);
+  openRetryTimer=setTimeout(function(){ if(currentUid===user.uid && !userDocRef) ownerOpenWorkspace(user, ws, (attempt||0)+1); }, Math.min(30000, 2000*Math.pow(2, attempt||0)));
+}
+function ownerOpenWorkspace(user, ws, attempt){
   ws.get().then(snap=>{
+    if(currentUid!==user.uid) return;
     const wsData = snap.exists ? ((snap.data()||{}).data) : null;
     if(wsData && !dbIsEmpty(wsData)){
-      userDocRef=ws; ws.set({viewers:WS_VIEWERS},{merge:true}).catch(()=>{}); attachSnap(ws); openHero(); return;
+      userDocRef=ws; ws.set({viewers:WS_VIEWERS},{merge:true}).catch(()=>{}); attachSnap(ws); if(!attempt) openHero(); return;
     }
+    if(snap.metadata && snap.metadata.fromCache){ ownerOpenFailed(user, ws, attempt||0, null); return; }   // ما نقرر "الدفتر فاضي" من ذاكرة الجهاز
     // الدفتر مش موجود أو فاضي → نعبّيه فقط ببيانات مؤكَّدة
     pickOwnerSeed(user).then(seed=>{
       const base={owner:user.uid, viewers:WS_VIEWERS, updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
@@ -1957,9 +2103,9 @@ function ownerOpenWorkspace(user, ws){
         ? ws.set(seed ? Object.assign({data:seed}, base) : base, {merge:true})
         : ws.set(Object.assign({data: seed || defaultDB()}, base));
       op.then(()=>{ userDocRef=ws; attachSnap(ws); openHero(); })
-        .catch(()=> fallbackPrivate(user));
+        .catch(err=> ownerOpenFailed(user, ws, attempt||0, err));
     });
-  }).catch(()=> fallbackPrivate(user));
+  }).catch(err=> ownerOpenFailed(user, ws, attempt||0, err));
 }
 function handleAuth(user){
   const overlay=document.getElementById('auth-overlay');
@@ -1967,7 +2113,7 @@ function handleAuth(user){
   if(!user){
     overlay.style.display='flex';
     if(logout) logout.style.display='none';
-    userDocRef=null; viewerMode=false; cacheVerified=false; currentUid=null;
+    userDocRef=null; viewerMode=false; cacheVerified=false; currentUid=null; dirty=false; baseObj=null; lastPushedCanon=''; snapRef=null; clearTimeout(pushTimer); pushTimer=null; clearTimeout(pushRetryTimer); clearTimeout(pushWatch); clearTimeout(openRetryTimer);
     mobAllowed=false; document.body.classList.add('no-mob');
     document.body.classList.remove('viewer-mode');
     const hh=document.getElementById('hero'); if(hh) hh.style.display='none';   // الواجهة تختفي قبل الدخول
@@ -1995,11 +2141,8 @@ function handleAuth(user){
     // جواد: مساحته الخاصة (اللي بتشوفها البلدية) — علي ما إله علاقة فيها
     ownerOpenWorkspace(user, ws);   // بيتعبّى فقط ببيانات مؤكَّد إنها لجواد
   } else if(isViewerEmail){
-    // البلدية: قراءة دفتر جواد فقط
-    ws.get().then(snap=>{
-      if(snap.exists){ userDocRef=null; attachSnap(ws); }
-      else { setSync('⏳ بانتظار حساب جواد يفتح أول مرة','#f5b942'); }
-    }).catch(()=>{ setSync('⚠️ الصلاحيات لسا ما تفعّلت','#ef4444'); });
+    // البلدية: قراءة دفتر جواد فقط — حالات (مش موجود / ما في صلاحية / بدون اتصال) بتتعالج جوّا المستمع وبيعيد المحاولة لحاله
+    userDocRef=null; attachSnap(ws);
   } else {
     // علي وباقي الحسابات: بيانات خاصة لكل حساب لحاله (خصوصية كاملة)
     userDocRef=fbDb.collection('users').doc(user.uid); attachSnap(userDocRef); openHero();
@@ -2008,14 +2151,45 @@ function handleAuth(user){
 
 function pushCloud(immediate){
   if(!userDocRef || viewerMode || !cacheVerified) return;
-  clearTimeout(pushTimer);
-  const doIt=()=>{ setSync('⏳ يحفظ…','#f59e0b'); userDocRef.set({data:db, updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>setSync('☁️ متزامن','#22c55e')).catch(()=>setSync('⚠️ غير متصل','#ef4444')); };
-  if(immediate) doIt(); else pushTimer=setTimeout(doIt,800);
+  clearTimeout(pushTimer); pushTimer=null;
+  if(immediate) doPush(); else pushTimer=setTimeout(doPush, 800);
+}
+function doPush(){
+  pushTimer=null;
+  if(!userDocRef || viewerMode || !cacheVerified) return;
+  clearTimeout(pushRetryTimer); pushRetryTimer=null;
+  var ref=userDocRef, seq=editSeq, pushed=cloneDb(db);
+  lastPushedCanon=canon(pushed);
+  setSync(navigator.onLine===false ? '📴 محفوظ عالجهاز — بانتظار النت' : '⏳ يحفظ…','#f59e0b');
+  clearTimeout(pushWatch);
+  pushWatch=setTimeout(function(){ if(dirty) setSync('📴 محفوظ عالجهاز — بانتظار النت','#f59e0b'); }, 7000);
+  pushInFlight++;
+  ref.set({data:pushed, updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(function(){
+    pushInFlight=Math.max(0,pushInFlight-1);
+    if(userDocRef!==ref) return;
+    clearTimeout(pushWatch); pushRetryN=0;
+    saveBase(pushed);
+    if(seq===editSeq){ dirty=false; setSync('☁️ متزامن','#22c55e'); }
+    else if(!pushTimer){ pushCloud(true); }                  // صار تعديل أثناء الرفع → ارفع الأحدث
+  }).catch(function(err){
+    pushInFlight=Math.max(0,pushInFlight-1);
+    if(userDocRef!==ref) return;
+    clearTimeout(pushWatch);
+    if(err && err.code==='permission-denied'){ setSync('⚠️ ما في صلاحية حفظ على السحابة','#ef4444'); return; }
+    pushRetryN++;                                            // فشل مؤقت → بنعيد المحاولة لحالنا (4 ث، 8، 16… لحد دقيقة)
+    setSync('⚠️ ما انحفظ — بعيد المحاولة','#ef4444');
+    pushRetryTimer=setTimeout(function(){ if(dirty) pushCloud(true); }, Math.min(60000, 4000*Math.pow(2, pushRetryN-1)));
+  });
 }
 
 /* اربط الحفظ المحلي بالرفع السحابي */
 const _origCommit = commit;
-commit = function(){ _origCommit(); if(fbReady && userDocRef && !applyingRemote) pushCloud(false); };
+commit = function(){
+  _origCommit();
+  if(applyingRemote || viewerMode) return;
+  editSeq++; dirty=true;                                     // من هاللحظة ممنوع أي نسخة من السحابة تستبدل بياناتنا لحد ما ينرفع التعديل
+  if(fbReady && userDocRef) pushCloud(false);
+};
 
 function mapAuthErr(code){
   if(code==='auth/invalid-email') return 'إيميل غير صحيح';
