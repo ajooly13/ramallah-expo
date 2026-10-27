@@ -407,6 +407,34 @@
   .company-switch button{border-radius:999px !important;background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.12) !important;color:rgba(255,255,255,.72) !important;box-shadow:none !important}
   .company-switch button.active{background:#E9E9E9 !important;color:#0A0707 !important;border-color:#E9E9E9 !important}
 
+  /* ═══ المرفقات: اتفاقيات الحجوزات والأكشاك (PDF / صورة) ═══ */
+  .agr{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:9px;padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.16);font-size:12.5px}
+  .agr.has{border-style:solid;border-color:rgba(59,130,246,.38);background:rgba(59,130,246,.09)}
+  .agr-i{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#3b82f6;color:#fff;flex:0 0 auto}
+  .agr-i.dim{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+  .agr-i .ico{width:13px;height:13px}
+  .agr-n{font-weight:700;max-width:44%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .agr-n.dim{color:rgba(255,255,255,.55);font-weight:500;max-width:none}
+  .agr-z{color:rgba(255,255,255,.5);font-size:11px}
+  .agr .btn{padding:6px 10px;font-size:12px;margin:0}
+  .agr-st{flex:1 1 100%;font-size:11.5px}
+  .agr-st:empty{display:none}
+  .agr-flag{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:#3b82f6;color:#fff;margin-left:6px;vertical-align:middle}
+  .agr-flag .ico{width:11px;height:11px}
+  #agrView{position:fixed;inset:0;z-index:1100;background:rgba(3,7,26,.94);display:none;flex-direction:column;padding:12px}
+  #agrView.open{display:flex}
+  .agr-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .agr-top h3{flex:1 1 160px;font-size:14px;font-weight:700;margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}
+  .agr-top .btn{margin:0}
+  .agr-top a.btn{text-decoration:none;display:inline-flex;align-items:center}
+  #agr-body{flex:1;min-height:0;border-radius:14px;overflow:auto;background:#1b1b1b;display:flex;align-items:flex-start;justify-content:center}
+  #agr-body iframe{width:100%;height:100%;border:0;background:#fff}
+  #agr-body img{max-width:100%;height:auto;display:block}
+  .agr-load{color:rgba(255,255,255,.75);padding:40px 16px;text-align:center;width:100%;font-size:14px}
+  .agr-load.err{color:#ff8a8a}
+  body.viewer-mode [onclick^="attachAgreement"],body.viewer-mode [onclick^="removeAgreement"],body.viewer-mode #dm-agr-row{display:none !important}
+  @media print{ #agrView,.agr .btn,.agr-st{display:none !important} }
+
   /* ═══ UI v4: الأقسام من جوّا — شارات ملونة (B) بدل الإيموجي ═══ */
   @media screen{
     .section,.stat{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.11);box-shadow:0 10px 26px rgba(0,0,0,.28)}
@@ -457,6 +485,7 @@
     <symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></symbol>
     <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
     <symbol id="i-print" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14" rx="1"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></symbol>
   </defs>
 </svg>
 
@@ -596,6 +625,17 @@
   </div>
 </div>
 
+<!-- ===== الاتفاقيات: عارض + مدخل الملف ===== -->
+<input type="file" id="agr-file" accept="application/pdf,image/*" style="display:none">
+<div id="agrView" dir="rtl">
+  <div class="agr-top">
+    <h3 id="agr-title">الاتفاقية</h3>
+    <button class="btn btn-sm btn-blue" id="agr-open" disabled>فتح بتبويب جديد</button>
+    <a class="btn btn-sm btn-ghost" id="agr-dl" download>تنزيل</a>
+    <button class="btn btn-sm btn-ghost" onclick="closeAgreement()">إغلاق</button>
+  </div>
+  <div id="agr-body"></div>
+</div>
 <!-- ============ RAMALLAH EXPO ============ -->
 <div id="co-expo">
   <div class="tabs">
@@ -699,6 +739,8 @@
           <div><label class="fld">إلى تاريخ</label><input id="dm-to" type="date" onchange="domeDays()"></div>
         </div>
         <div class="badge" id="dm-preview" style="margin-bottom:10px">الإجمالي: 0</div><br>
+        <div class="row" id="dm-agr-row"><div><label class="fld">الاتفاقية (PDF أو صورة) — اختياري</label>
+          <button class="btn btn-ghost btn-sm" onclick="pickDomeFile()">اختيار ملف الاتفاقية</button> <span id="dm-agr-name" class="badge" style="margin-right:6px;display:none"></span></div></div>
         <button class="btn btn-green" onclick="addDome()">إضافة الإيفنت</button>
       </div>
       <div class="section"><h3 style="--t:#64748b">سجل الإيفنتات</h3><div id="dome-list"></div></div>
@@ -1219,13 +1261,15 @@ function renderKiosks(){
     <div class="kiosk" id="kiosk-${id}">
       <div class="kiosk-head" onclick="toggleKiosk('${id}')">
         <span class="tag">${id.toUpperCase()}</span>
-        <div class="who"><div class="nm">${k.owner||'<span style="color:var(--dim)">— بدون صاحب —</span>'}</div>
+        <div class="who"><div class="nm">${(k.agreement&&k.agreement.fid)?'<span class="agr-flag" title="اتفاقية مرفقة"><svg class="ico"><use href="#i-file"/></svg></span>':''}${k.owner||'<span style="color:var(--dim)">— بدون صاحب —</span>'}</div>
           <div class="sub">إيجار: ${money(num(k.rent),k.rentCur)}</div></div>
         <div class="tot">${money(kt.ils,'₪')}<br>${money(kt.usd,'$')}</div>
         <span class="chev">▾</span>
       </div>
       <div class="kiosk-body">
-        <div class="mini">بيانات الكشك</div>
+        <div class="mini">اتفاقية الكشك</div>
+        ${agrHtml('kiosk',id)}
+        <div class="mini" style="margin-top:12px">بيانات الكشك</div>
         <div class="row"><div><label class="fld">اسم صاحب الكشك</label>
           <input value="${esc(k.owner)}" placeholder="الاسم" onchange="setKiosk('${id}','owner',this.value)"></div></div>
         <div class="row">
@@ -1251,29 +1295,23 @@ function renderKiosks(){
   document.getElementById('k-total').innerHTML = dual(tot);
 }
 function toggleKiosk(id){ document.getElementById('kiosk-'+id).classList.toggle('open'); }
-function setKiosk(id,field,val){ db.expo.kiosks[id][field]=val; localStorage.setItem(DB_KEY,JSON.stringify(db));
-  // keep open state, re-render
-  const open=document.getElementById('kiosk-'+id).classList.contains('open');
-  renderKiosks(); renderDash(); if(open) document.getElementById('kiosk-'+id).classList.add('open'); }
+function setKiosk(id,field,val){ db.expo.kiosks[id][field]=val; const open=document.getElementById('kiosk-'+id).classList.contains('open'); commit(); if(open){ const el=document.getElementById('kiosk-'+id); if(el) el.classList.add('open'); } }
 function addKioskOther(id){
   const l=document.getElementById('ko-l-'+id).value||'دفعة';
   const a=document.getElementById('ko-a-'+id).value; const c=document.getElementById('ko-c-'+id).value;
   if(!num(a)) return;
   db.expo.kiosks[id].others.push({id:uid(),label:l,amount:a,cur:c,date:today()});
-  localStorage.setItem(DB_KEY,JSON.stringify(db));
-  renderKiosks(); renderDash(); document.getElementById('kiosk-'+id).classList.add('open');
+  commitKiosk(id);
 }
 function delKioskOther(id,oid){
   db.expo.kiosks[id].others = db.expo.kiosks[id].others.filter(o=>o.id!==oid);
-  localStorage.setItem(DB_KEY,JSON.stringify(db));
-  renderKiosks(); renderDash(); document.getElementById('kiosk-'+id).classList.add('open');
+  commitKiosk(id);
 }
 function logKioskRent(id){
   const k=db.expo.kiosks[id];
   if(!num(k.rent)) return;
   k.others.push({id:uid(),label:'إيجار شهري',amount:k.rent,cur:k.rentCur,date:today()});
-  localStorage.setItem(DB_KEY,JSON.stringify(db));
-  renderKiosks(); renderDash(); document.getElementById('kiosk-'+id).classList.add('open');
+  commitKiosk(id);
 }
 
 /* ============================================================
@@ -1327,10 +1365,11 @@ function addDome(){
   const date=from||today();
   const total=num(days)*num(daily)+num(setup);
   if(!total) return;
-  db.expo.dome.push({id:uid(),renter,days,daily,setup,total,cur,dateFrom:from,dateTo:to,date});
+  const nid=uid(); db.expo.dome.push({id:nid,renter,days,daily,setup,total,cur,dateFrom:from,dateTo:to,date});
   document.getElementById('dm-renter').value='';document.getElementById('dm-days').value='';document.getElementById('dm-daily').value='';document.getElementById('dm-setup').value='';document.getElementById('dm-from').value='';document.getElementById('dm-to').value='';
   document.getElementById('dm-preview').textContent='الإجمالي: 0';
   commit();
+  if(domeStaged){ const f=domeStaged; domeStaged=null; const e=document.getElementById('dm-agr-name'); if(e){ e.textContent=''; e.style.display='none'; } uploadAgreement(f,'dome',nid); }
 }
 function delDome(id){ db.expo.dome=db.expo.dome.filter(x=>x.id!==id); commit(); }
 function renderDome(){
@@ -1341,7 +1380,7 @@ function renderDome(){
   const el=document.getElementById('dome-list');
   el.innerHTML = E.dome.length ? E.dome.slice().reverse().map(d=>`
     <div class="item"><div class="info"><div class="t">${ic('dome','#ca8a04')}${d.renter}</div>
-      <div class="s">${num(d.days)} يوم × ${money(num(d.daily),d.cur)}${num(d.setup)>0?' + فك وتركيب '+money(num(d.setup),d.cur):''}<br>${d.dateFrom?('من '+d.dateFrom+' إلى '+(d.dateTo||'—')):(d.date||'')}</div></div>
+      <div class="s">${num(d.days)} يوم × ${money(num(d.daily),d.cur)}${num(d.setup)>0?' + فك وتركيب '+money(num(d.setup),d.cur):''}<br>${d.dateFrom?('من '+d.dateFrom+' إلى '+(d.dateTo||'—')):(d.date||'')}</div>${agrHtml('dome',d.id)}</div>
     <div class="amt cyan">${money(num(d.total),d.cur)}</div>
     <button class="btn-x btn" onclick="delDome('${d.id}')">✕</button></div>`).join('')
     : '<div class="empty">لا يوجد إيفنتات بعد</div>';
@@ -1485,7 +1524,7 @@ function importBackup(ev){
   r.onload=e=>{ try{ const d=JSON.parse(e.target.result);
     if(!d.expo) throw new Error('ملف غير صالح');
     if(!confirm('سيتم استبدال كل البيانات الحالية بالنسخة الاحتياطية. متأكد؟')) return;
-    db=d; localStorage.setItem(DB_KEY,JSON.stringify(db)); renderActive();
+    db=d; commit();   // commit → بينرفع للسحابة كمان، مش بس عالجهاز
     alert('✅ تم استرجاع النسخة بنجاح');
   }catch(err){ alert('❌ الملف غير صالح: '+err.message); } };
   r.readAsText(f); ev.target.value='';
@@ -2191,6 +2230,161 @@ commit = function(){
   if(fbReady && userDocRef) pushCloud(false);
 };
 
+/* ══════════ المرفقات: اتفاقيات الحجوزات والأكشاك ══════════
+   الملف بينخزّن على Firestore مقسّم قطع (750KB لكل مستند) تحت دفتر الحساب نفسه:
+   <ledger>/files/{fid}  (بيانات الملف)   +   <ledger>/files/{fid}/chunks/{0..n-1}  (القطع)
+   السجل (حجز/كشك) بيحمل بس مرجع: agreement:{fid,name,size,type,chunks,at} — أو null بعد الحذف (مش حذف المفتاح، عشان الدمج مع السحابة). */
+var AGR_CHUNK=750000, AGR_MAX=12*1024*1024, agrCache={}, agrPending=null, agrViewUrl=null, domeStaged=null;
+function ledgerRef(){ return userDocRef || snapRef || null; }
+function agrRec(kind,id){ if(kind==='dome') return (db.expo.dome||[]).find(function(x){ return x.id===id; })||null; if(kind==='kiosk') return (db.expo.kiosks||{})[id]||null; return null; }
+function agrSt(kind,id,msg,color){ var e=document.getElementById('agr-st-'+kind+'-'+id); if(e){ e.textContent=msg||''; e.style.color=color||''; } }
+function agrFmtSize(n){ n=num(n); return n>=1048576 ? (n/1048576).toFixed(1)+' MB' : Math.max(1,Math.round(n/1024))+' KB'; }
+function commitKiosk(id){ commit(); var el=document.getElementById('kiosk-'+id); if(el) el.classList.add('open'); }
+function agrHtml(kind,id){
+  var r=agrRec(kind,id), a=r&&r.agreement, sid=kind+'-'+id, q="'";
+  if(a && a.fid){
+    return '<div class="agr has"><span class="agr-i"><svg class="ico"><use href="#i-file"/></svg></span>'
+      +'<span class="agr-n" title="'+esc(a.name||'')+'">'+esc(a.name||'الاتفاقية')+'</span><span class="agr-z">'+agrFmtSize(a.size)+'</span>'
+      +'<button class="btn btn-sm btn-blue" onclick="viewAgreement('+q+kind+q+','+q+id+q+')">عرض</button>'
+      +'<button class="btn btn-sm btn-ghost" onclick="attachAgreement('+q+kind+q+','+q+id+q+')">استبدال</button>'
+      +'<button class="btn btn-sm btn-ghost" onclick="removeAgreement('+q+kind+q+','+q+id+q+')">حذف</button>'
+      +'<span class="agr-st" id="agr-st-'+sid+'"></span></div>';
+  }
+  return '<div class="agr"><span class="agr-i dim"><svg class="ico"><use href="#i-file"/></svg></span><span class="agr-n dim">ما في اتفاقية مرفقة</span>'
+    +'<button class="btn btn-sm btn-ghost" onclick="attachAgreement('+q+kind+q+','+q+id+q+')">إرفاق الاتفاقية</button>'
+    +'<span class="agr-st" id="agr-st-'+sid+'"></span></div>';
+}
+function readBuf(b){ return new Promise(function(res,rej){ var r=new FileReader(); r.onload=function(){ res(new Uint8Array(r.result)); }; r.onerror=function(){ rej(r.error||new Error('read')); }; r.readAsArrayBuffer(b); }); }
+function withTimeout(p,ms){ return new Promise(function(res,rej){ var t=setTimeout(function(){ rej(new Error('timeout')); },ms); p.then(function(v){ clearTimeout(t); res(v); },function(e){ clearTimeout(t); rej(e); }); }); }
+/* PDF زي ما هو؛ الصور بتتصغّر لـ1800px JPEG عشان ما تاكل مساحة السحابة */
+function agrPrepare(file){
+  var isPdf = file.type==='application/pdf' || /\.pdf$/i.test(file.name||'');
+  var isImg = /^image\//.test(file.type||'');
+  if(!isPdf && !isImg) return Promise.reject(new Error('type'));
+  if(isPdf) return readBuf(file).then(function(bytes){ return {bytes:bytes,type:'application/pdf',name:file.name||'agreement.pdf'}; });
+  return new Promise(function(res,rej){
+    var url=URL.createObjectURL(file), im=new Image();
+    im.onload=function(){
+      try{
+        var MAX=1800, w=im.naturalWidth, h=im.naturalHeight, s=Math.min(1, MAX/Math.max(w,h,1));
+        var c=document.createElement('canvas'); c.width=Math.max(1,Math.round(w*s)); c.height=Math.max(1,Math.round(h*s));
+        c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(url);
+        c.toBlob(function(b){ if(!b){ rej(new Error('img')); return; } readBuf(b).then(function(bytes){ res({bytes:bytes,type:'image/jpeg',name:String(file.name||'agreement').replace(/\.[^.]+$/,'')+'.jpg'}); },rej); },'image/jpeg',0.82);
+      }catch(e){ rej(e); }
+    };
+    im.onerror=function(){ URL.revokeObjectURL(url); rej(new Error('img')); };
+    im.src=url;
+  });
+}
+function attachAgreement(kind,id){
+  if(viewerMode) return;
+  if(!ledgerRef()){ alert('لسا ما اتصل بالسحابة — جرّب بعد شوي'); return; }
+  if(navigator.onLine===false){ alert('ما في نت — إرفاق الاتفاقية بده اتصال'); return; }
+  agrPending={kind:kind,id:id};
+  var inp=document.getElementById('agr-file'); inp.value=''; inp.click();
+}
+function pickDomeFile(){
+  if(viewerMode) return;
+  agrPending={kind:'domeNew',id:''};
+  var inp=document.getElementById('agr-file'); inp.value=''; inp.click();
+}
+function stageDomeFile(f){ domeStaged=f; var e=document.getElementById('dm-agr-name'); if(e){ e.textContent=f.name; e.style.display='inline-block'; } }
+(function(){ var inp=document.getElementById('agr-file'); if(!inp) return;
+  inp.addEventListener('change', function(){
+    var f=this.files&&this.files[0], p=agrPending; agrPending=null; if(!f||!p) return;
+    if(p.kind==='domeNew'){ stageDomeFile(f); return; }
+    uploadAgreement(f,p.kind,p.id);
+  });
+})();
+function agrErrMsg(e){
+  var m=String(e&&e.message||e||'');
+  if(e&&e.code==='permission-denied') return 'ما في صلاحية — قواعد السحابة لسا ما انحدّثت';
+  if(m==='type') return 'الملف لازم يكون PDF أو صورة';
+  if(m==='size') return 'الملف كبير (الحد 12 ميجا)';
+  if(m==='timeout') return 'النت بطيء — ما كمّل، جرّب مرة ثانية';
+  if(m==='missing') return 'المرفق غير موجود على السحابة';
+  if(m==='noledger') return 'لسا ما اتصل بالسحابة';
+  return 'فشل — تأكد من النت وجرّب مرة ثانية';
+}
+function uploadAgreement(file,kind,id){
+  if(viewerMode) return;
+  var ref=ledgerRef(); if(!ref){ agrSt(kind,id,'لسا ما اتصل بالسحابة','var(--red)'); return; }
+  if(!agrRec(kind,id)) return;
+  agrSt(kind,id,'يجهّز الملف…','var(--amber)');
+  var fid=uid(), n=0, fdoc=ref.collection('files').doc(fid), done=0;
+  return agrPrepare(file).then(function(f){
+    if(f.bytes.length>AGR_MAX) throw new Error('size');
+    n=Math.ceil(f.bytes.length/AGR_CHUNK);
+    function next(){
+      if(done>=n) return Promise.resolve();
+      var part=f.bytes.subarray(done*AGR_CHUNK, Math.min(f.bytes.length,(done+1)*AGR_CHUNK));
+      agrSt(kind,id,'يرفع '+(done+1)+'/'+n+'…','var(--amber)');
+      return withTimeout(fdoc.collection('chunks').doc(String(done)).set({b:firebase.firestore.Blob.fromUint8Array(part)}),90000).then(function(){ done++; return next(); });
+    }
+    return next().then(function(){
+      // بيانات الملف آخر إشي — لو انقطع قبلها، القطع بتضل بدون مرجع وما بتبين لحد
+      return withTimeout(fdoc.set({name:f.name,size:f.bytes.length,type:f.type,chunks:n,kind:kind,rid:String(id),by:currentUid||null,at:firebase.firestore.FieldValue.serverTimestamp()}),90000);
+    }).then(function(){
+      var rec=agrRec(kind,id);                                  // بنرجع نجيب السجل (يمكن db انبدل من السحابة أثناء الرفع)
+      if(!rec){ agrDeleteFile({fid:fid,chunks:n}); return; }
+      var old=rec.agreement;
+      rec.agreement={fid:fid,name:f.name,size:f.bytes.length,type:f.type,chunks:n,at:today()};
+      agrCache[fid]=new Blob([f.bytes],{type:f.type});
+      if(kind==='kiosk') commitKiosk(id); else commit();
+      agrSt(kind,id,'تم إرفاق الاتفاقية','var(--green)');
+      if(old && old.fid && old.fid!==fid) agrDeleteFile(old);
+    });
+  }).catch(function(e){
+    agrSt(kind,id,agrErrMsg(e),'var(--red)');
+    if(done>0 || n>0) agrDeleteFile({fid:fid,chunks:Math.max(done,n)});   // نظّف القطع الناقصة
+  });
+}
+function agrDeleteFile(a){
+  var ref=ledgerRef(); if(!ref||!a||!a.fid) return Promise.resolve();
+  var fdoc=ref.collection('files').doc(a.fid), ps=[];
+  for(var i=0;i<(num(a.chunks)||0);i++) ps.push(fdoc.collection('chunks').doc(String(i)).delete().catch(function(){}));
+  return Promise.all(ps).then(function(){ return fdoc.delete().catch(function(){}); });
+}
+function removeAgreement(kind,id){
+  if(viewerMode) return;
+  var rec=agrRec(kind,id); if(!rec||!rec.agreement||!rec.agreement.fid) return;
+  if(!confirm('حذف الاتفاقية المرفقة؟')) return;
+  var old=rec.agreement; rec.agreement=null; delete agrCache[old.fid];
+  if(kind==='kiosk') commitKiosk(id); else commit();
+  agrDeleteFile(old);
+}
+function agrFetch(a){
+  if(agrCache[a.fid]) return Promise.resolve(agrCache[a.fid]);
+  var ref=ledgerRef(); if(!ref) return Promise.reject(new Error('noledger'));
+  var fdoc=ref.collection('files').doc(a.fid);
+  return withTimeout(fdoc.get(),60000).then(function(m){
+    if(!m.exists) throw new Error('missing');
+    var md=m.data()||{}, n=num(md.chunks)||num(a.chunks)||1, type=md.type||a.type||'application/pdf', ps=[];
+    for(var i=0;i<n;i++) ps.push(withTimeout(fdoc.collection('chunks').doc(String(i)).get(),90000));
+    return Promise.all(ps).then(function(snaps){
+      var parts=snaps.map(function(s){ if(!s.exists) throw new Error('missing'); var b=(s.data()||{}).b; return (b&&b.toUint8Array) ? b.toUint8Array() : new Uint8Array(0); });
+      var blob=new Blob(parts,{type:type}); agrCache[a.fid]=blob; return blob;
+    });
+  });
+}
+function viewAgreement(kind,id){
+  var rec=agrRec(kind,id), a=rec&&rec.agreement; if(!a||!a.fid) return;
+  var ov=document.getElementById('agrView'); ov.classList.add('open');
+  document.getElementById('agr-title').textContent=a.name||'الاتفاقية';
+  var body=document.getElementById('agr-body'); body.innerHTML='<div class="agr-load">جاري تحميل الاتفاقية…</div>';
+  var open=document.getElementById('agr-open'), dl=document.getElementById('agr-dl');
+  open.disabled=true; open.onclick=null; dl.removeAttribute('href');
+  if(agrViewUrl){ URL.revokeObjectURL(agrViewUrl); agrViewUrl=null; }
+  agrFetch(a).then(function(blob){
+    if(!ov.classList.contains('open')) return;
+    var url=URL.createObjectURL(blob); agrViewUrl=url;
+    body.innerHTML = /^image\//.test(blob.type) ? '<img src="'+url+'" alt="">' : '<iframe src="'+url+'" title="الاتفاقية"></iframe>';
+    open.disabled=false; open.onclick=function(){ window.open(url,'_blank'); };
+    dl.href=url; dl.download=a.name||'agreement';
+  }).catch(function(e){ body.innerHTML='<div class="agr-load err">'+agrErrMsg(e)+'</div>'; });
+}
+function closeAgreement(){ var ov=document.getElementById('agrView'); ov.classList.remove('open'); document.getElementById('agr-body').innerHTML=''; if(agrViewUrl){ URL.revokeObjectURL(agrViewUrl); agrViewUrl=null; } }
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ var ov=document.getElementById('agrView'); if(ov&&ov.classList.contains('open')) closeAgreement(); } });
 function mapAuthErr(code){
   if(code==='auth/invalid-email') return 'إيميل غير صحيح';
   if(code==='auth/missing-password'||code==='auth/weak-password') return 'كلمة السر لازم 6 أحرف على الأقل';
